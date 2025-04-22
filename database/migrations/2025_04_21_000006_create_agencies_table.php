@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('city');
             $table->text('address');
             $table->string('phone');
+            $table->string('logo')->nullable();
             $table->timestamps();
         });
     }
