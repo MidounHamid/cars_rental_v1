@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\review;
+use App\Models\Review;
 use App\Http\Requests\StorereviewRequest;
 use App\Http\Requests\UpdatereviewRequest;
 
@@ -13,7 +13,7 @@ class ReviewController extends Controller
      */
     public function index()
     {
-        $reviews = review::with(['user', 'car'])->paginate(10);
+        $reviews = Review::with(['user', 'car'])->paginate(10);
         return view('admin.reviews.index', compact('reviews'));
     }
 
@@ -30,14 +30,14 @@ class ReviewController extends Controller
      */
     public function store(StorereviewRequest $request)
     {
-        review::create($request->validated());
+        Review::create($request->validated());
         return redirect()->route('reviews.index')->with('success', 'L\'avis a été créé avec succès.');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(review $review)
+    public function show(Review $review)
     {
         return view('admin.reviews.show', compact('review'));
     }
@@ -45,7 +45,7 @@ class ReviewController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(review $review)
+    public function edit(Review $review)
     {
         return view('admin.reviews.edit', compact('review'));
     }
@@ -53,7 +53,7 @@ class ReviewController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdatereviewRequest $request, review $review)
+    public function update(UpdatereviewRequest $request, Review $review)
     {
         $review->update($request->validated());
         return redirect()->route('reviews.index')->with('success', 'L\'avis a été mis à jour avec succès.');
@@ -62,7 +62,7 @@ class ReviewController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(review $review)
+    public function destroy(Review $review)
     {
         $review->delete();
         return redirect()->route('reviews.index')->with('success', 'L\'avis a été supprimé avec succès.');

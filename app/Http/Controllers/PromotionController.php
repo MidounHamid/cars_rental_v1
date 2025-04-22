@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\promotion;
+use App\Models\Promotion;
 use App\Http\Requests\StorepromotionRequest;
 use App\Http\Requests\UpdatepromotionRequest;
 
@@ -13,7 +13,7 @@ class PromotionController extends Controller
      */
     public function index()
     {
-        $promotions = promotion::paginate(10);
+        $promotions = Promotion::paginate(10);
         return view('admin.promotions.index', compact('promotions'));
     }
 
@@ -30,14 +30,14 @@ class PromotionController extends Controller
      */
     public function store(StorepromotionRequest $request)
     {
-        promotion::create($request->validated());
+        Promotion::create($request->validated());
         return redirect()->route('promotions.index')->with('success', 'La promotion a été créée avec succès.');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(promotion $promotion)
+    public function show(Promotion $promotion)
     {
         return view('admin.promotions.show', compact('promotion'));
     }
@@ -45,7 +45,7 @@ class PromotionController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(promotion $promotion)
+    public function edit(Promotion $promotion)
     {
         return view('admin.promotions.edit', compact('promotion'));
     }
@@ -53,7 +53,7 @@ class PromotionController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdatepromotionRequest $request, promotion $promotion)
+    public function update(UpdatepromotionRequest $request, Promotion $promotion)
     {
         $promotion->update($request->validated());
         return redirect()->route('promotions.index')->with('success', 'La promotion a été mise à jour avec succès.');
@@ -62,7 +62,7 @@ class PromotionController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(promotion $promotion)
+    public function destroy(Promotion $promotion)
     {
         $promotion->delete();
         return redirect()->route('promotions.index')->with('success', 'La promotion a été supprimée avec succès.');

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\booking;
+use App\Models\Booking;
 use App\Http\Requests\StorebookingRequest;
 use App\Http\Requests\UpdatebookingRequest;
 
@@ -13,7 +13,7 @@ class BookingController extends Controller
      */
     public function index()
     {
-        $bookings = booking::with(['user', 'car'])->paginate(10);
+        $bookings = Booking::with(['user', 'car'])->paginate(10);
         return view('admin.bookings.index', compact('bookings'));
     }
 
@@ -32,7 +32,7 @@ class BookingController extends Controller
     {
         $formFields = $request->validated();
 
-        booking::create($formFields);
+        Booking::create($formFields);
 
         return redirect()->route('bookings.index')->with('success', 'La réservation a été créée avec succès.');
     }
@@ -40,7 +40,7 @@ class BookingController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(booking $booking)
+    public function show(Booking $booking)
     {
         return view('admin.bookings.show', compact('booking'));
     }
@@ -48,7 +48,7 @@ class BookingController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(booking $booking)
+    public function edit(Booking $booking)
     {
         return view('admin.bookings.edit', compact('booking'));
     }
@@ -56,7 +56,7 @@ class BookingController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdatebookingRequest $request, booking $booking)
+    public function update(UpdatebookingRequest $request, Booking $booking)
     {
         $formFields = $request->validated();
 
@@ -68,7 +68,7 @@ class BookingController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(booking $booking)
+    public function destroy(Booking $booking)
     {
         $booking->delete();
         return redirect()->route('bookings.index')->with('success', 'La réservation a été supprimée avec succès.');

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\fuel_type;
+use App\Models\Fuel_type;
 use App\Http\Requests\Storefuel_typeRequest;
 use App\Http\Requests\Updatefuel_typeRequest;
 
@@ -13,7 +13,7 @@ class FuelTypeController extends Controller
      */
     public function index()
     {
-        $fuelTypes = fuel_type::paginate(10);
+        $fuelTypes = Fuel_type::paginate(10);
         return view('admin.fuel_types.index', compact('fuelTypes'));
     }
 
@@ -30,14 +30,14 @@ class FuelTypeController extends Controller
      */
     public function store(Storefuel_typeRequest $request)
     {
-        fuel_type::create($request->validated());
+        Fuel_type::create($request->validated());
         return redirect()->route('fuel_types.index')->with('success', 'Le type de carburant a été créé avec succès.');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(fuel_type $fuel_type)
+    public function show(Fuel_type $fuel_type)
     {
         return view('admin.fuel_types.show', compact('fuel_type'));
     }
@@ -45,7 +45,7 @@ class FuelTypeController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(fuel_type $fuel_type)
+    public function edit(Fuel_type $fuel_type)
     {
         return view('admin.fuel_types.edit', compact('fuel_type'));
     }
@@ -53,7 +53,7 @@ class FuelTypeController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Updatefuel_typeRequest $request, fuel_type $fuel_type)
+    public function update(Updatefuel_typeRequest $request, Fuel_type $fuel_type)
     {
         $fuel_type->update($request->validated());
         return redirect()->route('fuel_types.index')->with('success', 'Le type de carburant a été mis à jour avec succès.');
@@ -62,7 +62,7 @@ class FuelTypeController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(fuel_type $fuel_type)
+    public function destroy(Fuel_type $fuel_type)
     {
         $fuel_type->delete();
         return redirect()->route('fuel_types.index')->with('success', 'Le type de carburant a été supprimé avec succès.');

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\mode_payment;
+use App\Models\Mode_payment;
 use App\Http\Requests\Storemode_paymentRequest;
 use App\Http\Requests\Updatemode_paymentRequest;
 
@@ -13,7 +13,7 @@ class ModePaymentController extends Controller
      */
     public function index()
     {
-        $modePayments = mode_payment::paginate(10);
+        $modePayments = Mode_payment::paginate(10);
         return view('admin.mode_payments.index', compact('modePayments'));
     }
 
@@ -30,14 +30,14 @@ class ModePaymentController extends Controller
      */
     public function store(Storemode_paymentRequest $request)
     {
-        mode_payment::create($request->validated());
+        Mode_payment::create($request->validated());
         return redirect()->route('mode_payments.index')->with('success', 'Le mode de paiement a été créé avec succès.');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(mode_payment $mode_payment)
+    public function show(Mode_payment $mode_payment)
     {
         return view('admin.mode_payments.show', compact('mode_payment'));
     }
@@ -45,7 +45,7 @@ class ModePaymentController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(mode_payment $mode_payment)
+    public function edit(Mode_payment $mode_payment)
     {
         return view('admin.mode_payments.edit', compact('mode_payment'));
     }
@@ -53,7 +53,7 @@ class ModePaymentController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Updatemode_paymentRequest $request, mode_payment $mode_payment)
+    public function update(Updatemode_paymentRequest $request, Mode_payment $mode_payment)
     {
         $mode_payment->update($request->validated());
         return redirect()->route('mode_payments.index')->with('success', 'Le mode de paiement a été mis à jour avec succès.');
@@ -62,7 +62,7 @@ class ModePaymentController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(mode_payment $mode_payment)
+    public function destroy(Mode_payment $mode_payment)
     {
         $mode_payment->delete();
         return redirect()->route('mode_payments.index')->with('success', 'Le mode de paiement a été supprimé avec succès.');

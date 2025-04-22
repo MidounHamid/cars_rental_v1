@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\specification;
+use App\Models\Specification;
 use App\Http\Requests\StorespecificationRequest;
 use App\Http\Requests\UpdatespecificationRequest;
 
@@ -13,7 +13,7 @@ class SpecificationController extends Controller
      */
     public function index()
     {
-        $specifications = specification::paginate(10);
+        $specifications = Specification::paginate(10);
         return view('admin.specifications.index', compact('specifications'));
     }
 
@@ -30,14 +30,14 @@ class SpecificationController extends Controller
      */
     public function store(StorespecificationRequest $request)
     {
-        specification::create($request->validated());
+        Specification::create($request->validated());
         return redirect()->route('specifications.index')->with('success', 'La spécification a été créée avec succès.');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(specification $specification)
+    public function show(Specification $specification)
     {
         return view('admin.specifications.show', compact('specification'));
     }
@@ -45,7 +45,7 @@ class SpecificationController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(specification $specification)
+    public function edit(Specification $specification)
     {
         return view('admin.specifications.edit', compact('specification'));
     }
@@ -53,7 +53,7 @@ class SpecificationController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdatespecificationRequest $request, specification $specification)
+    public function update(UpdatespecificationRequest $request, Specification $specification)
     {
         $specification->update($request->validated());
         return redirect()->route('specifications.index')->with('success', 'La spécification a été mise à jour avec succès.');
@@ -62,7 +62,7 @@ class SpecificationController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(specification $specification)
+    public function destroy(Specification $specification)
     {
         $specification->delete();
         return redirect()->route('specifications.index')->with('success', 'La spécification a été supprimée avec succès.');

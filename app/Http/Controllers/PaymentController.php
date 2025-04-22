@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\payment;
+use App\Models\Payment;
 use App\Http\Requests\StorepaymentRequest;
 use App\Http\Requests\UpdatepaymentRequest;
 
@@ -13,7 +13,7 @@ class PaymentController extends Controller
      */
     public function index()
     {
-        $payments = payment::with(['booking', 'modePayment'])->paginate(10);
+        $payments = Payment::with(['booking', 'modePayment'])->paginate(10);
         return view('admin.payments.index', compact('payments'));
     }
 
@@ -30,14 +30,14 @@ class PaymentController extends Controller
      */
     public function store(StorepaymentRequest $request)
     {
-        payment::create($request->validated());
+        Payment::create($request->validated());
         return redirect()->route('payments.index')->with('success', 'Le paiement a été créé avec succès.');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(payment $payment)
+    public function show(Payment $payment)
     {
         return view('admin.payments.show', compact('payment'));
     }
@@ -45,7 +45,7 @@ class PaymentController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(payment $payment)
+    public function edit(Payment $payment)
     {
         return view('admin.payments.edit', compact('payment'));
     }
@@ -53,7 +53,7 @@ class PaymentController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdatepaymentRequest $request, payment $payment)
+    public function update(UpdatepaymentRequest $request, Payment $payment)
     {
         $payment->update($request->validated());
         return redirect()->route('payments.index')->with('success', 'Le paiement a été mis à jour avec succès.');
@@ -62,7 +62,7 @@ class PaymentController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(payment $payment)
+    public function destroy(Payment $payment)
     {
         $payment->delete();
         return redirect()->route('payments.index')->with('success', 'Le paiement a été supprimé avec succès.');

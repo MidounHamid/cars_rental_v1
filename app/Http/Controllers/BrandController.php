@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\brand;
+use App\Models\Brand;
 use App\Http\Requests\StorebrandRequest;
 use App\Http\Requests\UpdatebrandRequest;
 
@@ -13,8 +13,8 @@ class BrandController extends Controller
      */
     public function index()
     {
-        $brands = brand::paginate(10);
-        return view('admin.brands.index', compact('brands'));
+        $brands = Brand::paginate(10);
+        return view('admin.s.index', compact('brands'));
     }
 
     /**
@@ -30,14 +30,14 @@ class BrandController extends Controller
      */
     public function store(StorebrandRequest $request)
     {
-        brand::create($request->validated());
+        Brand::create($request->validated());
         return redirect()->route('brands.index')->with('success', 'La marque a été créée avec succès.');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(brand $brand)
+    public function show(Brand $brand)
     {
         return view('admin.brands.show', compact('brand'));
     }
@@ -45,7 +45,7 @@ class BrandController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(brand $brand)
+    public function edit(Brand $brand)
     {
         return view('admin.brands.edit', compact('brand'));
     }
@@ -53,7 +53,7 @@ class BrandController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdatebrandRequest $request, brand $brand)
+    public function update(UpdatebrandRequest $request, Brand $brand)
     {
         $brand->update($request->validated());
         return redirect()->route('brands.index')->with('success', 'La marque a été mise à jour avec succès.');
@@ -62,7 +62,7 @@ class BrandController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(brand $brand)
+    public function destroy(Brand $brand)
     {
         $brand->delete();
         return redirect()->route('brands.index')->with('success', 'La marque a été supprimée avec succès.');

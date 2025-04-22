@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\agencie;
+use App\Models\Agencie;
 use App\Http\Requests\StoreagencieRequest;
 use App\Http\Requests\UpdateagencieRequest;
 
@@ -13,7 +13,7 @@ class AgencieController extends Controller
      */
     public function index()
     {
-        $agencies = agencie::paginate(10);
+        $agencies = Agencie::paginate(10);
         return view('admin.agencies.index', compact('agencies'));
     }
 
@@ -37,7 +37,7 @@ class AgencieController extends Controller
             $formFields['logo'] = $request->file('logo')->store('logos', 'public');
         }
 
-        agencie::create($formFields);
+        Agencie::create($formFields);
 
         return redirect()->route("agencies.index")->with("success", "Votre agence a été créée avec succès.");
     }
@@ -45,7 +45,7 @@ class AgencieController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(agencie $agencie)
+    public function show(Agencie $agencie)
     {
         return view('admin.agencies.show', compact('agencie'));
     }
@@ -53,7 +53,7 @@ class AgencieController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(agencie $agencie)
+    public function edit(Agencie $agencie)
     {
         return view('admin.agencies.edit', compact('agencie'));
     }
@@ -61,7 +61,7 @@ class AgencieController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateagencieRequest $request, agencie $agencie)
+    public function update(UpdateagencieRequest $request, Agencie $agencie)
     {
         $formFields = $request->validated();
 
@@ -78,7 +78,7 @@ class AgencieController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(agencie $agencie)
+    public function destroy(Agencie $agencie)
     {
         $agencie->delete();
         return redirect()->route("agencies.index")->with("success", "Votre agence a été supprimée avec succès.");

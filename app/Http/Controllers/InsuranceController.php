@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\insurance;
+use App\Models\Insurance;
 use App\Http\Requests\StoreinsuranceRequest;
 use App\Http\Requests\UpdateinsuranceRequest;
 
@@ -13,7 +13,7 @@ class InsuranceController extends Controller
      */
     public function index()
     {
-        $insurances = insurance::paginate(10);
+        $insurances = Insurance::paginate(10);
         return view('admin.insurances.index', compact('insurances'));
     }
 
@@ -30,14 +30,14 @@ class InsuranceController extends Controller
      */
     public function store(StoreinsuranceRequest $request)
     {
-        insurance::create($request->validated());
+        Insurance::create($request->validated());
         return redirect()->route('insurances.index')->with('success', 'L\'assurance a été créée avec succès.');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(insurance $insurance)
+    public function show(Insurance $insurance)
     {
         return view('admin.insurances.show', compact('insurance'));
     }
@@ -45,7 +45,7 @@ class InsuranceController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(insurance $insurance)
+    public function edit(Insurance $insurance)
     {
         return view('admin.insurances.edit', compact('insurance'));
     }
@@ -53,7 +53,7 @@ class InsuranceController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateinsuranceRequest $request, insurance $insurance)
+    public function update(UpdateinsuranceRequest $request, Insurance $insurance)
     {
         $insurance->update($request->validated());
         return redirect()->route('insurances.index')->with('success', 'L\'assurance a été mise à jour avec succès.');
@@ -62,7 +62,7 @@ class InsuranceController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(insurance $insurance)
+    public function destroy(Insurance $insurance)
     {
         $insurance->delete();
         return redirect()->route('insurances.index')->with('success', 'L\'assurance a été supprimée avec succès.');
