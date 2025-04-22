@@ -1,10 +1,28 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Admin Dashboard</title>
-</head>
-<body>
-    <h1>Bienvenue dans le dashboard admin</h1>
-    @yield('content')
-</body>
+<!doctype html>
+<html lang="en">
+    @include('admin.layouts.head')
+
+  <body >
+
+
+
+
+        @include('admin.layouts.header')
+
+        @include('admin.layouts.sidebar')
+
+
+
+
+            @yield('content')
+
+
+
+
+
+
+
+
+    @include('admin.layouts.script')
+  </body>
 </html>
