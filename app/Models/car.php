@@ -32,7 +32,7 @@ class Car extends Model
 
     public function carType()
     {
-        return $this->belongsTo(CarType::class);
+        return $this->belongsTo(Car_type::class);
     }
 
     public function fuelType()
@@ -42,7 +42,7 @@ class Car extends Model
 
     public function agency()
     {
-        return $this->belongsTo(Agency::class);
+        return $this->belongsTo(Agencie::class);
     }
 
     public function insurance()
