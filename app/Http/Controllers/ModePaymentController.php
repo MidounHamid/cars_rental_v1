@@ -13,7 +13,8 @@ class ModePaymentController extends Controller
      */
     public function index()
     {
-        //
+        $modePayments = mode_payment::paginate(10);
+        return view('admin.mode_payments.index', compact('modePayments'));
     }
 
     /**
@@ -21,7 +22,7 @@ class ModePaymentController extends Controller
      */
     public function create()
     {
-        //
+        return view('admin.mode_payments.create');
     }
 
     /**
@@ -29,7 +30,8 @@ class ModePaymentController extends Controller
      */
     public function store(Storemode_paymentRequest $request)
     {
-        //
+        mode_payment::create($request->validated());
+        return redirect()->route('mode_payments.index')->with('success', 'Le mode de paiement a été créé avec succès.');
     }
 
     /**
@@ -37,7 +39,7 @@ class ModePaymentController extends Controller
      */
     public function show(mode_payment $mode_payment)
     {
-        //
+        return view('admin.mode_payments.show', compact('mode_payment'));
     }
 
     /**
@@ -45,7 +47,7 @@ class ModePaymentController extends Controller
      */
     public function edit(mode_payment $mode_payment)
     {
-        //
+        return view('admin.mode_payments.edit', compact('mode_payment'));
     }
 
     /**
@@ -53,7 +55,8 @@ class ModePaymentController extends Controller
      */
     public function update(Updatemode_paymentRequest $request, mode_payment $mode_payment)
     {
-        //
+        $mode_payment->update($request->validated());
+        return redirect()->route('mode_payments.index')->with('success', 'Le mode de paiement a été mis à jour avec succès.');
     }
 
     /**
@@ -61,6 +64,7 @@ class ModePaymentController extends Controller
      */
     public function destroy(mode_payment $mode_payment)
     {
-        //
+        $mode_payment->delete();
+        return redirect()->route('mode_payments.index')->with('success', 'Le mode de paiement a été supprimé avec succès.');
     }
 }

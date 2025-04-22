@@ -13,7 +13,8 @@ class SpecificationController extends Controller
      */
     public function index()
     {
-        //
+        $specifications = specification::paginate(10);
+        return view('admin.specifications.index', compact('specifications'));
     }
 
     /**
@@ -21,7 +22,7 @@ class SpecificationController extends Controller
      */
     public function create()
     {
-        //
+        return view('admin.specifications.create');
     }
 
     /**
@@ -29,7 +30,8 @@ class SpecificationController extends Controller
      */
     public function store(StorespecificationRequest $request)
     {
-        //
+        specification::create($request->validated());
+        return redirect()->route('specifications.index')->with('success', 'La spécification a été créée avec succès.');
     }
 
     /**
@@ -37,7 +39,7 @@ class SpecificationController extends Controller
      */
     public function show(specification $specification)
     {
-        //
+        return view('admin.specifications.show', compact('specification'));
     }
 
     /**
@@ -45,7 +47,7 @@ class SpecificationController extends Controller
      */
     public function edit(specification $specification)
     {
-        //
+        return view('admin.specifications.edit', compact('specification'));
     }
 
     /**
@@ -53,7 +55,8 @@ class SpecificationController extends Controller
      */
     public function update(UpdatespecificationRequest $request, specification $specification)
     {
-        //
+        $specification->update($request->validated());
+        return redirect()->route('specifications.index')->with('success', 'La spécification a été mise à jour avec succès.');
     }
 
     /**
@@ -61,6 +64,7 @@ class SpecificationController extends Controller
      */
     public function destroy(specification $specification)
     {
-        //
+        $specification->delete();
+        return redirect()->route('specifications.index')->with('success', 'La spécification a été supprimée avec succès.');
     }
 }

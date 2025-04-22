@@ -13,7 +13,8 @@ class ReviewController extends Controller
      */
     public function index()
     {
-        //
+        $reviews = review::with(['user', 'car'])->paginate(10);
+        return view('admin.reviews.index', compact('reviews'));
     }
 
     /**
@@ -21,7 +22,7 @@ class ReviewController extends Controller
      */
     public function create()
     {
-        //
+        return view('admin.reviews.create');
     }
 
     /**
@@ -29,7 +30,8 @@ class ReviewController extends Controller
      */
     public function store(StorereviewRequest $request)
     {
-        //
+        review::create($request->validated());
+        return redirect()->route('reviews.index')->with('success', 'L\'avis a été créé avec succès.');
     }
 
     /**
@@ -37,7 +39,7 @@ class ReviewController extends Controller
      */
     public function show(review $review)
     {
-        //
+        return view('admin.reviews.show', compact('review'));
     }
 
     /**
@@ -45,7 +47,7 @@ class ReviewController extends Controller
      */
     public function edit(review $review)
     {
-        //
+        return view('admin.reviews.edit', compact('review'));
     }
 
     /**
@@ -53,7 +55,8 @@ class ReviewController extends Controller
      */
     public function update(UpdatereviewRequest $request, review $review)
     {
-        //
+        $review->update($request->validated());
+        return redirect()->route('reviews.index')->with('success', 'L\'avis a été mis à jour avec succès.');
     }
 
     /**
@@ -61,6 +64,7 @@ class ReviewController extends Controller
      */
     public function destroy(review $review)
     {
-        //
+        $review->delete();
+        return redirect()->route('reviews.index')->with('success', 'L\'avis a été supprimé avec succès.');
     }
 }

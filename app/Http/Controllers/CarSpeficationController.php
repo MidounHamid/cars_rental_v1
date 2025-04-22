@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\car_spefication;
 use App\Http\Requests\Storecar_speficationRequest;
 use App\Http\Requests\Updatecar_speficationRequest;
+use App\Models\car_spefication;
+use Illuminate\Http\Request;
+
 
 class CarSpeficationController extends Controller
 {
@@ -13,7 +15,8 @@ class CarSpeficationController extends Controller
      */
     public function index()
     {
-        //
+        $carSpecifications = car_spefication::with(['car', 'specification'])->paginate(10);
+        return view('admin.car_spefications.index', compact('carSpecifications'));
     }
 
     /**
@@ -21,7 +24,7 @@ class CarSpeficationController extends Controller
      */
     public function create()
     {
-        //
+        return view('admin.car_spefications.create');
     }
 
     /**
@@ -29,7 +32,9 @@ class CarSpeficationController extends Controller
      */
     public function store(Storecar_speficationRequest $request)
     {
-        //
+        car_spefication::create($request->validated());
+
+        return redirect()->route('car_spefications.index')->with('success', 'La spécification de la voiture a été ajoutée avec succès.');
     }
 
     /**
@@ -37,7 +42,7 @@ class CarSpeficationController extends Controller
      */
     public function show(car_spefication $car_spefication)
     {
-        //
+        return view('admin.car_spefications.show', compact('car_spefication'));
     }
 
     /**
@@ -45,7 +50,7 @@ class CarSpeficationController extends Controller
      */
     public function edit(car_spefication $car_spefication)
     {
-        //
+        return view('admin.car_spefications.edit', compact('car_spefication'));
     }
 
     /**
@@ -53,7 +58,9 @@ class CarSpeficationController extends Controller
      */
     public function update(Updatecar_speficationRequest $request, car_spefication $car_spefication)
     {
-        //
+        $car_spefication->update($request->validated());
+
+        return redirect()->route('car_spefications.index')->with('success', 'La spécification de la voiture a été mise à jour avec succès.');
     }
 
     /**
@@ -61,6 +68,8 @@ class CarSpeficationController extends Controller
      */
     public function destroy(car_spefication $car_spefication)
     {
-        //
+        $car_spefication->delete();
+
+        return redirect()->route('car_spefications.index')->with('success', 'La spécification de la voiture a été supprimée avec succès.');
     }
 }

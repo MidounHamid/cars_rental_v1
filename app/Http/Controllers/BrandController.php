@@ -13,7 +13,8 @@ class BrandController extends Controller
      */
     public function index()
     {
-        //
+        $brands = brand::paginate(10);
+        return view('admin.brands.index', compact('brands'));
     }
 
     /**
@@ -21,7 +22,7 @@ class BrandController extends Controller
      */
     public function create()
     {
-        //
+        return view('admin.brands.create');
     }
 
     /**
@@ -29,7 +30,8 @@ class BrandController extends Controller
      */
     public function store(StorebrandRequest $request)
     {
-        //
+        brand::create($request->validated());
+        return redirect()->route('brands.index')->with('success', 'La marque a été créée avec succès.');
     }
 
     /**
@@ -37,7 +39,7 @@ class BrandController extends Controller
      */
     public function show(brand $brand)
     {
-        //
+        return view('admin.brands.show', compact('brand'));
     }
 
     /**
@@ -45,7 +47,7 @@ class BrandController extends Controller
      */
     public function edit(brand $brand)
     {
-        //
+        return view('admin.brands.edit', compact('brand'));
     }
 
     /**
@@ -53,7 +55,8 @@ class BrandController extends Controller
      */
     public function update(UpdatebrandRequest $request, brand $brand)
     {
-        //
+        $brand->update($request->validated());
+        return redirect()->route('brands.index')->with('success', 'La marque a été mise à jour avec succès.');
     }
 
     /**
@@ -61,6 +64,7 @@ class BrandController extends Controller
      */
     public function destroy(brand $brand)
     {
-        //
+        $brand->delete();
+        return redirect()->route('brands.index')->with('success', 'La marque a été supprimée avec succès.');
     }
 }

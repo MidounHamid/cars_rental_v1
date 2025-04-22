@@ -13,7 +13,8 @@ class FuelTypeController extends Controller
      */
     public function index()
     {
-        //
+        $fuelTypes = fuel_type::paginate(10);
+        return view('admin.fuel_types.index', compact('fuelTypes'));
     }
 
     /**
@@ -21,7 +22,7 @@ class FuelTypeController extends Controller
      */
     public function create()
     {
-        //
+        return view('admin.fuel_types.create');
     }
 
     /**
@@ -29,7 +30,8 @@ class FuelTypeController extends Controller
      */
     public function store(Storefuel_typeRequest $request)
     {
-        //
+        fuel_type::create($request->validated());
+        return redirect()->route('fuel_types.index')->with('success', 'Le type de carburant a été créé avec succès.');
     }
 
     /**
@@ -37,7 +39,7 @@ class FuelTypeController extends Controller
      */
     public function show(fuel_type $fuel_type)
     {
-        //
+        return view('admin.fuel_types.show', compact('fuel_type'));
     }
 
     /**
@@ -45,7 +47,7 @@ class FuelTypeController extends Controller
      */
     public function edit(fuel_type $fuel_type)
     {
-        //
+        return view('admin.fuel_types.edit', compact('fuel_type'));
     }
 
     /**
@@ -53,7 +55,8 @@ class FuelTypeController extends Controller
      */
     public function update(Updatefuel_typeRequest $request, fuel_type $fuel_type)
     {
-        //
+        $fuel_type->update($request->validated());
+        return redirect()->route('fuel_types.index')->with('success', 'Le type de carburant a été mis à jour avec succès.');
     }
 
     /**
@@ -61,6 +64,7 @@ class FuelTypeController extends Controller
      */
     public function destroy(fuel_type $fuel_type)
     {
-        //
+        $fuel_type->delete();
+        return redirect()->route('fuel_types.index')->with('success', 'Le type de carburant a été supprimé avec succès.');
     }
 }

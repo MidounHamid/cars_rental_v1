@@ -13,7 +13,8 @@ class InsuranceController extends Controller
      */
     public function index()
     {
-        //
+        $insurances = insurance::paginate(10);
+        return view('admin.insurances.index', compact('insurances'));
     }
 
     /**
@@ -21,7 +22,7 @@ class InsuranceController extends Controller
      */
     public function create()
     {
-        //
+        return view('admin.insurances.create');
     }
 
     /**
@@ -29,7 +30,8 @@ class InsuranceController extends Controller
      */
     public function store(StoreinsuranceRequest $request)
     {
-        //
+        insurance::create($request->validated());
+        return redirect()->route('insurances.index')->with('success', 'L\'assurance a été créée avec succès.');
     }
 
     /**
@@ -37,7 +39,7 @@ class InsuranceController extends Controller
      */
     public function show(insurance $insurance)
     {
-        //
+        return view('admin.insurances.show', compact('insurance'));
     }
 
     /**
@@ -45,7 +47,7 @@ class InsuranceController extends Controller
      */
     public function edit(insurance $insurance)
     {
-        //
+        return view('admin.insurances.edit', compact('insurance'));
     }
 
     /**
@@ -53,7 +55,8 @@ class InsuranceController extends Controller
      */
     public function update(UpdateinsuranceRequest $request, insurance $insurance)
     {
-        //
+        $insurance->update($request->validated());
+        return redirect()->route('insurances.index')->with('success', 'L\'assurance a été mise à jour avec succès.');
     }
 
     /**
@@ -61,6 +64,7 @@ class InsuranceController extends Controller
      */
     public function destroy(insurance $insurance)
     {
-        //
+        $insurance->delete();
+        return redirect()->route('insurances.index')->with('success', 'L\'assurance a été supprimée avec succès.');
     }
 }
