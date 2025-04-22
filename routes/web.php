@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
-});
+})->name('home');
 
 Route::get('/dashboard', function () {
     return view('dashboard');
@@ -31,10 +31,10 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-// ======= Admin routes =======
-Route::middleware('admin')->group(function () {
+// // ======= Admin routes =======
+Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/admin', function () {
-        return view('admin.Layout.app');
+        return view('admin.layouts.app');
     })->name('admin');
 
     Route::resource('agencie', AgencieController::class);

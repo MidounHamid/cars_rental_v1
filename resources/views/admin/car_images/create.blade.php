@@ -1,3 +1,5 @@
-<div>
-    <!-- When there is no desire, all things are at peace. - Laozi -->
-</div>
+@extends('admin.Layout.app')
+
+@section('content')
+
+@endsection
