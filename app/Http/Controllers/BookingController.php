@@ -13,7 +13,8 @@ class BookingController extends Controller
      */
     public function index()
     {
-        //
+        $bookings = booking::with(['user', 'car'])->paginate(10);
+        return view('admin.bookings.index', compact('bookings'));
     }
 
     /**
@@ -21,7 +22,7 @@ class BookingController extends Controller
      */
     public function create()
     {
-        //
+        return view('admin.bookings.create');
     }
 
     /**
@@ -29,7 +30,11 @@ class BookingController extends Controller
      */
     public function store(StorebookingRequest $request)
     {
-        //
+        $formFields = $request->validated();
+
+        booking::create($formFields);
+
+        return redirect()->route('bookings.index')->with('success', 'La réservation a été créée avec succès.');
     }
 
     /**
@@ -37,7 +42,7 @@ class BookingController extends Controller
      */
     public function show(booking $booking)
     {
-        //
+        return view('admin.bookings.show', compact('booking'));
     }
 
     /**
@@ -45,7 +50,7 @@ class BookingController extends Controller
      */
     public function edit(booking $booking)
     {
-        //
+        return view('admin.bookings.edit', compact('booking'));
     }
 
     /**
@@ -53,7 +58,11 @@ class BookingController extends Controller
      */
     public function update(UpdatebookingRequest $request, booking $booking)
     {
-        //
+        $formFields = $request->validated();
+
+        $booking->update($formFields);
+
+        return redirect()->route('bookings.index')->with('success', 'La réservation a été mise à jour avec succès.');
     }
 
     /**
@@ -61,6 +70,7 @@ class BookingController extends Controller
      */
     public function destroy(booking $booking)
     {
-        //
+        $booking->delete();
+        return redirect()->route('bookings.index')->with('success', 'La réservation a été supprimée avec succès.');
     }
 }

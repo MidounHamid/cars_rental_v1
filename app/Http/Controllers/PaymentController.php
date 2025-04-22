@@ -13,7 +13,8 @@ class PaymentController extends Controller
      */
     public function index()
     {
-        //
+        $payments = payment::with(['booking', 'modePayment'])->paginate(10);
+        return view('admin.payments.index', compact('payments'));
     }
 
     /**
@@ -21,7 +22,7 @@ class PaymentController extends Controller
      */
     public function create()
     {
-        //
+        return view('admin.payments.create');
     }
 
     /**
@@ -29,7 +30,8 @@ class PaymentController extends Controller
      */
     public function store(StorepaymentRequest $request)
     {
-        //
+        payment::create($request->validated());
+        return redirect()->route('payments.index')->with('success', 'Le paiement a été créé avec succès.');
     }
 
     /**
@@ -37,7 +39,7 @@ class PaymentController extends Controller
      */
     public function show(payment $payment)
     {
-        //
+        return view('admin.payments.show', compact('payment'));
     }
 
     /**
@@ -45,7 +47,7 @@ class PaymentController extends Controller
      */
     public function edit(payment $payment)
     {
-        //
+        return view('admin.payments.edit', compact('payment'));
     }
 
     /**
@@ -53,7 +55,8 @@ class PaymentController extends Controller
      */
     public function update(UpdatepaymentRequest $request, payment $payment)
     {
-        //
+        $payment->update($request->validated());
+        return redirect()->route('payments.index')->with('success', 'Le paiement a été mis à jour avec succès.');
     }
 
     /**
@@ -61,6 +64,7 @@ class PaymentController extends Controller
      */
     public function destroy(payment $payment)
     {
-        //
+        $payment->delete();
+        return redirect()->route('payments.index')->with('success', 'Le paiement a été supprimé avec succès.');
     }
 }

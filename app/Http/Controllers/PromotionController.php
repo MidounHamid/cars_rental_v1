@@ -13,7 +13,8 @@ class PromotionController extends Controller
      */
     public function index()
     {
-        //
+        $promotions = promotion::paginate(10);
+        return view('admin.promotions.index', compact('promotions'));
     }
 
     /**
@@ -21,7 +22,7 @@ class PromotionController extends Controller
      */
     public function create()
     {
-        //
+        return view('admin.promotions.create');
     }
 
     /**
@@ -29,7 +30,8 @@ class PromotionController extends Controller
      */
     public function store(StorepromotionRequest $request)
     {
-        //
+        promotion::create($request->validated());
+        return redirect()->route('promotions.index')->with('success', 'La promotion a été créée avec succès.');
     }
 
     /**
@@ -37,7 +39,7 @@ class PromotionController extends Controller
      */
     public function show(promotion $promotion)
     {
-        //
+        return view('admin.promotions.show', compact('promotion'));
     }
 
     /**
@@ -45,7 +47,7 @@ class PromotionController extends Controller
      */
     public function edit(promotion $promotion)
     {
-        //
+        return view('admin.promotions.edit', compact('promotion'));
     }
 
     /**
@@ -53,7 +55,8 @@ class PromotionController extends Controller
      */
     public function update(UpdatepromotionRequest $request, promotion $promotion)
     {
-        //
+        $promotion->update($request->validated());
+        return redirect()->route('promotions.index')->with('success', 'La promotion a été mise à jour avec succès.');
     }
 
     /**
@@ -61,6 +64,7 @@ class PromotionController extends Controller
      */
     public function destroy(promotion $promotion)
     {
-        //
+        $promotion->delete();
+        return redirect()->route('promotions.index')->with('success', 'La promotion a été supprimée avec succès.');
     }
 }

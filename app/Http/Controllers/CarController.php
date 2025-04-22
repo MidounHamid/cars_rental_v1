@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\car;
-use App\Http\Requests\StorecarRequest;
-use App\Http\Requests\UpdatecarRequest;
+use App\Models\Car;
+use App\Http\Requests\StoreCarRequest;
+use App\Http\Requests\UpdateCarRequest;
 
 class CarController extends Controller
 {
@@ -13,7 +13,8 @@ class CarController extends Controller
      */
     public function index()
     {
-        //
+        $cars = Car::with(['carType', 'fuelType', 'agency', 'brand', 'insurance'])->paginate(10);
+        return view('admin.cars.index', compact('cars'));
     }
 
     /**
@@ -21,46 +22,49 @@ class CarController extends Controller
      */
     public function create()
     {
-        //
+        return view('admin.cars.create');
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StorecarRequest $request)
+    public function store(StoreCarRequest $request)
     {
-        //
+        Car::create($request->validated());
+        return redirect()->route('cars.index')->with('success', 'La voiture a été créée avec succès.');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(car $car)
+    public function show(Car $car)
     {
-        //
+        return view('admin.cars.show', compact('car'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(car $car)
+    public function edit(Car $car)
     {
-        //
+        return view('admin.cars.edit', compact('car'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdatecarRequest $request, car $car)
+    public function update(UpdateCarRequest $request, Car $car)
     {
-        //
+        $car->update($request->validated());
+        return redirect()->route('cars.index')->with('success', 'La voiture a été mise à jour avec succès.');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(car $car)
+    public function destroy(Car $car)
     {
-        //
+        $car->delete();
+        return redirect()->route('cars.index')->with('success', 'La voiture a été supprimée avec succès.');
     }
 }
