@@ -3,7 +3,7 @@
 @section('content')
 <div class="table-container">
     <h1>Agencies</h1>
-    <a href="{{ route('agencies.create') }}" class="add-agency-btn">Add Agency</a>
+    <a href="{{ route('agencies.create') }}" class="add-btn">Add Agency</a>
     <table>
         <thead>
             <tr>

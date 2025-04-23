@@ -786,7 +786,7 @@ form[action*="logout"] button:hover {
 
 
 /* Add Agency Button Styles */
-.add-agency-btn {
+.add-btn {
     display: inline-block;
     background: #4caf50;
     color: white;
@@ -799,12 +799,12 @@ form[action*="logout"] button:hover {
     margin-bottom: 20px;
 }
 
-.add-agency-btn:hover {
+.add-btn:hover {
     background: #45a049;
     transform: scale(1.05);
 }
 
-.add-agency-btn:active {
+.add-btn:active {
     transform: scale(0.95);
 }
 
@@ -833,7 +833,7 @@ tr:hover {
 
 /* Responsive Button for Mobile */
 @media (max-width: 768px) {
-    .add-agency-btn {
+    .add-btn {
         width: 100%;
         text-align: center;
     }
