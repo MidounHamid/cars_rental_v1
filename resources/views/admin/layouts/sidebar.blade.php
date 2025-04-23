@@ -122,68 +122,76 @@
                 </li>
                 <li class="nav-item">
                     <a href="{{route('car_images.index')}}" class="nav-link">
-                        <span class="nav-icon material-symbols-rounded">campaign</span>
-                        <span class="nav-label">Promotions</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{{route('car_spefications.index')}}" class="nav-link">
-                        <span class="nav-icon material-symbols-rounded">list_alt</span>
-                        <span class="nav-label">Specifications</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{{route('car_types.index')}}" class="nav-link">
-                        <span class="nav-icon material-symbols-rounded">rate_review</span>
-                        <span class="nav-label">Reviews</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{{route('cars.index')}}" class="nav-link">
                         <span class="nav-icon material-symbols-rounded">directions_car</span>
                         <span class="nav-label">Car Image</span>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="{{route('fuel_types.index')}}" class="nav-link">
+                    <a href="{{route('car_spefications.index')}}" class="nav-link">
                         <span class="nav-icon material-symbols-rounded">tune</span>
                         <span class="nav-label">Car Specification</span>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="{{route('insurances.index')}}" class="nav-link">
+                    <a href="{{route('car_types.index')}}" class="nav-link">
                         <span class="nav-icon material-symbols-rounded">category</span>
                         <span class="nav-label">Car Type</span>
+                       
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{route('cars.index')}}" class="nav-link">
+                        <span class="nav-icon material-symbols-rounded">directions_car</span>
+                        <span class="nav-label">Car</span>
+                     
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{route('fuel_types.index')}}" class="nav-link">
+                        <span class="nav-icon material-symbols-rounded">local_gas_station</span>
+                        <span class="nav-label">Fuel Type</span>
+                        
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{route('insurances.index')}}" class="nav-link">
+                        <span class="nav-icon material-symbols-rounded">verified_user</span>
+                        <span class="nav-label">Insurance</span>
+                        
                     </a>
                 </li>
                 <li class="nav-item">
                     <a href="{{route('mode_payments.index')}}" class="nav-link">
-                        <span class="nav-icon material-symbols-rounded">directions_car</span>
-                        <span class="nav-label">Car</span>
+                        <span class="nav-icon material-symbols-rounded">account_balance_wallet</span>
+                        <span class="nav-label">Mode Payement</span>
+                       
                     </a>
                 </li>
                 <li class="nav-item">
                     <a href="{{route('payments.index')}}" class="nav-link">
-                        <span class="nav-icon material-symbols-rounded">local_gas_station</span>
-                        <span class="nav-label">Fuel Type</span>
+                        <span class="nav-icon material-symbols-rounded">payments</span>
+                        <span class="nav-label">Payement</span>
+                        
                     </a>
                 </li>
                 <li class="nav-item">
                     <a href="{{route('promotions.index')}}" class="nav-link">
-                        <span class="nav-icon material-symbols-rounded">verified_user</span>
-                        <span class="nav-label">Insurance</span>
+                        <span class="nav-icon material-symbols-rounded">campaign</span>
+                        <span class="nav-label">promotions</span>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a href="{{route('reviews.index')}}" class="nav-link">
-                        <span class="nav-icon material-symbols-rounded">account_balance_wallet</span>
-                        <span class="nav-label">Mode Payement</span>
+                        <span class="nav-icon material-symbols-rounded">rate_review</span>
+                        <span class="nav-label">Reviews</span>
+                       
                     </a>
                 </li>
                 <li class="nav-item">
                     <a href="{{route('specifications.index')}}" class="nav-link">
-                        <span class="nav-icon material-symbols-rounded">payments</span>
-                        <span class="nav-label">Payement</span>
+                        <span class="nav-icon material-symbols-rounded">list_alt</span>
+                        <span class="nav-label">Specifications</span>
+                       
                     </a>
                 </li>
             </ul>
