@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Agencie;
+use App\Models\Agency;
 use App\Http\Requests\StoreagencieRequest;
 use App\Http\Requests\UpdateagencieRequest;
 
@@ -13,7 +13,7 @@ class AgencieController extends Controller
      */
     public function index()
     {
-        $agencies = Agencie::paginate(10);
+        $agencies = Agency::paginate(10);
         return view('admin.agencies.index', compact('agencies'));
     }
 
@@ -37,7 +37,7 @@ class AgencieController extends Controller
             $formFields['logo'] = $request->file('logo')->store('logos', 'public');
         }
 
-        Agencie::create($formFields);
+        Agency::create($formFields);
 
         return redirect()->route("agencies.index")->with("success", "Votre agence a été créée avec succès.");
     }
@@ -45,24 +45,23 @@ class AgencieController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Agencie $agencie)
+    public function show(Agency $agency)
     {
-        return view('admin.agencies.show', compact('agencie'));
+        return view('admin.agencies.show', compact('agency'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Agencie $agencie)
+    public function edit(Agency $agency)
     {
-        return view('admin.agencies.edit', compact('agencie'));
+        return view('admin.agencies.edit', compact('agency'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateagencieRequest $request, Agencie $agencie)
-    {
+    public function update(UpdateagencieRequest $request, Agency $agency)    {
         $formFields = $request->validated();
 
         // Handle file upload for the logo
@@ -70,7 +69,7 @@ class AgencieController extends Controller
             $formFields['logo'] = $request->file('logo')->store('logos', 'public');
         }
 
-        $agencie->update($formFields);
+        $agency->update($formFields);
 
         return redirect()->route("agencies.index")->with("success", "Votre agence a été mise à jour avec succès.");
     }
@@ -78,9 +77,9 @@ class AgencieController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Agencie $agencie)
+    public function destroy(Agency $agency)
     {
-        $agencie->delete();
+        $agency->delete();
         return redirect()->route("agencies.index")->with("success", "Votre agence a été supprimée avec succès.");
     }
 }
