@@ -11,7 +11,7 @@ class StorespecificationRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,7 @@ class StorespecificationRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'specification' => 'required|string|max:255',  // Ensure it's a required string with a max length of 255 characters
         ];
     }
 }

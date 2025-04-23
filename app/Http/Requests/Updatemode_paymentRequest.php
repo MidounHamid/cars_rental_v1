@@ -11,7 +11,7 @@ class Updatemode_paymentRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,7 @@ class Updatemode_paymentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'mode_payment' => 'required|string|max:100|unique:mode_payments,mode_payment',
         ];
     }
 }

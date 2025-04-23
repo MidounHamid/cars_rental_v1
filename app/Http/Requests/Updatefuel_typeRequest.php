@@ -11,7 +11,7 @@ class Updatefuel_typeRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,7 @@ class Updatefuel_typeRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'fuel_type' => 'required|string|max:255', // Validate the fuel type field
         ];
     }
 }
