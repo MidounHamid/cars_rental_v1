@@ -1,10 +1,9 @@
 @extends('admin.layouts.app')
 
-
 @section('content')
 <div class="table-container">
     <h2>Add New Agency</h2>
-    <form action="{{ route('agencies.store') }}" method="POST"  class="agency-form">
+    <form action="{{ route('agencies.store') }}" method="POST" enctype="multipart/form-data" class="agency-form">
         @csrf
 
         <div class="form-row">
@@ -28,7 +27,7 @@
         <div class="form-row">
             <div class="form-group">
                 <label for="address">Address</label>
-                <textarea id="address" name="address" class="form-input" rows="3" value="{{ old('address') }}"></textarea>
+                <textarea id="address" name="address" class="form-input" rows="3">{{ old('address') }}</textarea>
                 @error('address')
                     <span class="error-message">{{ $message }}</span>
                 @enderror
@@ -47,13 +46,15 @@
             <div class="form-group">
                 <label for="logo">Logo</label>
                 <div class="file-upload">
-                    <input type="file" id="logo" name="logo" class="file-input">
+                    <input type="file" id="logo" name="logo" class="file-input" accept="image/*">
                     <label for="logo" class="file-label">Choose File</label>
                     @error('logo')
                         <span class="error-message">{{ $message }}</span>
                     @enderror
                 </div>
-                <div class="logo-preview mt-2"></div>
+                <div class="logo-preview mt-2">
+                    <img id="logo-preview-img" src="#" alt="Logo Preview" style="display: none; max-height: 150px;">
+                </div>
             </div>
         </div>
 
@@ -63,5 +64,24 @@
         </div>
     </form>
 </div>
-@endsection
 
+{{-- JavaScript pour prévisualiser le logo --}}
+<script>
+    document.getElementById('logo').addEventListener('change', function (event) {
+        const file = event.target.files[0];
+        const preview = document.getElementById('logo-preview-img');
+
+        if (file && file.type.startsWith('image/')) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                preview.src = e.target.result;
+                preview.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        } else {
+            preview.style.display = 'none';
+            preview.src = '#';
+        }
+    });
+</script>
+@endsection

@@ -1,7 +1,9 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use App\Models\User;
+use App\Models\Car;
+use App\Models\Promotion;
 use App\Models\Booking;
 use App\Http\Requests\StorebookingRequest;
 use App\Http\Requests\UpdatebookingRequest;
@@ -22,7 +24,13 @@ class BookingController extends Controller
      */
     public function create()
     {
-        return view('admin.bookings.create');
+        
+         $users = User::all();
+         $cars = Car::all();
+         $promotions = Promotion::all();
+
+         return view('admin.bookings.create', compact('users', 'cars', 'promotions'));
+       
     }
 
     /**
