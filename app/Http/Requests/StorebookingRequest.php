@@ -11,7 +11,7 @@ class StorebookingRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,14 @@ class StorebookingRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'user_id' => 'required|exists:users,id',
+            'car_id' => 'required|exists:cars,id',
+            'start_date' => 'required|date|after_or_equal:today',
+            'end_date' => 'required|date|after:start_date',
+            'total_price' => 'numeric|min:0',
+            'status' => 'nullable|in:pending,confirmed,cancelled',
+            'payment_id' => 'nullable|exists:payments,id',
+            'promotion_id' => 'exists:promotions,id',
         ];
     }
 }
