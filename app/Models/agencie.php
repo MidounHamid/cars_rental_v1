@@ -17,6 +17,7 @@ class Agencie extends Model
         'logo',
     ];
 
+
     // Une agence peut avoir plusieurs voitures
     public function cars()
     {

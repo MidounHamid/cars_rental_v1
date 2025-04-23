@@ -1,1 +1,1 @@
-<script src="index.js"></script>
+<script src="{{ asset('index.js') }}"></script>
