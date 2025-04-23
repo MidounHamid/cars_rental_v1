@@ -42,7 +42,7 @@ class Car extends Model
 
     public function agency()
     {
-        return $this->belongsTo(Agencie::class);
+        return $this->belongsTo(Agency::class);
     }
 
     public function insurance()

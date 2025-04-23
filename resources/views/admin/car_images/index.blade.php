@@ -11,7 +11,6 @@
                 <th>Car ID</th>
                 <th>Image</th>
                 <th>Primary</th>
-                <th>Created At</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -21,7 +20,7 @@
                     <td>{{ $image->car_id }}</td>
                     <td><img src="{{ asset('storage/' . $image->image_path) }}" alt="Car Image" width="100"></td>
                     <td>{{ $image->is_primary ? 'Yes' : 'No' }}</td>
-                    <td>{{ $image->created_at }}</td>
+                    
                     <td>
                         <a href="{{ route('car_images.edit', $image->id) }}" class="btn btn-primary btn-sm">Edit</a>
                         <form action="{{ route('car_images.destroy', $image->id) }}" method="POST" style="display:inline;">

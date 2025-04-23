@@ -9,6 +9,10 @@
             <tr>
                 <th>Model</th>
                 <th>Car Type</th>
+                <th>Fuel Type</th>
+                <th>Agency</th>
+                <th>Brand</th>
+                <th>Insurance</th>
                 <th>City</th>
                 <th>Price per Day</th>
                 <th>Transmission</th>
@@ -22,6 +26,10 @@
                 <tr>
                     <td>{{ $car->model }}</td>
                     <td>{{ $car->carType ? $car->carType->name : 'N/A' }}</td>
+                    <td>{{ $car->fuelType ? $car->fuelType->name : 'N/A' }}</td>
+                    <td>{{ $car->agency ? $car->agency->name : 'N/A' }}</td>
+                    <td>{{ $car->brand ? $car->brand->name : 'N/A' }}</td>
+                    <td>{{ $car->insurance ? $car->insurance->name : 'N/A' }}</td>
                     <td>{{ $car->city }}</td>
                     <td>{{ $car->price_per_day }}</td>
                     <td>{{ $car->transmission }}</td>
@@ -38,7 +46,7 @@
                 </tr>
             @empty
                 <tr>
-                    <td colspan="8">No cars found.</td>
+                    <td colspan="12">No cars found.</td>
                 </tr>
             @endforelse
         </tbody>

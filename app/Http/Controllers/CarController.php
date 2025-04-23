@@ -1,10 +1,16 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use App\Models\CarType;
+use App\Models\FuelType;
+use App\Models\Agency;
+use App\Models\Brand;
+use App\Models\Insurance;
 use App\Models\Car;
 use App\Http\Requests\StoreCarRequest;
 use App\Http\Requests\UpdateCarRequest;
+use App\Models\Car_type;
+use App\Models\Fuel_type;
 
 class CarController extends Controller
 {
@@ -22,8 +28,16 @@ class CarController extends Controller
      */
     public function create()
     {
-        return view('admin.cars.create');
+        $carTypes = Car_type::all();
+        $fuelTypes = Fuel_type::all();
+        $agencies = Agency::all();
+        $brands = Brand::all();
+        $insurances = Insurance::all();
+
+        return view('admin.cars.create', compact('carTypes', 'fuelTypes', 'agencies', 'brands', 'insurances'));
     }
+        
+    
 
     /**
      * Store a newly created resource in storage.
@@ -46,8 +60,15 @@ class CarController extends Controller
      * Show the form for editing the specified resource.
      */
     public function edit(Car $car)
-    {
-        return view('admin.cars.edit', compact('car'));
+    {         
+              $carTypes = Car_type::all();
+              $fuelTypes = Fuel_type::all();
+              $agencies = Agency::all();
+              $brands = Brand::all();
+              $insurances = Insurance::all();
+    
+             return view('admin.cars.edit', compact('car', 'carTypes', 'fuelTypes', 'agencies', 'brands', 'insurances'));
+            
     }
 
     /**

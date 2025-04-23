@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use App\Models\Car;
 use App\Models\Car_image;
 use Illuminate\Http\Request;
 
@@ -21,7 +21,8 @@ class CarImageController extends Controller
      */
     public function create()
     {
-        return view('admin.car_images.create');
+        $cars = Car::all(); 
+        return view('admin.car_images.create', compact('cars'));
     }
 
     /**
@@ -53,7 +54,10 @@ class CarImageController extends Controller
      */
     public function edit(Car_image $car_image)
     {
-        return view('admin.car_images.edit', compact('car_image'));
+        
+        $cars = Car::all();
+
+        return view('admin.car_images.edit', compact('car_image', 'cars'));
     }
 
     /**
