@@ -12,4 +12,9 @@ class Promotion extends Model
     public function bookings() {
         return $this->hasMany(Booking::class);
     }
+
+
+        // // Add the date fields to the $dates property
+        protected $dates = ['starts_at', 'expires_at'];
+
 }

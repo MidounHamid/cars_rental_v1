@@ -11,7 +11,7 @@ class Updatecar_imageRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,9 @@ class Updatecar_imageRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'car_id' => 'required|exists:cars,id', // Validate car_id is required and exists in the cars table
+            'image_path' => 'required|image|mimes:jpg,jpeg,png,gif|max:2048', // Validate the image file
+            'is_primary' => 'nullable|boolean', // Validate the is_primary field
         ];
     }
 }

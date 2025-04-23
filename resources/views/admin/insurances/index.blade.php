@@ -20,8 +20,8 @@
                     <td>{{ $insurance->description }}</td>
                     <td>{{ $insurance->price_per_day }}</td>
                     <td>
-                        <a href="{{ route('insurance.edit', $insurance->id) }}" class="btn btn-primary">Edit</a>
-                        <form action="{{ route('insurance.destroy', $insurance->id) }}" method="POST" style="display: inline;">
+                        <a href="{{ route('insurances.edit', $insurance->id) }}" class="btn btn-primary">Edit</a>
+                        <form action="{{ route('insurances.destroy', $insurance->id) }}" method="POST" style="display: inline;">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this insurance?')">Delete</button>

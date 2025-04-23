@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Booking;
+use App\Models\Mode_payment;
 use App\Models\Payment;
 use App\Http\Requests\StorepaymentRequest;
 use App\Http\Requests\UpdatepaymentRequest;
@@ -22,7 +24,11 @@ class PaymentController extends Controller
      */
     public function create()
     {
-        return view('admin.payments.create');
+        // Fetch all bookings and mode payments to populate the dropdowns
+        $bookings = Booking::all(); // Make sure you have a Booking model
+        $modePayments = Mode_payment::all(); // Ensure you have a ModePayment model
+
+        return view('admin.payments.create', compact('bookings', 'modePayments'));
     }
 
     /**

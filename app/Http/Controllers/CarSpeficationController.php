@@ -5,8 +5,9 @@ namespace App\Http\Controllers;
 use App\Http\Requests\Storecar_speficationRequest;
 use App\Http\Requests\Updatecar_speficationRequest;
 use App\Models\Car_spefication;
+use App\Models\Car;
+use App\Models\Specification;
 use Illuminate\Http\Request;
-
 
 class CarSpeficationController extends Controller
 {
@@ -24,7 +25,11 @@ class CarSpeficationController extends Controller
      */
     public function create()
     {
-        return view('admin.car_spefications.create');
+        // Fetch the collections needed for dropdowns
+        $cars = Car::all();
+        $specifications = Specification::all();
+
+        return view('admin.car_spefications.create', compact('cars', 'specifications'));
     }
 
     /**
@@ -34,7 +39,8 @@ class CarSpeficationController extends Controller
     {
         Car_spefication::create($request->validated());
 
-        return redirect()->route('car_spefications.index')->with('success', 'La spécification de la voiture a été ajoutée avec succès.');
+        return redirect()->route('car_spefications.index')
+            ->with('success', 'La spécification de la voiture a été ajoutée avec succès.');
     }
 
     /**
@@ -50,7 +56,11 @@ class CarSpeficationController extends Controller
      */
     public function edit(Car_spefication $car_spefication)
     {
-        return view('admin.car_spefications.edit', compact('car_spefication'));
+        // Again, pass the needed collections for the dropdowns
+        $cars = Car::all();
+        $specifications = Specification::all();
+
+        return view('admin.car_spefications.edit', compact('car_spefication', 'cars', 'specifications'));
     }
 
     /**
@@ -60,7 +70,8 @@ class CarSpeficationController extends Controller
     {
         $car_spefication->update($request->validated());
 
-        return redirect()->route('car_spefications.index')->with('success', 'La spécification de la voiture a été mise à jour avec succès.');
+        return redirect()->route('car_spefications.index')
+            ->with('success', 'La spécification de la voiture a été mise à jour avec succès.');
     }
 
     /**
@@ -70,6 +81,7 @@ class CarSpeficationController extends Controller
     {
         $car_spefication->delete();
 
-        return redirect()->route('car_spefications.index')->with('success', 'La spécification de la voiture a été supprimée avec succès.');
+        return redirect()->route('car_spefications.index')
+            ->with('success', 'La spécification de la voiture a été supprimée avec succès.');
     }
 }

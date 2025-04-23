@@ -11,7 +11,7 @@ class Storecar_speficationRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,8 @@ class Storecar_speficationRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'car_id' => 'required|exists:cars,id', // Validate that car_id exists in the cars table
+            'specification_id' => 'required|exists:specifications,id', // Validate that specification_id exists in the specifications table
         ];
     }
 }

@@ -11,7 +11,7 @@ class StoreinsuranceRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,9 @@ class StoreinsuranceRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'name' => 'required|string|max:100|unique:insurances,name', // Ensure the name is unique in the insurances table
+            'description' => 'nullable|string', // The description is optional and should be a string
+            'price_per_day' => 'required|numeric|min:0', // Price must be a positive number
         ];
     }
 }
