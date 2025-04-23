@@ -16,7 +16,6 @@ return new class extends Migration
             $table->unsignedBigInteger('booking_id');
             $table->decimal('amount', 10, 2);
             $table->enum('method', ['cash', 'card', 'paypal', 'bank_transfer']);
-            $table->string('transaction_id', 255)->nullable();
             $table->enum('status', ['pending', 'successful', 'failed', 'refunded'])->default('pending');
             $table->unsignedBigInteger('mode_payment_id');
 

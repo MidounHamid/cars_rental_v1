@@ -1,18 +1,24 @@
+@php
+    $profileImage = Auth::user()->image && trim(Auth::user()->image) !== ''
+        ? asset('storage/' . Auth::user()->image)
+        : asset('images/default.png');
+@endphp
+
 <aside class="sidebar">
     <header class="sidebar-header">
         <a href="#" class="header-logo">
-            <img src="images.png" alt="Company Logo">
+            <img src="{{ asset('images/car_rental.png') }}" alt="Company Logo">
         </a>
         <div class="mobile-actions">
             <div class="mobile-profile">
                 <button class="nav-link profile-link">
-                    <img src="profile.jpg" alt="Profile" class="nav-icon profile-icon">
+                    <img src="{{ $profileImage }}" alt="User Image" class="nav-icon profile-icon">
                 </button>
                 <div class="mobile-dropdown">
                     <div class="dropdown-header">
-                        <img src="profile.jpg" alt="Profile" class="profile-img-large">
+                        <img src="{{ $profileImage }}" alt="User Image" class="profile-img-large">
                         <div class="profile-info">
-                            <h4>John Doe</h4>
+                            <h4>{{ Auth::user()->name }}</h4>
                             <p>Administrator</p>
                         </div>
                     </div>
@@ -29,10 +35,14 @@
                             <span class="material-symbols-rounded">mail</span>
                             <span>Messages</span>
                         </a>
-                        <a href="#" class="dropdown-item text-danger">
-                            <span class="material-symbols-rounded">logout</span>
-                            <span>Logout</span>
-                        </a>
+                        <!-- Logout inside mobile dropdown -->
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <button type="submit" class="dropdown-item logout-button">
+                                <span class="material-symbols-rounded">logout</span>
+                                <span>Logout</span>
+                            </button>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -47,7 +57,7 @@
 
     <nav class="sidebar-nav">
         <div class="nav-content">
-            <ul class="nav-list primary-nav">
+            {{-- <ul class="nav-list primary-nav">
                 <li class="nav-item">
                     <a href="#" class="nav-link">
                         <span class="nav-icon material-symbols-rounded">dashboard</span>
@@ -90,22 +100,111 @@
                         <span class="nav-label">Settings</span>
                     </a>
                 </li>
+            </ul> --}}
+            <ul class="nav-list primary-nav">
+                <li class="nav-item">
+                    <a href="{{route('agencies.index')}}" class="nav-link">
+                        <span class="nav-icon material-symbols-rounded">apartment</span>
+                        <span class="nav-label">Agencies</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{route('bookings.index')}}" class="nav-link">
+                        <span class="nav-icon material-symbols-rounded">event_available</span>
+                        <span class="nav-label">Booking</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{route('brands.index')}}" class="nav-link">
+                        <span class="nav-icon material-symbols-rounded">sell</span>
+                        <span class="nav-label">Brands</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{route('car_images.index')}}" class="nav-link">
+                        <span class="nav-icon material-symbols-rounded">campaign</span>
+                        <span class="nav-label">Promotions</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{route('car_spefications.index')}}" class="nav-link">
+                        <span class="nav-icon material-symbols-rounded">list_alt</span>
+                        <span class="nav-label">Specifications</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{route('car_types.index')}}" class="nav-link">
+                        <span class="nav-icon material-symbols-rounded">rate_review</span>
+                        <span class="nav-label">Reviews</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{route('cars.index')}}" class="nav-link">
+                        <span class="nav-icon material-symbols-rounded">directions_car</span>
+                        <span class="nav-label">Car Image</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{route('fuel_types.index')}}" class="nav-link">
+                        <span class="nav-icon material-symbols-rounded">tune</span>
+                        <span class="nav-label">Car Specification</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{route('insurances.index')}}" class="nav-link">
+                        <span class="nav-icon material-symbols-rounded">category</span>
+                        <span class="nav-label">Car Type</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{route('mode_payments.index')}}" class="nav-link">
+                        <span class="nav-icon material-symbols-rounded">directions_car</span>
+                        <span class="nav-label">Car</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{route('payments.index')}}" class="nav-link">
+                        <span class="nav-icon material-symbols-rounded">local_gas_station</span>
+                        <span class="nav-label">Fuel Type</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{route('promotions.index')}}" class="nav-link">
+                        <span class="nav-icon material-symbols-rounded">verified_user</span>
+                        <span class="nav-label">Insurance</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{route('reviews.index')}}" class="nav-link">
+                        <span class="nav-icon material-symbols-rounded">account_balance_wallet</span>
+                        <span class="nav-label">Mode Payement</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{route('specifications.index')}}" class="nav-link">
+                        <span class="nav-icon material-symbols-rounded">payments</span>
+                        <span class="nav-label">Payement</span>
+                    </a>
+                </li>
             </ul>
 
-            <ul class="nav-list secondary-nav">
+            {{-- <ul class="nav-list secondary-nav">
                 <li class="nav-item">
                     <a href="#" class="nav-link">
-                        <img src="profile.jpg" alt="Profile" class="nav-icon profile-icon">
+                        <img src="{{ $profileImage }}" alt="User Image" class="nav-icon profile-icon">
                         <span class="nav-label">Profile</span>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="#" class="nav-link">
-                        <span class="nav-icon material-symbols-rounded">logout</span>
-                        <span class="nav-label">Logout</span>
-                    </a>
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button type="submit" class="nav-link logout-button">
+                            <span class="nav-icon material-symbols-rounded">logout</span>
+                            <span class="nav-label">Logout</span>
+                        </button>
+                    </form>
                 </li>
-            </ul>
+            </ul> --}}
         </div>
     </nav>
 </aside>

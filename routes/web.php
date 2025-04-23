@@ -37,20 +37,20 @@ Route::middleware(['auth', 'admin'])->group(function () {
         return view('admin.layouts.app');
     })->name('admin');
 
-    Route::resource('agencie', AgencieController::class);
-    Route::resource('booking', BookingController::class);
-    Route::resource('brand', BrandController::class);
-    Route::resource('car', CarController::class);
-    Route::resource('car_image', CarImageController::class);
-    Route::resource('car_spefication', CarSpeficationController::class);
-    Route::resource('car_type', CarTypeController::class);
-    Route::resource('fuel_type', FuelTypeController::class);
-    Route::resource('insurance', InsuranceController::class);
-    Route::resource('mode_payment', ModePaymentController::class);
-    Route::resource('payment', PaymentController::class);
-    Route::resource('promotion', PromotionController::class);
-    Route::resource('review', ReviewController::class);
-    Route::resource('specification', SpecificationController::class);
+    Route::resource('agencies', AgencieController::class);
+    Route::resource('bookings', BookingController::class);
+    Route::resource('brands', BrandController::class);
+    Route::resource('cars', CarController::class);
+    Route::resource('car_images', CarImageController::class);
+    Route::resource('car_spefications', CarSpeficationController::class);
+    Route::resource('car_types', CarTypeController::class);
+    Route::resource('fuel_types', FuelTypeController::class);
+    Route::resource('insurances', InsuranceController::class);
+    Route::resource('mode_payments', ModePaymentController::class);
+    Route::resource('payments', PaymentController::class);
+    Route::resource('promotions', PromotionController::class);
+    Route::resource('reviews', ReviewController::class);
+    Route::resource('specifications', SpecificationController::class);
 });
 
 require __DIR__.'/auth.php';
