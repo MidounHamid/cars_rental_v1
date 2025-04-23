@@ -1,3 +1,43 @@
-<div>
-    <!-- Simplicity is the ultimate sophistication. - Leonardo da Vinci -->
+@extends('admin.layouts.app')
+
+@section('content')
+<div class="table-container">
+    <h2>Add New Car Specification</h2>
+    <form action="{{ route('car_spefications.store') }}" method="POST" enctype="multipart/form-data" class="car-specification-form">
+        @csrf
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="car_id">Car</label>
+                <select id="car_id" name="car_id" class="form-input">
+                    <option value="">Select Car</option>
+                    @foreach($cars as $car)
+                        <option value="{{ $car->id }}" {{ old('car_id') == $car->id ? 'selected' : '' }}>{{ $car->name }}</option>
+                    @endforeach
+                </select>
+                @error('car_id')
+                    <span class="error-message">{{ $message }}</span>
+                @enderror
+            </div>
+
+            <div class="form-group">
+                <label for="specification_id">Specification</label>
+                <select id="specification_id" name="specification_id" class="form-input">
+                    <option value="">Select Specification</option>
+                    @foreach($specifications as $spec)
+                        <option value="{{ $spec->id }}" {{ old('specification_id') == $spec->id ? 'selected' : '' }}>{{ $spec->name }}</option>
+                    @endforeach
+                </select>
+                @error('specification_id')
+                    <span class="error-message">{{ $message }}</span>
+                @enderror
+            </div>
+        </div>
+
+        <div class="form-footer">
+            <button type="submit" class="add-btn">Create Car Specification</button>
+            <a href="{{ route('car_spefications.index') }}" class="cancel-btn">Cancel</a>
+        </div>
+    </form>
 </div>
+@endsection

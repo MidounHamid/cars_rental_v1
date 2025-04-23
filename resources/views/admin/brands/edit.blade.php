@@ -11,7 +11,7 @@
         <div class="form-group">
             <label for="name">Brand Name</label>
             <input type="text" id="name" name="name" class="form-input"
-                   value="{{ old('name', $brand->brand) }}"
+                   value="{{ old('name', $brand->name) }}"
                    placeholder="Enter brand name">
             @error('name')
                 <span class="error-message">{{ $message }}</span>
