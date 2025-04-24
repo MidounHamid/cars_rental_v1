@@ -1,21 +1,24 @@
 @extends('admin.layouts.app')
 
 @section('content')
-<div class="form-container">
+<div class="table-container">
     <h2>Edit Brand</h2>
 
     <form action="{{ route('brands.update', $brand->id) }}" method="POST" class="brand-form" enctype="multipart/form-data">
         @csrf
         @method('PUT')
 
-        <div class="form-group">
-            <label for="name">Brand Name</label>
-            <input type="text" id="name" name="name" class="form-input"
-                   value="{{ old('name', $brand->name) }}"
-                   placeholder="Enter brand name">
-            @error('name')
-                <span class="error-message">{{ $message }}</span>
-            @enderror
+        <div class="form-row">
+            <div class="form-group">
+                <label for="name">Brand Name</label>
+                <input type="text" id="brand" name="brand" class="form-input"
+                value="{{ old('brand', $brand->brand) }}"
+                placeholder="Enter brand name">
+
+                @error('name')
+                    <span class="error-message">{{ $message }}</span>
+                @enderror
+            </div>
         </div>
 
         <div class="form-footer">
