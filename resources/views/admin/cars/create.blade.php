@@ -86,7 +86,7 @@
                 <option value="">Choose...</option>
                 @foreach($fuelTypes as $fuel)
                     <option value="{{ $fuel->id }}" {{ old('fuel_types_id') == $fuel->id ? 'selected' : '' }}>
-                        {{ $fuel->name }}
+                        {{ $fuel->fuel_type }}
                     </option>
                 @endforeach
             </select>
@@ -116,7 +116,7 @@
                 <option value="">Choose...</option>
                 @foreach($brands as $brand)
                     <option value="{{ $brand->id }}" {{ old('brand_id') == $brand->id ? 'selected' : '' }}>
-                        {{ $brand->name }}
+                        {{ $brand->brand }}
                     </option>
                 @endforeach
             </select>

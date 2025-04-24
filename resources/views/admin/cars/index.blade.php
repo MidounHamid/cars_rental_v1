@@ -26,9 +26,9 @@
                 <tr>
                     <td>{{ $car->model }}</td>
                     <td>{{ $car->carType ? $car->carType->name : 'N/A' }}</td>
-                    <td>{{ $car->fuelType ? $car->fuelType->name : 'N/A' }}</td>
+                    <td>{{ $car->fuelType ? $car->fuelType->fuel_type : 'N/A' }}</td>
                     <td>{{ $car->agency ? $car->agency->name : 'N/A' }}</td>
-                    <td>{{ $car->brand ? $car->brand->name : 'N/A' }}</td>
+                    <td>{{ $car->brand ? $car->brand->brand : 'N/A' }}</td>
                     <td>{{ $car->insurance ? $car->insurance->name : 'N/A' }}</td>
                     <td>{{ $car->city }}</td>
                     <td>{{ $car->price_per_day }}</td>
