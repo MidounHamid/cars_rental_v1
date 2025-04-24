@@ -2,23 +2,23 @@
 
 @section('content')
 <div class="table-container">
-    <h2>Modifier la voiture</h2>
+    <h2>Edit Car</h2>
     <form action="{{ route('cars.update', $car->id) }}" method="POST" class="agency-form">
         @csrf
         @method('PUT')
 
         <div class="form-row">
             <div class="form-group">
-                <label for="model">Modèle</label>
-                <input type="text" name="model" class="form-input" value="{{ old('model', $car->model) }}">
+                <label for="model">Model</label>
+                <input type="text" name="model" id="model" class="form-input" value="{{ old('model', $car->model) }}">
                 @error('model')
                     <span class="error-message">{{ $message }}</span>
                 @enderror
             </div>
 
             <div class="form-group">
-                <label for="city">Ville</label>
-                <input type="text" name="city" class="form-input" value="{{ old('city', $car->city) }}">
+                <label for="city">City</label>
+                <input type="text" name="city" id="city" class="form-input" value="{{ old('city', $car->city) }}">
                 @error('city')
                     <span class="error-message">{{ $message }}</span>
                 @enderror
@@ -27,16 +27,16 @@
 
         <div class="form-row">
             <div class="form-group">
-                <label for="price_per_day">Prix / jour</label>
-                <input type="number" step="0.01" name="price_per_day" class="form-input" value="{{ old('price_per_day', $car->price_per_day) }}">
+                <label for="price_per_day">Price per Day</label>
+                <input type="number" step="0.01" name="price_per_day" id="price_per_day" class="form-input" value="{{ old('price_per_day', $car->price_per_day) }}">
                 @error('price_per_day')
                     <span class="error-message">{{ $message }}</span>
                 @enderror
             </div>
 
             <div class="form-group">
-                <label for="seats">Places</label>
-                <input type="number" name="seats" class="form-input" value="{{ old('seats', $car->seats) }}">
+                <label for="seats">Seats</label>
+                <input type="number" name="seats" id="seats" class="form-input" value="{{ old('seats', $car->seats) }}">
                 @error('seats')
                     <span class="error-message">{{ $message }}</span>
                 @enderror
@@ -46,8 +46,7 @@
         <div class="form-row">
             <div class="form-group">
                 <label for="transmission">Transmission</label>
-                <select name="transmission" class="form-input">
-                    <option value="">Choisir...</option>
+                <select name="transmission" id="transmission" class="form-input">
                     @foreach(['Automatic', 'Manual', 'CVT', 'Semi-Automatic'] as $option)
                         <option value="{{ $option }}" {{ old('transmission', $car->transmission) === $option ? 'selected' : '' }}>{{ $option }}</option>
                     @endforeach
@@ -58,33 +57,87 @@
             </div>
 
             <div class="form-group">
-                <label for="is_available">Disponible</label>
-                <select name="is_available" class="form-input">
-                    <option value="1" {{ old('is_available', $car->is_available) == true ? 'selected' : '' }}>Oui</option>
-                    <option value="0" {{ old('is_available', $car->is_available) == false ? 'selected' : '' }}>Non</option>
+                <label for="is_available">Available</label>
+                <select name="is_available" id="is_available" class="form-input">
+                    <option value="1" {{ old('is_available', $car->is_available) == true ? 'selected' : '' }}>Yes</option>
+                    <option value="0" {{ old('is_available', $car->is_available) == false ? 'selected' : '' }}>No</option>
                 </select>
             </div>
         </div>
 
-        {{-- Sélections des clés étrangères --}}
-        @foreach (['car_type_id' => 'Type', 'fuel_types_id' => 'Carburant', 'agency_id' => 'Agence', 'brand_id' => 'Marque', 'insurance_id' => 'Assurance'] as $name => $label)
-            <div class="form-group">
-                <label for="{{ $name }}">{{ $label }}</label>
-                <select name="{{ $name }}" class="form-input">
-                    <option value="">Choisir...</option>
-                    @foreach($$name as $item)
-                        <option value="{{ $item->id }}" {{ old($name, $car->$name) == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
-                    @endforeach
-                </select>
-                @error($name)
-                    <span class="error-message">{{ $message }}</span>
-                @enderror
-            </div>
-        @endforeach
+        <div class="form-group">
+            <label for="car_type_id">Car Type</label>
+            <select name="car_type_id" id="car_type_id" class="form-input">
+                @foreach($carTypes as $type)
+                    <option value="{{ $type->id }}" {{ old('car_type_id', $car->car_type_id) == $type->id ? 'selected' : '' }}>
+                        {{ $type->name }}
+                    </option>
+                @endforeach
+            </select>
+            @error('car_type_id')
+                <span class="error-message">{{ $message }}</span>
+            @enderror
+        </div>
+
+        <div class="form-group">
+            <label for="fuel_types_id">Fuel Type</label>
+            <select name="fuel_types_id" id="fuel_types_id" class="form-input">
+                @foreach($fuelTypes as $fuel)
+                    <option value="{{ $fuel->id }}" {{ old('fuel_types_id', $car->fuel_types_id) == $fuel->id ? 'selected' : '' }}>
+                        {{ $fuel->fuel_type }}
+                    </option>
+                @endforeach
+            </select>
+            @error('fuel_types_id')
+                <span class="error-message">{{ $message }}</span>
+            @enderror
+        </div>
+
+        <div class="form-group">
+            <label for="agency_id">Agency</label>
+            <select name="agency_id" id="agency_id" class="form-input">
+                @foreach($agencies as $agency)
+                    <option value="{{ $agency->id }}" {{ old('agency_id', $car->agency_id) == $agency->id ? 'selected' : '' }}>
+                        {{ $agency->name }}
+                    </option>
+                @endforeach
+            </select>
+            @error('agency_id')
+                <span class="error-message">{{ $message }}</span>
+            @enderror
+        </div>
+
+        <div class="form-group">
+            <label for="brand_id">Brand</label>
+            <select name="brand_id" id="brand_id" class="form-input">
+                @foreach($brands as $brand)
+                    <option value="{{ $brand->id }}" {{ old('brand_id', $car->brand_id) == $brand->id ? 'selected' : '' }}>
+                        {{ $brand->brand }}
+                    </option>
+                @endforeach
+            </select>
+            @error('brand_id')
+                <span class="error-message">{{ $message }}</span>
+            @enderror
+        </div>
+
+        <div class="form-group">
+            <label for="insurance_id">Insurance</label>
+            <select name="insurance_id" id="insurance_id" class="form-input">
+                @foreach($insurances as $insurance)
+                    <option value="{{ $insurance->id }}" {{ old('insurance_id', $car->insurance_id) == $insurance->id ? 'selected' : '' }}>
+                        {{ $insurance->name }}
+                    </option>
+                @endforeach
+            </select>
+            @error('insurance_id')
+                <span class="error-message">{{ $message }}</span>
+            @enderror
+        </div>
 
         <div class="form-footer">
-            <button type="submit" class="add-btn">Mettre à jour</button>
-            <a href="{{ route('cars.index') }}" class="cancel-btn">Annuler</a>
+            <button type="submit" class="add-btn">Update</button>
+            <a href="{{ route('cars.index') }}" class="cancel-btn">Cancel</a>
         </div>
     </form>
 </div>
