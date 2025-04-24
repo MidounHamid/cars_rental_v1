@@ -23,9 +23,14 @@ Route::get('/', function () {
     return view('welcome');
 })->name('home');
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
+Route::get('/', function () {
+    return view('client.home.home');
 })->middleware(['auth', 'verified'])->name('dashboard');
+
+
+Route::get('/abouts', function () {
+    return view('client.abouts.abouts');
+})->middleware(['auth', 'verified'])->name('abouts');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

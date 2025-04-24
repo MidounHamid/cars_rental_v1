@@ -1,3 +1,1 @@
-<div>
-    <!-- When there is no desire, all things are at peace. - Laozi -->
-</div>
+<script src="{{asset('js/navbar.js')}}"></script>

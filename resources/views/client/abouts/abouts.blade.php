@@ -1,3 +1,3 @@
 <x-app-layout>
-<h1>zedrftgyhujklm</h1>
+    <h1>hamid</h1>
 </x-app-layout>
