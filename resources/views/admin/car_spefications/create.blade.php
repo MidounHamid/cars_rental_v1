@@ -12,7 +12,7 @@
                 <select id="car_id" name="car_id" class="form-input">
                     <option value="">Select Car</option>
                     @foreach($cars as $car)
-                        <option value="{{ $car->id }}" {{ old('car_id') == $car->id ? 'selected' : '' }}>{{ $car->name }}</option>
+                        <option value="{{ $car->id }}" {{ old('car_id') == $car->id ? 'selected' : '' }}>{{ $car->model }}</option>
                     @endforeach
                 </select>
                 @error('car_id')
@@ -25,7 +25,7 @@
                 <select id="specification_id" name="specification_id" class="form-input">
                     <option value="">Select Specification</option>
                     @foreach($specifications as $spec)
-                        <option value="{{ $spec->id }}" {{ old('specification_id') == $spec->id ? 'selected' : '' }}>{{ $spec->name }}</option>
+                        <option value="{{ $spec->id }}" {{ old('specification_id') == $spec->id ? 'selected' : '' }}>{{ $spec->specification }}</option>
                     @endforeach
                 </select>
                 @error('specification_id')
