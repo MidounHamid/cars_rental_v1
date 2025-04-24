@@ -16,6 +16,8 @@ use App\Http\Controllers\PromotionController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\SpecificationController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Admin\UserController; // <-- Add this use statement at the top
+
 
 Route::get('/', function () {
     return view('welcome');
@@ -36,6 +38,15 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/admin', function () {
         return view('admin.layouts.app');
     })->name('admin');
+
+
+
+
+
+    // Add this line for managing users
+    Route::resource('users', UserController::class);
+
+
 
     Route::resource('agencies', AgencieController::class);
     Route::resource('bookings', BookingController::class);

@@ -103,6 +103,12 @@
             </ul> --}}
             <ul class="nav-list primary-nav">
                 <li class="nav-item">
+                    <a href="{{ route('users.index') }}" class="nav-link">
+                        <span class="nav-icon material-symbols-rounded">people</span>
+                        <span class="nav-label">Users</span>
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a href="{{route('agencies.index')}}" class="nav-link">
                         <span class="nav-icon material-symbols-rounded">apartment</span>
                         <span class="nav-label">Agencies</span>
@@ -136,42 +142,42 @@
                     <a href="{{route('car_types.index')}}" class="nav-link">
                         <span class="nav-icon material-symbols-rounded">category</span>
                         <span class="nav-label">Car Type</span>
-                       
+
                     </a>
                 </li>
                 <li class="nav-item">
                     <a href="{{route('cars.index')}}" class="nav-link">
                         <span class="nav-icon material-symbols-rounded">directions_car</span>
                         <span class="nav-label">Car</span>
-                     
+
                     </a>
                 </li>
                 <li class="nav-item">
                     <a href="{{route('fuel_types.index')}}" class="nav-link">
                         <span class="nav-icon material-symbols-rounded">local_gas_station</span>
                         <span class="nav-label">Fuel Type</span>
-                        
+
                     </a>
                 </li>
                 <li class="nav-item">
                     <a href="{{route('insurances.index')}}" class="nav-link">
                         <span class="nav-icon material-symbols-rounded">verified_user</span>
                         <span class="nav-label">Insurance</span>
-                        
+
                     </a>
                 </li>
                 <li class="nav-item">
                     <a href="{{route('mode_payments.index')}}" class="nav-link">
                         <span class="nav-icon material-symbols-rounded">account_balance_wallet</span>
                         <span class="nav-label">Mode Payement</span>
-                       
+
                     </a>
                 </li>
                 <li class="nav-item">
                     <a href="{{route('payments.index')}}" class="nav-link">
                         <span class="nav-icon material-symbols-rounded">payments</span>
                         <span class="nav-label">Payement</span>
-                        
+
                     </a>
                 </li>
                 <li class="nav-item">
@@ -184,14 +190,14 @@
                     <a href="{{route('reviews.index')}}" class="nav-link">
                         <span class="nav-icon material-symbols-rounded">rate_review</span>
                         <span class="nav-label">Reviews</span>
-                       
+
                     </a>
                 </li>
                 <li class="nav-item">
                     <a href="{{route('specifications.index')}}" class="nav-link">
                         <span class="nav-icon material-symbols-rounded">list_alt</span>
                         <span class="nav-label">Specifications</span>
-                       
+
                     </a>
                 </li>
             </ul>

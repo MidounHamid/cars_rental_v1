@@ -26,7 +26,8 @@ class User extends Authenticatable
         'phone',
         'address',
         'driver_license',
-        'id_admin',
+        'is_admin',
+        'image'
     ];
 
     /**
@@ -49,7 +50,7 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
-            'id_admin' => 'boolean',
+            'is_admin' => 'boolean',
 
         ];
     }

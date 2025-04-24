@@ -17,10 +17,11 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->string('image')->nullable();
 
-            $table->string('phone')->nullable();
+            $table->string('phone')->nullable()->unique();
             $table->text('address')->nullable();
-            $table->string('driver_license')->nullable();
+            $table->string('driver_license')->nullable()->unique();;
             $table->boolean('is_admin')->default(false);
             $table->rememberToken();
             $table->timestamps();
