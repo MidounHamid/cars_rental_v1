@@ -24,13 +24,13 @@ class BookingController extends Controller
      */
     public function create()
     {
-        
+
          $users = User::all();
          $cars = Car::all();
          $promotions = Promotion::all();
 
          return view('admin.bookings.create', compact('users', 'cars', 'promotions'));
-       
+
     }
 
     /**
@@ -56,9 +56,14 @@ class BookingController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Booking $booking)
+    public function edit($id)
     {
-        return view('admin.bookings.edit', compact('booking'));
+        $booking = Booking::findOrFail($id);
+        $users = User::all(); // Add this
+        $cars = Car::all(); // Add this
+        $promotions = Promotion::all(); // Add this
+
+        return view('admin.bookings.edit', compact('booking', 'users', 'cars', 'promotions'));
     }
 
     /**

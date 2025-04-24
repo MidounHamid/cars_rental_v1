@@ -23,7 +23,7 @@
                     @foreach($cars as $car)
                         <option value="{{ $car->id }}"
                             {{ old('car_id', $car_spefication->car_id ?? '') == $car->id ? 'selected' : '' }}>
-                            {{ $car->name }}
+                            {{ $car->model }}
                         </option>
                     @endforeach
                 </select>
@@ -39,7 +39,7 @@
                     @foreach($specifications as $spec)
                         <option value="{{ $spec->id }}"
                             {{ old('specification_id', $car_spefication->specification_id ?? '') == $spec->id ? 'selected' : '' }}>
-                            {{ $spec->name }}
+                            {{ $spec->specification }}
                         </option>
                     @endforeach
                 </select>

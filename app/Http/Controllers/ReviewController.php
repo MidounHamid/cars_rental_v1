@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Review;
 use App\Http\Requests\StorereviewRequest;
 use App\Http\Requests\UpdatereviewRequest;
+use App\Models\Car;
+use App\Models\User;
 
 class ReviewController extends Controller
 {
@@ -21,9 +23,13 @@ class ReviewController extends Controller
      * Show the form for creating a new resource.
      */
     public function create()
-    {
-        return view('admin.reviews.create');
-    }
+{
+    // Get all users and cars for the dropdown
+    $users = User::all();  // Assuming you have a User model
+    $cars = Car::all();    // Assuming you have a Car model
+
+    return view('admin.reviews.create', compact('users', 'cars'));
+}
 
     /**
      * Store a newly created resource in storage.

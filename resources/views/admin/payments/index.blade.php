@@ -10,7 +10,6 @@
                 <th>Booking ID</th>
                 <th>Amount</th>
                 <th>Method</th>
-                <th>Transaction ID</th>
                 <th>Status</th>
                 <th>Actions</th>
             </tr>
@@ -21,7 +20,6 @@
                     <td>{{ $payment->booking_id }}</td>
                     <td>{{ $payment->amount }}</td>
                     <td>{{ $payment->method }}</td>
-                    <td>{{ $payment->transaction_id }}</td>
                     <td>{{ $payment->status }}</td>
                     <td>
                         <a href="{{ route('payments.edit', $payment->id) }}" class="btn btn-primary">Edit</a>

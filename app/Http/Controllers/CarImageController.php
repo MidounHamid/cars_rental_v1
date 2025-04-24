@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Models\Car;
 use App\Models\Car_image;
 use Illuminate\Http\Request;
@@ -21,7 +22,7 @@ class CarImageController extends Controller
      */
     public function create()
     {
-        $cars = Car::all(); 
+        $cars = Car::all();
         return view('admin.car_images.create', compact('cars'));
     }
 
@@ -30,12 +31,17 @@ class CarImageController extends Controller
      */
     public function store(Request $request)
     {
+        // Check if the checkbox for 'is_primary' is checked and convert it to integer (1 for true, 0 for false)
+        $isPrimary = $request->has('is_primary') ? 1 : 0;
+
+        // Store the image file
         $imagePath = $request->file('image_path')->store('car_images', 'public');
 
+        // Create the Car_image record
         Car_image::create([
             'car_id' => $request->car_id,
             'image_path' => $imagePath,
-            'is_primary' => $request->is_primary ?? false,
+            'is_primary' => $isPrimary,  // Use the converted value
         ]);
 
         return redirect()->route('car_images.index')->with('success', 'L\'image de la voiture a été ajoutée avec succès.');
@@ -54,9 +60,7 @@ class CarImageController extends Controller
      */
     public function edit(Car_image $car_image)
     {
-        
         $cars = Car::all();
-
         return view('admin.car_images.edit', compact('car_image', 'cars'));
     }
 
@@ -65,15 +69,18 @@ class CarImageController extends Controller
      */
     public function update(Request $request, Car_image $car_image)
     {
+        // Prepare the fields to update
         $formFields = [
             'car_id' => $request->car_id,
-            'is_primary' => $request->is_primary ?? false,
+            'is_primary' => $request->has('is_primary') ? 1 : 0, // Convert checkbox value
         ];
 
+        // If there's a new image, store it
         if ($request->hasFile('image_path')) {
             $formFields['image_path'] = $request->file('image_path')->store('car_images', 'public');
         }
 
+        // Update the Car_image record
         $car_image->update($formFields);
 
         return redirect()->route('car_images.index')->with('success', 'L\'image de la voiture a été mise à jour avec succès.');

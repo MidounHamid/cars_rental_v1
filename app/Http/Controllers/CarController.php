@@ -36,8 +36,8 @@ class CarController extends Controller
 
         return view('admin.cars.create', compact('carTypes', 'fuelTypes', 'agencies', 'brands', 'insurances'));
     }
-        
-    
+
+
 
     /**
      * Store a newly created resource in storage.
@@ -60,15 +60,15 @@ class CarController extends Controller
      * Show the form for editing the specified resource.
      */
     public function edit(Car $car)
-    {         
+    {
               $carTypes = Car_type::all();
               $fuelTypes = Fuel_type::all();
               $agencies = Agency::all();
               $brands = Brand::all();
               $insurances = Insurance::all();
-    
+
              return view('admin.cars.edit', compact('car', 'carTypes', 'fuelTypes', 'agencies', 'brands', 'insurances'));
-            
+
     }
 
     /**

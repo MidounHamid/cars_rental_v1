@@ -12,7 +12,7 @@
                 <label for="car_id">Car</label>
                 <select id="car_id" name="car_id" class="form-input">
                     @foreach($cars as $car)
-                        <option value="{{ $car->id }}" {{ old('car_id', $car_image->car_id) == $car->id ? 'selected' : '' }}>{{ $car->name }}</option>
+                        <option value="{{ $car->id }}" {{ old('car_id', $car_image->car_id) == $car->id ? 'selected' : '' }}>{{ $car->model }}</option>
                     @endforeach
                 </select>
                 @error('car_id')
