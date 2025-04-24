@@ -21,6 +21,7 @@
             <button type="submit" class="add-btn">Add Specification</button>
             <a href="{{ route('specifications.index') }}" class="cancel-btn">Cancel</a>
         </div>
+        <button type="submit" class="btn btn-success">Save Specification</button>
     </form>
 </div>
 @endsection
