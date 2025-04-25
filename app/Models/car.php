@@ -21,16 +21,28 @@ class Car extends Model
         'agency_id',
         'brand_id',
         'insurance_id',
+        'available_from',  // Added missing date field
+        'available_to',    // Added missing date field
+    ];
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'available_from' => 'datetime',
+        'available_to' => 'datetime',
+        'is_available' => 'boolean',
+        'price_per_day' => 'decimal:2',
+        'seats' => 'integer',
     ];
 
     // Relations
-
-
-public function carImages()
-{
-    return $this->hasMany(CarImage::class);
-}
-
+    public function carImages()
+    {
+        return $this->hasMany(CarImage::class);
+    }
 
     public function brand()
     {

@@ -16,11 +16,16 @@ class CarFactory extends Factory
      */
     public function definition()
     {
+        $carModels = [
+            'Toyota Corolla', 'Honda Civic', 'BMW 3 Series', 'Audi A4', 'Tesla Model 3',
+            'Ford Mustang', 'Chevrolet Malibu', 'Nissan Altima', 'Mercedes-Benz C-Class'
+        ];
+
         return [
-            'model' => $this->faker->word,
+            'model' => $this->faker->randomElement($carModels),  // Randomly selects from a predefined list of car models
             'car_type_id' => \App\Models\CarType::factory(),
             'city' => $this->faker->city,
-            'price_per_day' => $this->faker->randomFloat(2, 20, 200),
+            'price_per_day' => $this->faker->randomFloat(2, 30, 150),  // Price range adjusted for realism
             'fuel_types_id' => \App\Models\FuelType::factory(),
             'transmission' => $this->faker->randomElement(['Automatic', 'Manual', 'CVT', 'Semi-Automatic']),
             'seats' => $this->faker->numberBetween(2, 7),
@@ -28,6 +33,8 @@ class CarFactory extends Factory
             'agency_id' => \App\Models\Agency::factory(),
             'brand_id' => \App\Models\Brand::factory(),
             'insurance_id' => \App\Models\Insurance::factory(),
+            'available_from' => $this->faker->dateTimeBetween('now', '+1 year')->format('Y-m-d'), // Random date within the next year
+            'available_to' => $this->faker->dateTimeBetween('+1 week', '+1 year')->format('Y-m-d'), // Random date after 'available_from'
         ];
     }
 }

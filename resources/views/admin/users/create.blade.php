@@ -72,6 +72,25 @@
                 @enderror
             </div>
         </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="address">Address</label>
+                    <input type="text" id="address" name="address" class="form-input" value="{{ old('address') }}">
+                    @error('address')
+                        <span class="error-message">{{ $message }}</span>
+                    @enderror
+                </div>
+
+                <div class="form-group">
+                    <label for="driver_license">Driver License</label>
+                    <input type="text" id="driver_license" name="driver_license" class="form-input" value="{{ old('driver_license') }}">
+                    @error('driver_license')
+                        <span class="error-message">{{ $message }}</span>
+                    @enderror
+                </div>
+            </div>
+
+
 
         <div class="form-footer">
             <button type="submit" class="add-btn">Create User</button>

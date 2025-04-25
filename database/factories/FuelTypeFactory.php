@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class FuelTypeFactory extends Factory
 {
-    
+
     /**
      * Define the model's default state.
      *
@@ -18,8 +18,10 @@ class FuelTypeFactory extends Factory
      */
     public function definition()
     {
+        $fuelTypes = ['Petrol', 'Diesel', 'Electric', 'Hybrid'];
+
         return [
-            'fuel_type' => $this->faker->word,
+            'fuel_type' => $this->faker->randomElement($fuelTypes),
         ];
     }
 }

@@ -9,7 +9,7 @@
 
             <!-- Search Form with Input Fields -->
             <div class="search-container">
-                <form class="search-form" action="" method="GET">
+                <form class="search-form" action="{{ route('cars.listing') }}" method="GET">
                     <div class="form-group">
                         <label for="from">WHERE YOU FROM</label>
                         <div class="address-input-wrapper">
@@ -65,7 +65,8 @@
                     <p>No cars available at the moment.</p>
                 @else
                     @foreach ($cars as $car)
-                        {{-- <div class="car-card">
+                    {{-- this is card car --}}
+                        <div class="car-card">
                             @php
                                 $primaryImage = $car->carImages->firstWhere('is_primary', true);
                             @endphp
@@ -86,7 +87,7 @@
                             <ul class="features-list">
                                 <li>{{ $car->seats }} Seats</li>
                             </ul>
-                        </div> --}}
+                        </div>
                     @endforeach
 
                 @endif

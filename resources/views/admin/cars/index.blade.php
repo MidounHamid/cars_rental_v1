@@ -51,5 +51,8 @@
             @endforelse
         </tbody>
     </table>
+
+    <!-- Add pagination -->
+    {{ $cars->links() }}
 </div>
 @endsection
