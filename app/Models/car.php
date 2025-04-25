@@ -25,6 +25,13 @@ class Car extends Model
 
     // Relations
 
+
+public function carImages()
+{
+    return $this->hasMany(CarImage::class);
+}
+
+
     public function brand()
     {
         return $this->belongsTo(Brand::class);
@@ -32,12 +39,12 @@ class Car extends Model
 
     public function carType()
     {
-        return $this->belongsTo(Car_type::class);
+        return $this->belongsTo(CarType::class);
     }
 
     public function fuelType()
     {
-        return $this->belongsTo(fuel_type::class, 'fuel_types_id');
+        return $this->belongsTo(FuelType::class, 'fuel_types_id');
     }
 
     public function agency()
@@ -52,6 +59,6 @@ class Car extends Model
 
     public function specifications()
     {
-        return $this->belongsToMany(Specification::class, 'car_spefications', 'car_id', 'specification_id');
+        return $this->belongsToMany(Specification::class, 'car_specifications', 'car_id', 'specification_id');
     }
 }

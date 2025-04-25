@@ -16,43 +16,31 @@ use App\Http\Controllers\PromotionController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\SpecificationController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Admin\UserController; // <-- Add this use statement at the top
+use App\Http\Controllers\Admin\UserController;
 
-
-Route::get('/', function () {
-    return view('welcome');
-})->name('home');
-
-Route::get('/', function () {
-    return view('client.home.home');
-})->middleware(['auth', 'verified'])->name('dashboard');
-
-
+// ======= Client Routes =======
+Route::get('/', [CarController::class, 'clientHome'])->name('dashboard'); // Client home page
 Route::get('/abouts', function () {
     return view('client.abouts.abouts');
 })->middleware(['auth', 'verified'])->name('abouts');
 
+// Add the route for fetching agency cities
+Route::get('/agencies/cities', [AgencieController::class, 'getCities'])->name('agencies.cities');
+
+// ======= Profile Routes =======
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-// // ======= Admin routes =======
+// ======= Admin Routes =======
 Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/admin', function () {
         return view('admin.layouts.app');
     })->name('admin');
 
-
-
-
-
-    // Add this line for managing users
     Route::resource('users', UserController::class);
-
-
-
     Route::resource('agencies', AgencieController::class);
     Route::resource('bookings', BookingController::class);
     Route::resource('brands', BrandController::class);

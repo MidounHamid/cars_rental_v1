@@ -5,16 +5,15 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Car_type extends Model
+class FuelType extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'name',
-        'description',
+        'fuel_type',
     ];
 
-    // Relation avec le modèle Car ( un type peut avoir plusieurs voitures)
+    // Relation avec le modèle Car (si un type de carburant peut être associé à plusieurs voitures)
     public function cars()
     {
         return $this->hasMany(Car::class);

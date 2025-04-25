@@ -9,8 +9,6 @@ use App\Models\Insurance;
 use App\Models\Car;
 use App\Http\Requests\StoreCarRequest;
 use App\Http\Requests\UpdateCarRequest;
-use App\Models\Car_type;
-use App\Models\Fuel_type;
 
 class CarController extends Controller
 {
@@ -28,8 +26,8 @@ class CarController extends Controller
      */
     public function create()
     {
-        $carTypes = Car_type::all();
-        $fuelTypes = Fuel_type::all();
+        $carTypes = CarType::all();
+        $fuelTypes = FuelType::all();
         $agencies = Agency::all();
         $brands = Brand::all();
         $insurances = Insurance::all();
@@ -61,8 +59,8 @@ class CarController extends Controller
      */
     public function edit(Car $car)
     {
-              $carTypes = Car_type::all();
-              $fuelTypes = Fuel_type::all();
+              $carTypes = CarType::all();
+              $fuelTypes = FuelType::all();
               $agencies = Agency::all();
               $brands = Brand::all();
               $insurances = Insurance::all();
@@ -88,4 +86,24 @@ class CarController extends Controller
         $car->delete();
         return redirect()->route('cars.index')->with('success', 'La voiture a été supprimée avec succès.');
     }
+
+
+    public function clientHome()
+    {
+        $cars = Car::with(['brand', 'carType', 'fuelType', 'agency', 'insurance'])
+                    ->with(['carImages' => function ($query) {
+                        $query->where('is_primary', true);
+                    }])
+                    ->get();
+
+        // Filter out cars with no primary image (if necessary)
+        foreach ($cars as $car) {
+            $car->primaryImage = $car->carImages->first(); // Get the first primary image (if any)
+        }
+
+        $brands = Brand::all();
+        return view('client.home.home', compact('cars', 'brands'));
+    }
+
+
 }

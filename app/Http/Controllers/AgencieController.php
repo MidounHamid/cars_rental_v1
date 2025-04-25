@@ -82,4 +82,15 @@ class AgencieController extends Controller
         $agency->delete();
         return redirect()->route("agencies.index")->with("success", "Votre agence a été supprimée avec succès.");
     }
+
+
+
+    /**
+ * Get all unique agency cities.
+ */
+public function getCities()
+{
+    $cities = Agency::select('city')->distinct()->get()->pluck('city');
+    return response()->json($cities);
+}
 }

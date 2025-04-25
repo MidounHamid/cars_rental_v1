@@ -5,12 +5,13 @@
     box-sizing: border-box;
     font-family: 'Josefin Sans', sans-serif;
 }
+
 /* Navbar Styling */
 .navbar {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 20px 10%;
+    padding: 1rem 5%;
     position: fixed;
     width: 100%;
     z-index: 1000;
@@ -20,17 +21,19 @@
 
 .logo {
     color: black;
-    font-size: 30px;
+    font-size: 1.75rem;
+    font-weight: bold;
+    text-decoration: none;
 }
 
 .search-input {
-    padding: 8px 12px;
+    padding: 0.5rem 0.75rem;
     border: none;
     border-radius: 5px;
-    font-size: 16px;
+    font-size: 1rem;
     outline: none;
     width: 200px;
-    margin-left: 20px;
+    margin-left: 1.25rem;
 }
 
 .search-input::placeholder {
@@ -45,20 +48,19 @@
 .navbar .navbar-links .navbar-item {
     list-style: none;
     display: inline-block;
-    padding: 10px 20px;
+    padding: 0.625rem 1.25rem;
 }
 
 .navbar .navbar-links .navbar-item .navbar-link {
     text-decoration: none;
     color: black;
-    font-size: 18px;
+    font-size: 1.125rem;
     transition: all 0.3s ease-in-out;
     font-weight: bold;
 }
 
 .navbar .navbar-links .navbar-item .navbar-link:hover {
     color: #d39e00;
-    transform: scale(1.1);
     transition: all 0.3s ease-in-out;
 }
 
@@ -67,7 +69,7 @@
 .navbar-links .navbar-item:last-child .navbar-link {
     background-color: #d39e00;
     color: white;
-    padding: 8px 15px;
+    padding: 0.5rem 0.9375rem;
     border-radius: 5px;
 }
 
@@ -96,10 +98,10 @@
     transition: all 0.3s ease;
 }
 
-/* Media Queries for Responsive Design */
+/* Media Queries for Navbar Responsiveness */
 @media screen and (max-width: 1024px) {
     .navbar {
-        padding: 20px 5%;
+        padding: 1rem 3%;
     }
 
     .search-input {
@@ -107,13 +109,13 @@
     }
 
     .navbar .navbar-links .navbar-item {
-        padding: 10px 15px;
+        padding: 0.625rem 0.9375rem;
     }
 }
 
 @media screen and (max-width: 768px) {
     .navbar {
-        padding: 15px 5%;
+        padding: 0.9375rem 3%;
     }
 
     .hamburger {
@@ -143,7 +145,7 @@
         height: calc(100vh - 70px);
         text-align: center;
         transition: all 0.3s ease;
-        padding-top: 20px;
+        padding-top: 1.25rem;
     }
 
     .navbar-links.active {
@@ -151,39 +153,25 @@
     }
 
     .navbar .navbar-links .navbar-item {
-        margin: 10px 0;
+        margin: 0.625rem 0;
     }
 
     .search-input {
         width: 120px;
     }
-
-    /* Hero content responsive adjustments */
-    .hero-content {
-        left: 5%;
-        max-width: 90%;
-    }
-
-    .hero-title {
-        font-size: 36px;
-    }
-
-    .hero-subtitle {
-        font-size: 18px;
-    }
 }
 
 @media screen and (max-width: 480px) {
     .logo {
-        font-size: 24px;
+        font-size: 1.5rem;
     }
 
     .search-input {
         width: 100px;
-        margin-left: 10px;
+        margin-left: 0.625rem;
     }
 
     .navbar {
-        padding: 15px 3%;
+        padding: 0.9375rem 2%;
     }
 }
