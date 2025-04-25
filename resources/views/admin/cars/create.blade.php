@@ -65,6 +65,24 @@
             </div>
         </div>
 
+        <div class="form-row">
+            <div class="form-group">
+                <label for="available_from">Available From</label>
+                <input type="date" name="available_from" class="form-input" value="{{ old('available_from') }}">
+                @error('available_from')
+                    <span class="error-message">{{ $message }}</span>
+                @enderror
+            </div>
+
+            <div class="form-group">
+                <label for="available_to">Available To</label>
+                <input type="date" name="available_to" class="form-input" value="{{ old('available_to') }}">
+                @error('available_to')
+                    <span class="error-message">{{ $message }}</span>
+                @enderror
+            </div>
+        </div>
+
         <div class="form-group">
             <label for="car_type_id">Car Type</label>
             <select name="car_type_id" class="form-input">

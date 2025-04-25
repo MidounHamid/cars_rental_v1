@@ -17,10 +17,12 @@ class CarTypeFactory extends Factory
      */
     public function definition(): array
     {
-        
+
+        $carTypes = ['SUV', 'Sedan', 'Coupe', 'Hatchback', 'Convertible', 'Truck', 'Minivan'];
+
         return [
-            'name' => $this->faker->word,
-            'description' => $this->faker->text,
+            'name' => $this->faker->randomElement($carTypes),  // Choose from predefined car types
+            'description' => $this->faker->text(100),  // Shorter description for realism
         ];
     }
 }

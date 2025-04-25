@@ -12,7 +12,7 @@
 
             <!-- Search Form with Input Fields -->
             <div class="search-container">
-                <form class="search-form" action="" method="GET">
+                <form class="search-form" action="{{ route('cars.listing') }}" method="GET">
                     <div class="form-group">
                         <label for="from">WHERE YOU FROM</label>
                         <div class="address-input-wrapper">

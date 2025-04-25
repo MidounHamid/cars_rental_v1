@@ -9,6 +9,8 @@ use App\Models\Insurance;
 use App\Models\Car;
 use App\Http\Requests\StoreCarRequest;
 use App\Http\Requests\UpdateCarRequest;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
 
 class CarController extends Controller
 {
@@ -104,6 +106,44 @@ class CarController extends Controller
         $brands = Brand::all();
         return view('client.home.home', compact('cars', 'brands'));
     }
+    public function carListing(Request $request)
+{
+    // Fetch search inputs from the request
+    $from = $request->input('from');
+    $to = $request->input('to');
+    $start_date = $request->input('start_date');
+    $end_date = $request->input('end_date');
+
+    // Query cars with filters
+    $query = Car::query();
+
+    if ($from) {
+        // Use 'city' instead of 'location'
+        $query->where('city', 'like', '%' . $from . '%');
+    }
+
+
+    if ($to) {
+        // Assuming 'destination' is a column in the cars table
+        $query->where('destination', 'like', '%' . $to . '%');
+    }
+
+    if ($start_date) {
+        // Convert start_date to date format and filter
+        $query->whereDate('available_from', '>=', Carbon::parse($start_date));
+    }
+
+    if ($end_date) {
+        // Convert end_date to date format and filter
+        $query->whereDate('available_to', '<=', Carbon::parse($end_date));
+    }
+
+    // Get the filtered cars with pagination
+    $cars = $query->paginate(10);  // Adding pagination for better performance
+
+    // Return the view with the filtered cars
+    return view('client.cars.listing', compact('cars'));  // Use the correct view path
+}
 
 
 }

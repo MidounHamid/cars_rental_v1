@@ -24,6 +24,9 @@ Route::get('/abouts', function () {
     return view('client.abouts.abouts');
 })->middleware(['auth', 'verified'])->name('abouts');
 
+
+Route::get('/car-listing', [CarController::class, 'carListing'])->name('cars.listing');
+
 // Add the route for fetching agency cities
 Route::get('/agencies/cities', [AgencieController::class, 'getCities'])->name('agencies.cities');
 
