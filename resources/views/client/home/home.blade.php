@@ -1,4 +1,7 @@
 <x-app-layout>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    
     <div class="hero-section">
         <!-- Hero Content - Text to the left of car -->
         <div class="hero-content">
@@ -65,28 +68,75 @@
                     <p>No cars available at the moment.</p>
                 @else
                     @foreach ($cars as $car)
-                        {{-- <div class="car-card">
+                        <div class="car-card">
                             @php
                                 $primaryImage = $car->carImages->firstWhere('is_primary', true);
                             @endphp
 
+                            <div class="car-image">
+                                @if ($primaryImage)
+                                    <img src="{{ asset('storage/' . $primaryImage->image_path) }}" alt="{{ $car->model }}">
+                                @else
+                                    <img src="{{ asset('storage/defaultcarimage.png') }}" alt="Default Car Image">
+                                @endif
+                            </div>
 
-                            @if ($primaryImage)
-                                <img src="{{ asset('storage/' . $primaryImage->image_path) }}" alt="sdfghjkl"
-                                    class="car-image">
-                                alt="{{ $car->model }}" class="car-image">
-                            @else
-                                <img src="{{ asset('storage/defaultcarimage.png') }}" alt="Default Image"
-                                    class="car-image">
-                            @endif
-
-
-
-                            <h3 class="car-model">{{ $car->brand->brand }} -- {{ $car->model }}</h3>
-                            <ul class="features-list">
-                                <li>{{ $car->seats }} Seats</li>
-                            </ul>
-                        </div> --}}
+                            <div class="car-details">
+                                <div class="car-header">
+                                    <h2 class="car-model">{{ $car->brand->brand }} {{ $car->model }}</h2>
+                                    <span class="car-brand">{{ $car->brand->brand }}</span>
+                                </div>
+                                
+                                <div class="car-specs">
+                                    <div class="spec-item">
+                                        <i class="fas fa-users"></i>
+                                        <span>{{ $car->seats }} seats</span>
+                                    </div>
+                                    <div class="spec-item">
+                                        <i class="fas fa-gas-pump"></i>
+                                        <span>{{ $car->fuelType->fuel_type }}</span>
+                                    </div>
+                                    <div class="spec-item">
+                                        <i class="fas fa-cog"></i>
+                                        <span>{{ $car->transmission }}</span>
+                                    </div>
+                                    <div class="spec-item">
+                                        <i class="fas fa-map-marker-alt"></i>
+                                        <span>{{ $car->city }}</span>
+                                    </div>
+                                </div>
+                
+                                <div class="car-features">
+                                    <div class="feature insurance-feature">
+                                        <i class="fas fa-shield-alt"></i>
+                                        <span>Full Insurance</span>
+                                    </div>
+                                    <div class="car-description">
+                                        <div class="description-header">
+                                            <i class="fas fa-info-circle"></i>
+                                            <span>Description</span>
+                                        </div>
+                                        <p>{{ $car->insurance->description ?? 'No insurance info' }}</p>
+                                    </div>
+                                </div>
+                
+                                <div class="car-footer">
+                                    <div class="price-section">
+                                        <span class="price">€{{ $car->price_per_day }}</span>
+                                        <span class="price-period">/Day</span>
+                                    </div>
+                                    <button class="book-now">BOOK NOW</button>
+                                </div>
+                
+                                <div class="car-status">
+                                    <span class="availability">{{ $car->is_available ? 'Available' : 'Not Available' }}</span>
+                                    <div class="reviews">
+                                        <i class="fas fa-star"></i>
+                                        <span>4.8 (120 reviews)</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     @endforeach
 
                 @endif

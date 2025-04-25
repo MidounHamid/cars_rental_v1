@@ -338,3 +338,188 @@
 .book-btn:hover {
     background-color: #1e293b;
 }
+.car-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+    padding: 1.5rem;
+}
+
+.car-card {
+    background: white;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.car-card:hover {
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+}
+
+.car-image {
+    width: 100%;
+    height: 220px;
+    position: relative;
+    overflow: hidden;
+}
+
+.car-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.car-details {
+    padding: 1.25rem;
+}
+
+.car-header {
+    margin-bottom: 1rem;
+}
+
+.car-model {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #212529;
+    margin: 0 0 0.25rem 0;
+    text-transform: uppercase;
+}
+
+.car-brand {
+    color: #6c757d;
+    font-size: 0.9rem;
+    display: block;
+}
+
+.car-specs {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.spec-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    color: #495057;
+}
+
+.spec-item i {
+    color: #dc3545;
+    font-size: 1rem;
+}
+
+.car-features {
+    margin-bottom: 1rem;
+}
+
+.insurance-feature {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #28a745;
+    font-size: 0.9rem;
+    margin-bottom: 0.75rem;
+}
+
+.car-description {
+    background: #f8f9fa;
+    padding: 0.75rem;
+    border-radius: 6px;
+    margin-bottom: 1rem;
+}
+
+.description-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: #212529;
+    font-size: 0.9rem;
+}
+
+.car-description p {
+    font-size: 0.85rem;
+    color: #6c757d;
+    margin: 0;
+    line-height: 1.4;
+}
+
+.car-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 1rem;
+    border-top: 1px solid #e9ecef;
+}
+
+.price-section {
+    display: flex;
+    align-items: baseline;
+    gap: 0.25rem;
+}
+
+.price {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #dc3545;
+}
+
+.price-period {
+    color: #6c757d;
+    font-size: 0.85rem;
+}
+
+.book-now {
+    background: #dc3545;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.book-now:hover {
+    background: #c82333;
+}
+
+.car-status {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 0.75rem;
+    font-size: 0.85rem;
+}
+
+.availability {
+    color: #28a745;
+    font-weight: 500;
+}
+
+.reviews {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    color: #6c757d;
+}
+
+.reviews i {
+    color: #ffc107;
+}
+
+/* Ajout des styles pour "Inventory Missing" */
+.inventory-missing {
+    color: #dc3545;
+    font-weight: 500;
+    font-size: 0.9rem;
+} 
