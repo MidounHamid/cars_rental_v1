@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Storecar_typeRequest;
 use App\Http\Requests\Updatecar_typeRequest;
-use App\Models\Car_type;
+use App\Models\CarType;
 
 class CarTypeController extends Controller
 {
@@ -13,7 +13,7 @@ class CarTypeController extends Controller
      */
     public function index()
     {
-        $carTypes = Car_type::paginate(10);
+        $carTypes = CarType::paginate(10);
         return view('admin.car_types.index', compact('carTypes'));
     }
 
@@ -30,14 +30,14 @@ class CarTypeController extends Controller
      */
     public function store(Storecar_typeRequest $request)
     {
-        Car_type::create($request->validated());
+        CarType::create($request->validated());
         return redirect()->route('car_types.index')->with('success', 'Le type de voiture a été créé avec succès.');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Car_type $carType)
+    public function show(CarType $carType)
     {
         return view('admin.car_types.show', compact('carType'));
     }
@@ -45,7 +45,7 @@ class CarTypeController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Car_type $carType)
+    public function edit(CarType $carType)
     {
         return view('admin.car_types.edit', compact('carType'));
     }
@@ -53,7 +53,7 @@ class CarTypeController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Updatecar_typeRequest $request, Car_type $carType)
+    public function update(Updatecar_typeRequest $request, CarType $carType)
     {
         $carType->update($request->validated());
         return redirect()->route('car_types.index')->with('success', 'Le type de voiture a été mis à jour avec succès.');
@@ -62,7 +62,7 @@ class CarTypeController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Car_type $carType)
+    public function destroy(CarType $carType)
     {
         $carType->delete();
         return redirect()->route('car_types.index')->with('success', 'Le type de voiture a été supprimé avec succès.');
