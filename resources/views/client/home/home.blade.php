@@ -1,7 +1,7 @@
 <x-app-layout>
-    
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    
+
     <div class="hero-section">
         <!-- Hero Content - Text to the left of car -->
         <div class="hero-content">
@@ -86,7 +86,7 @@
                                     <h2 class="car-model">{{ $car->brand->brand }} {{ $car->model }}</h2>
                                     <span class="car-brand">{{ $car->brand->brand }}</span>
                                 </div>
-                                
+
                                 <div class="car-specs">
                                     <div class="spec-item">
                                         <i class="fas fa-users"></i>
@@ -105,7 +105,7 @@
                                         <span>{{ $car->city }}</span>
                                     </div>
                                 </div>
-                
+
                                 <div class="car-features">
                                     <div class="feature insurance-feature">
                                         <i class="fas fa-shield-alt"></i>
@@ -119,7 +119,7 @@
                                         <p>{{ $car->insurance->description ?? 'No insurance info' }}</p>
                                     </div>
                                 </div>
-                
+
                                 <div class="car-footer">
                                     <div class="price-section">
                                         <span class="price">€{{ $car->price_per_day }}</span>
@@ -127,7 +127,7 @@
                                     </div>
                                     <button class="book-now">BOOK NOW</button>
                                 </div>
-                
+
                                 <div class="car-status">
                                     <span class="availability">{{ $car->is_available ? 'Available' : 'Not Available' }}</span>
                                     <div class="reviews">
