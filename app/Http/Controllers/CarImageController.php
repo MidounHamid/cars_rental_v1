@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Car;
 use App\Models\Car_image;
+use App\Models\CarImage;
 use Illuminate\Http\Request;
 
 class CarImageController extends Controller
@@ -13,7 +14,7 @@ class CarImageController extends Controller
      */
     public function index()
     {
-        $carImages = Car_image::with('car')->paginate(10);
+        $carImages = CarImage::with('car')->paginate(10);
         return view('admin.car_images.index', compact('carImages'));
     }
 
@@ -38,7 +39,7 @@ class CarImageController extends Controller
         $imagePath = $request->file('image_path')->store('car_images', 'public');
 
         // Create the Car_image record
-        Car_image::create([
+        CarImage::create([
             'car_id' => $request->car_id,
             'image_path' => $imagePath,
             'is_primary' => $isPrimary,  // Use the converted value
@@ -50,7 +51,7 @@ class CarImageController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Car_image $car_image)
+    public function show(CarImage $car_image)
     {
         return view('admin.car_images.show', compact('car_image'));
     }
@@ -58,7 +59,7 @@ class CarImageController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Car_image $car_image)
+    public function edit(CarImage $car_image)
     {
         $cars = Car::all();
         return view('admin.car_images.edit', compact('car_image', 'cars'));
@@ -67,7 +68,7 @@ class CarImageController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Car_image $car_image)
+    public function update(Request $request, CarImage $car_image)
     {
         // Prepare the fields to update
         $formFields = [
@@ -89,7 +90,7 @@ class CarImageController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Car_image $car_image)
+    public function destroy(CarImage $car_image)
     {
         $car_image->delete();
         return redirect()->route('car_images.index')->with('success', 'L\'image de la voiture a été supprimée avec succès.');

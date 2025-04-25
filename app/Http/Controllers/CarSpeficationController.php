@@ -6,6 +6,7 @@ use App\Http\Requests\Storecar_speficationRequest;
 use App\Http\Requests\Updatecar_speficationRequest;
 use App\Models\Car_spefication;
 use App\Models\Car;
+use App\Models\CarSpefication;
 use App\Models\Specification;
 use Illuminate\Http\Request;
 
@@ -16,7 +17,7 @@ class CarSpeficationController extends Controller
      */
     public function index()
     {
-        $carSpecifications = Car_spefication::with(['car', 'specification'])->paginate(10);
+        $carSpecifications = CarSpefication::with(['car', 'specification'])->paginate(10);
         return view('admin.car_spefications.index', compact('carSpecifications'));
     }
 
@@ -37,7 +38,7 @@ class CarSpeficationController extends Controller
      */
     public function store(Storecar_speficationRequest $request)
     {
-        Car_spefication::create($request->validated());
+        CarSpefication::create($request->validated());
 
         return redirect()->route('car_spefications.index')
             ->with('success', 'La spécification de la voiture a été ajoutée avec succès.');
@@ -46,7 +47,7 @@ class CarSpeficationController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Car_spefication $car_spefication)
+    public function show(CarSpefication $car_spefication)
     {
         return view('admin.car_spefications.show', compact('car_spefication'));
     }
@@ -54,7 +55,7 @@ class CarSpeficationController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Car_spefication $car_spefication)
+    public function edit(CarSpefication $car_spefication)
     {
         // Again, pass the needed collections for the dropdowns
         $cars = Car::all();
@@ -66,7 +67,7 @@ class CarSpeficationController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Updatecar_speficationRequest $request, Car_spefication $car_spefication)
+    public function update(Updatecar_speficationRequest $request, CarSpefication $car_spefication)
     {
         $car_spefication->update($request->validated());
 
@@ -77,7 +78,7 @@ class CarSpeficationController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Car_spefication $car_spefication)
+    public function destroy(CarSpefication $car_spefication)
     {
         $car_spefication->delete();
 
