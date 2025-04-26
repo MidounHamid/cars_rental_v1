@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Models\CarType;
 use App\Models\FuelType;
 use App\Models\Agency;
@@ -61,14 +62,13 @@ class CarController extends Controller
      */
     public function edit(Car $car)
     {
-              $carTypes = CarType::all();
-              $fuelTypes = FuelType::all();
-              $agencies = Agency::all();
-              $brands = Brand::all();
-              $insurances = Insurance::all();
+        $carTypes = CarType::all();
+        $fuelTypes = FuelType::all();
+        $agencies = Agency::all();
+        $brands = Brand::all();
+        $insurances = Insurance::all();
 
-             return view('admin.cars.edit', compact('car', 'carTypes', 'fuelTypes', 'agencies', 'brands', 'insurances'));
-
+        return view('admin.cars.edit', compact('car', 'carTypes', 'fuelTypes', 'agencies', 'brands', 'insurances'));
     }
 
     /**
@@ -93,10 +93,10 @@ class CarController extends Controller
     public function clientHome()
     {
         $cars = Car::with(['brand', 'carType', 'fuelType', 'agency', 'insurance'])
-                    ->with(['carImages' => function ($query) {
-                        $query->where('is_primary', true);
-                    }])
-                    ->get();
+            ->with(['carImages' => function ($query) {
+                $query->where('is_primary', true);
+            }])
+            ->get();
 
         // Filter out cars with no primary image (if necessary)
         foreach ($cars as $car) {
@@ -107,43 +107,41 @@ class CarController extends Controller
         return view('client.home.home', compact('cars', 'brands'));
     }
     public function carListing(Request $request)
-{
-    // Fetch search inputs from the request
-    $from = $request->input('from');
-    $to = $request->input('to');
-    $start_date = $request->input('start_date');
-    $end_date = $request->input('end_date');
+    {
+        // Fetch search inputs from the request
+        $from = $request->input('from');
+        $to = $request->input('to');
+        $start_date = $request->input('start_date');
+        $end_date = $request->input('end_date');
 
-    // Query cars with filters
-    $query = Car::query();
+        // Query cars with filters
+        $query = Car::query();
 
-    if ($from) {
-        // Use 'city' instead of 'location'
-        $query->where('city', 'like', '%' . $from . '%');
+        if ($from) {
+            // Use 'city' instead of 'location'
+            $query->where('city', 'like', '%' . $from . '%');
+        }
+
+
+        if ($to) {
+            // Assuming 'destination' is a column in the cars table
+            $query->where('destination', 'like', '%' . $to . '%');
+        }
+
+        if ($start_date) {
+            // Convert start_date to date format and filter
+            $query->whereDate('available_from', '>=', Carbon::parse($start_date));
+        }
+
+        if ($end_date) {
+            // Convert end_date to date format and filter
+            $query->whereDate('available_to', '<=', Carbon::parse($end_date));
+        }
+
+        // Get the filtered cars with pagination
+        $cars = $query->paginate(10);  // Adding pagination for better performance
+
+        // Return the view with the filtered cars
+        return view('client.cars.listing', compact('cars'));  // Use the correct view path
     }
-
-
-    if ($to) {
-        // Assuming 'destination' is a column in the cars table
-        $query->where('destination', 'like', '%' . $to . '%');
-    }
-
-    if ($start_date) {
-        // Convert start_date to date format and filter
-        $query->whereDate('available_from', '>=', Carbon::parse($start_date));
-    }
-
-    if ($end_date) {
-        // Convert end_date to date format and filter
-        $query->whereDate('available_to', '<=', Carbon::parse($end_date));
-    }
-
-    // Get the filtered cars with pagination
-    $cars = $query->paginate(10);  // Adding pagination for better performance
-
-    // Return the view with the filtered cars
-    return view('client.cars.listing', compact('cars'));  // Use the correct view path
-}
-
-
 }
