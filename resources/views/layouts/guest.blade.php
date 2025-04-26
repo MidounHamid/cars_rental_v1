@@ -16,27 +16,12 @@
 </head>
 <body class="font-sans antialiased m-0 p-0">
 
-    <!-- Fullscreen background image -->
-    {{-- <div class="absolute inset-0 bg-cover bg-center z-0" style="background-image: url('/images/loginImage.jpg');">
-        <div class="absolute inset-0 bg-gradient-to-r from-orange-500/50 to-orange-300/20"></div>
-    </div> --}}
-    
+   
 
-    <!-- Page content -->
-   {{-- <div class="relative z-10 min-h-screen flex items-center justify-end px-10"> --}}
-        <!-- Right side: transparent login container -->
-        {{-- <div class="w-full max-w-md text-white p-8">
-            {{ $slot }}
-        </div> --}}
-        {{-- <div class="w-full h-[80vh] text-white p-8">
-            {{ $slot }}
-        </div> --}}
+    
         <div class="w-full max-w-md h-[80vh] text-white p-8 flex flex-col justify-center">
             {{ $slot }}
         </div>
-        
-        
-    {{-- </div> --}}
 
 </body>
 </html>
