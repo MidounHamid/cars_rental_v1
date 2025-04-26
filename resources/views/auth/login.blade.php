@@ -1,289 +1,319 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-uoyEPZTxG+..." crossorigin="anonymous" referrerpolicy="no-referrer" />
-
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: "Roboto", sans-serif;
-        }
-        
-        body, html {
-            height: 100%;
+            font-family: 'Poppins', sans-serif;
         }
 
-        .background-overlay {
-            background: url('/images/loginImage.jpg') no-repeat center center/cover;
-            height: 100vh;
-            width: 100%;
-            position: relative;
+        body {
+            min-height: 100vh;
+            background: url('/images/loginImage.jpg') no-repeat center center;
+            background-size: cover;
             display: flex;
             align-items: center;
-            justify-content: center;
         }
 
-        .background-overlay::before {
-            content: "";
+        body::before {
+            content: '';
             position: absolute;
             top: 0;
             left: 0;
-            height: 100%;
-            width: 100%;
-            background: linear-gradient(to right, rgba(255, 140, 0, 0.5), rgba(255, 153, 51, 0.2));
-            z-index: 1;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(to right, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.4));
         }
 
         .container {
-            position: relative;
-            z-index: 2;
-            display: flex;
+            width: 100%;
             max-width: 1200px;
-            width: 100%;
-            padding: 40px;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .left-section {
-            color: white;
-            flex: 1;
-            padding: 40px;
-            align-self: flex-start;
-            margin-top: 20px;
-        }
-
-        .left-section h2 {
-            font-size: 48px;
-            margin-bottom: 20px;
-        }
-
-        .left-section h3 {
-            font-size: 24px;
-            font-weight: 300;
-        }
-
-        /* Nouveau style pour la section droite, inspiré de l'image */
-        .right-section {
-            flex: 1;
+            margin: 0 auto;
+            padding: 0 20px;
             display: flex;
             align-items: center;
-            justify-content: center;
-            background-color: rgba(248, 245, 243, 0.4);
-            padding: 40px;
-            border-radius: 15px;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-            color: white;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-
+            justify-content: space-between;
+            position: relative;
+            z-index: 1;
+            min-height: 90vh;
         }
 
-        .formcontent {
+        .left-content {
+            flex: 1;
+            max-width: 500px;
+            padding-right: 50px;
+        }
+
+        .welcome-text h1 {
+            color: #fff;
+            font-size: 48px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+
+        .welcome-text p {
+            color: #fff;
+            font-size: 16px;
+            line-height: 1.6;
+            opacity: 0.9;
+        }
+
+        .right-content {
+            width: 420px;
+        }
+
+        .form-container {
             width: 100%;
-            height: 70vh;
-            max-width: 350px;
-            margin: 0 auto;
+            background: rgba(128, 128, 128, 0.2);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border-radius: 20px;
+            padding: 40px;
+            min-height: 65vh;
             display: flex;
             flex-direction: column;
-            align-items: center;
+            justify-content: center;
         }
 
-        /* Titre Login */
-        .form-title {
-            font-size: 28px;
-            font-weight: 600;
-            margin-bottom: 25px;
-            text-align: center;
-            color: white;
+        .form-container form {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
 
-        /* Style amélioré des champs */
-        .input-group {
+        .form-group {
             position: relative;
             margin-bottom: 20px;
-            width: 100%;
         }
 
-        /* Icon style */
-        .input-group i {
+        .form-group:last-of-type {
+            margin-bottom: 25px;
+        }
+
+        .form-group input {
+            width: 100%;
+            height: 50px;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            border-radius: 10px;
+            padding: 0 45px;
+            color: #fff;
+            font-size: 15px;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+        }
+
+        .form-group input:-webkit-autofill,
+        .form-group input:-webkit-autofill:hover,
+        .form-group input:-webkit-autofill:focus {
+            -webkit-text-fill-color: #fff;
+            -webkit-box-shadow: 0 0 0px 1000px rgba(255, 255, 255, 0.1) inset;
+            transition: background-color 5000s ease-in-out 0s;
+        }
+
+        .form-group input::placeholder {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .form-group i {
             position: absolute;
-            right: 12px; /* Déplacé à droite comme dans l'image */
+            left: 18px;
             top: 50%;
             transform: translateY(-50%);
             color: rgba(255, 255, 255, 0.8);
-            z-index: 2;
+            font-size: 18px;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: none;
         }
 
-        /* Label style */
-        .block {
-            display: block;
-            margin-bottom: 7px;
-            color: rgba(255, 255, 255, 0.9);
-            font-size: 0.9rem;
+        .password-toggle {
+            position: absolute;
+            right: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 18px;
+            cursor: pointer;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
         }
 
-        /* Input style */
-        .input-with-icon {
-            padding: 12px 40px 12px 15px;
-            background-color: rgba(182, 80, 12, 0.89) !important;
-            border: 1px solid rgba(255, 255, 255, 0.3) !important;
-            border-radius: 25px !important;
-            color: white !important;
-            width: 100% !important;
-            height: 45px;
-            font-size: 0.95rem;
-            transition: all 0.3s ease;
-        }
-
-        .input-with-icon:focus {
+        .password-toggle:focus {
             outline: none;
-            border-color: rgba(255, 255, 255, 0.6) !important;
-            box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.2);
         }
 
-        /* Remember me style */
-        .remember-section {
+        .password-toggle i {
+            position: static;
+            transform: none;
+            width: auto;
+            height: auto;
+            left: auto;
+        }
+
+        .remember-forgot {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            width: 100%;
-            margin: 15px 0;
+            margin-bottom: 25px;
         }
 
-        .inline-flex {
+        .remember-me {
             display: flex;
             align-items: center;
+            gap: 8px;
         }
 
-        input[type="checkbox"] {
-            margin-right: 8px;
-            accent-color: #f4eff5;
-        }
-
-        /* Forgot password link */
-        .forgot-link {
-            color: rgba(255, 255, 255, 0.9);
-            text-decoration: none;
-            font-size: 0.85rem;
-        }
-        
-        .forgot-link:hover {
-            text-decoration: underline;
-            color: white;
-        }
-
-        /* Button style */
-        .login-button {
-            background-color: white;
-            color: #eb8219d7;
-            border: none;
-            padding: 12px 20px;
-            border-radius: 25px;
+        .remember-me input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            accent-color: rgba(255, 255, 255, 0.2);
             cursor: pointer;
-            font-weight: bold;
+        }
+
+        .remember-me span,
+        .forgot-password {
+            color: #fff;
+            font-size: 14px;
+            text-decoration: none;
+        }
+
+        .login-btn {
             width: 100%;
-            margin-top: 10px;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            height: 50px;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            border-radius: 10px;
+            color: #fff;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            margin-bottom: 20px;
+            transition: background 0.3s;
         }
 
-        .login-button:hover {
-            background-color: #f5f5f5;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        .login-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
         }
 
-        /* Register link */
         .register-link {
-            margin-top: 15px;
-            font-size: 0.85rem;
-            color: rgba(255, 255, 255, 0.9);
             text-align: center;
+            color: #fff;
+            font-size: 14px;
         }
 
         .register-link a {
-            color: white;
-            font-weight: bold;
+            color: #fff;
             text-decoration: none;
+            font-weight: 500;
+            margin-left: 5px;
         }
 
-        .register-link a:hover {
-            text-decoration: underline;
+        @media (max-width: 1024px) {
+            .container {
+                flex-direction: column;
+                text-align: center;
+                padding: 40px 20px;
+            }
+
+            .left-content {
+                padding-right: 0;
+                margin-bottom: 40px;
+            }
+
+            .right-content {
+                width: 100%;
+                max-width: 420px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .form-container {
+                padding: 30px 20px;
+            }
+
+            .welcome-text h1 {
+                font-size: 36px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="background-overlay">
-        <div class="container">
-            <div class="left-section">
-                <h2>Welcome</h2>
-                <h3>Discover Our Team's Story</h3>
+    <div class="container">
+        <div class="left-content">
+            <div class="welcome-text">
+                <h1>Welcome Back</h1>
+                <p>Please login to your account to access our car rental services and manage your bookings.</p>
             </div>
-
-            <div class="right-section">
-                <div class="formcontent">
-                    <h2 class="form-title">Login</h2>
-                    <form method="POST" action="{{ route('login') }}" style="width: 100%;">
-                        @csrf
-
-                        <!-- Email/Username Address -->
-                        <div class="input-group">
-                            <label class="block" for="email">Username</label>
-                            <input 
-                                id="email" 
-                                class="input-with-icon" 
-                                type="email" 
-                                name="email" 
-                                required 
-                                autofocus 
-                                autocomplete="username" 
-                            />
-                            <i class="fas fa-user"></i>
-                        </div>
-
-                        <!-- Password -->
-                        <div class="input-group">
-                            <label class="block" for="password">Password</label>
-                            <input 
-                                id="password" 
-                                class="input-with-icon" 
-                                type="password" 
-                                name="password" 
-                                required 
-                                autocomplete="current-password" 
-                            />
-                            <i class="fas fa-lock"></i>
-                        </div>
-
-                        <!-- Remember Me and Forgot Password -->
-                        <div class="remember-section">
-                            <label class="inline-flex" for="remember_me">
-                                <input id="remember_me" type="checkbox" name="remember">
-                                <span>Remember me</span>
-                            </label>
-                            <a class="forgot-link" href="{{ route('password.request') }}">
-                                Forgot Password?
-                            </a>
-                        </div>
-
-                        <button type="submit" class="login-button">
-                            Login
+        </div>
+        <div class="right-content">
+            <div class="form-container">
+                <form method="POST" action="{{ route('login') }}">
+                    @csrf
+                    <div class="form-group">
+                        <i class="fas fa-user"></i>
+                        <input type="email" name="email" placeholder="Email Address" required>
+                    </div>
+                    <div class="form-group">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" name="password" placeholder="Password" required>
+                        <button type="button" class="password-toggle" onclick="togglePassword(this)">
+                            <i class="fas fa-eye"></i>
                         </button>
-                        
-                        <div class="register-link">
-                            Don't have an account? <a href="{{ route('register') }}">Register</a>
-                        </div>
-                    </form>
-                </div>
+                    </div>
+                    <div class="remember-forgot">
+                        <label class="remember-me">
+                            <input type="checkbox" name="remember">
+                            <span>Remember me</span>
+                        </label>
+                        <a href="{{ route('password.request') }}" class="forgot-password">Forgot Password?</a>
+                    </div>
+                    <button type="submit" class="login-btn">Sign In</button>
+                    <div class="register-link">
+                        Don't have an account? <a href="{{ route('register') }}">Register Now</a>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
+
+    <script>
+        function togglePassword(button) {
+            const input = button.parentElement.querySelector('input');
+            const icon = button.querySelector('i');
+            
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+    </script>
 </body>
 </html>
