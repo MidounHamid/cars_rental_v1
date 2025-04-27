@@ -11,5 +11,5 @@
     {{-- Optional custom table styling --}}
     {{-- <link rel="stylesheet" href="table.css" /> --}}
 
-    @stack('styles') <!-- ✅ This enables child views to push additional CSS like Font Awesome -->
+    @stack('styles') <!--  This enables child views to push additional CSS like Font Awesome -->
 </head>

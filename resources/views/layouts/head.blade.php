@@ -6,13 +6,45 @@
 
 <nav class="navbar">
     <h2 class="logo">Logo</h2>
+
     <input type="text" id="search-box" class="search-input" placeholder="Search...">
 
-    <div class="hamburger">
-        <span></span>
-        <span></span>
-        <span></span>
+    @auth
+    <div class="mobile-profile">
+        <button type="button" class="mobile-profile-trigger">
+            <img src="{{ $profileImage }}" alt="Profile" class="profile-img">
+            <span class="profile-name">{{ Auth::user()->name }}</span>
+        </button>
+        <div class="mobile-profile-dropdown">
+            <a href="#" class="dropdown-item">
+                <span class="material-symbols-rounded">person</span>
+                <span>My Profile</span>
+            </a>
+            <a href="#" class="dropdown-item">
+                <span class="material-symbols-rounded">settings</span>
+                <span>Settings</span>
+            </a>
+            <a href="#" class="dropdown-item">
+                <span class="material-symbols-rounded">mail</span>
+                <span>Messages</span>
+            </a>
+            <form method="POST" action="{{ route('logout') }}">
+                @csrf
+                <button type="submit" class="dropdown-item text-danger">
+                    <span class="material-symbols-rounded">logout</span>
+                    <span>Sign out</span>
+                </button>
+            </form>
+        </div>
     </div>
+    @endauth
+
+    <input type="checkbox" id="menu-toggle" class="menu-toggle">
+    <label for="menu-toggle" class="hamburger">
+        <span></span>
+        <span></span>
+        <span></span>
+    </label>
 
     <ul class="navbar-links">
         <li class="navbar-item"><a href="#" class="navbar-link">Home</a></li>
@@ -24,56 +56,89 @@
             <li class="navbar-item"><a href="{{ route('login') }}" class="navbar-link-login">Login</a></li>
             <li class="navbar-item"><a href="{{ route('register') }}" class="navbar-link-signup">Register</a></li>
         @else
-    </ul> <!-- close the ul before user menu -->
-
-    <div class="user-menu">
-        <div class="user-toggle">
-            <img src="{{ $profileImage }}" alt="User Avatar" class="user-avatar">
-            <span class="username">{{ Auth::user()->name }}</span>
-            <i class="arrow-down"></i>
-        </div>
-
-        <div class="user-dropdown">
-            <div class="user-info">
-                <img src="{{ $profileImage }}" alt="User Avatar" class="user-avatar-large">
-                <div class="user-details">
-                    <div class="username">{{ Auth::user()->name }}</div>
-                    <div class="role">{{ Auth::user()->role ?? 'User' }}</div>
+            <li class="navbar-item profile-menu">
+                <button type="button" class="profile-trigger">
+                    <img src="{{ $profileImage }}" alt="Profile" class="profile-img">
+                    <span>{{ Auth::user()->name }}</span>
+                    <span class="material-symbols-rounded">expand_more</span>
+                </button>
+                <div class="profile-dropdown">
+                    <div class="dropdown-header">
+                        <img src="{{ $profileImage }}" alt="Profile" class="profile-img-large">
+                        <div class="profile-info">
+                            <h4>{{ Auth::user()->name }}</h4>
+                            <p>Administrator</p>
+                        </div>
+                    </div>
+                    <div class="dropdown-body">
+                        <a href="#" class="dropdown-item">
+                            <span class="material-symbols-rounded">person</span>
+                            <span>My Profile</span>
+                        </a>
+                        <a href="#" class="dropdown-item">
+                            <span class="material-symbols-rounded">settings</span>
+                            <span>Settings</span>
+                        </a>
+                        <a href="#" class="dropdown-item">
+                            <span class="material-symbols-rounded">mail</span>
+                            <span>Messages</span>
+                        </a>
+                    </div>
+                    <div class="dropdown-footer">
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <button type="submit" class="dropdown-item text-danger">
+                                <span class="material-symbols-rounded">logout</span>
+                                <span>{{ __('Sign out') }}</span>
+                            </button>
+                        </form>
+                    </div>
                 </div>
-            </div>
-
-            <ul>
-                <li><a href="#">My Profile</a></li>
-                <li><a href="#">Settings</a></li>
-                <li><a href="#">Messages</a></li>
-                <li>
-                    <form method="POST" action="{{ route('logout') }}">
-                        @csrf
-                        <button type="submit" class="logout">Sign out</button>
-                    </form>
-                </li>
-            </ul>
-        </div>
-    </div>
-    @endguest
+            </li>
+        @endguest
+    </ul>
 </nav>
 
+<!-- Script -->
 <script>
-    const userToggle = document.querySelector('.user-toggle');
-    const userDropdown = document.querySelector('.user-dropdown');
-    const hamburger = document.querySelector('.hamburger');
-    const navLinks = document.querySelector('.navbar-links');
+    document.addEventListener('DOMContentLoaded', function () {
+        const profileTrigger = document.querySelector('.profile-trigger');
+        const profileMenu = document.querySelector('.profile-menu');
 
-    if (userToggle) {
-        userToggle.addEventListener('click', () => {
-            userDropdown.classList.toggle('active');
+        profileTrigger?.addEventListener('click', function (e) {
+            e.stopPropagation();
+            profileMenu.classList.toggle('active');
         });
-    }
 
-    if (hamburger) {
-        hamburger.addEventListener('click', () => {
-            hamburger.classList.toggle('active');
-            navLinks.classList.toggle('active');
+        document.addEventListener('click', function (e) {
+            if (profileMenu && !profileMenu.contains(e.target)) {
+                profileMenu.classList.remove('active');
+            }
         });
-    }
+
+        const mobileProfileTrigger = document.querySelector('.mobile-profile-trigger');
+        const mobileProfileDropdown = document.querySelector('.mobile-profile-dropdown');
+
+        mobileProfileTrigger?.addEventListener('click', function (e) {
+            e.stopPropagation();
+            mobileProfileDropdown.classList.toggle('active');
+        });
+
+        document.addEventListener('click', function (e) {
+            if (mobileProfileDropdown && !mobileProfileTrigger?.contains(e.target)) {
+                mobileProfileDropdown.classList.remove('active');
+            }
+        });
+
+        const mobileLinks = document.querySelectorAll('.navbar-links .navbar-link, .navbar-links .navbar-link-login, .navbar-links .navbar-link-signup');
+        const menuToggle = document.getElementById('menu-toggle');
+
+        mobileLinks.forEach(link => {
+            link.addEventListener('click', function() {
+                if (window.innerWidth <= 768) {
+                    menuToggle.checked = false;
+                }
+            });
+        });
+    });
 </script>
