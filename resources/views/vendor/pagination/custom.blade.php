@@ -11,9 +11,9 @@
         {{-- Pagination Elements --}}
         @foreach ($paginator->getUrlRange(1, $paginator->lastPage()) as $page => $url)
             @if ($page == $paginator->currentPage())
-                <span class="active">Page {{ $page }}</span>
+                <span class="active"> {{ $page }}</span>
             @else
-                <a href="{{ $url }}">Page {{ $page }}</a>
+                <a href="{{ $url }}"> {{ $page }}</a>
             @endif
         @endforeach
 

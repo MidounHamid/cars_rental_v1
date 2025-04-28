@@ -1,26 +1,32 @@
-/* public/css/pagination.css or in your main CSS file */
-
+/* public/css/pagination.css */
 .pagination {
     display: flex;
     margin: 20px 0;
     align-items: center;
+    justify-content: center; /* Centers the pagination */
 }
 
 .pagination a, .pagination span {
-    padding: 5px 10px;
+    padding: 8px 15px;
     margin: 0 5px;
-    border-radius: 3px;
+    border-radius: 20px; /* Rounded corners */
     text-decoration: none;
     color: #333;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .pagination a {
     background-color: #f0f0f0;
     border: 1px solid #ddd;
+    transition: all 0.3s ease;
 }
 
 .pagination a:hover {
     background-color: #e0e0e0;
+    transform: translateY(-2px);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
 .pagination span.disabled {
@@ -33,10 +39,12 @@
     background-color: #4a90e2;
     color: white;
     border: 1px solid #3a80d2;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
 .results-info {
     color: #666;
     font-size: 14px;
-    margin-bottom: 20px;
+    margin: 10px 0 20px;
+    text-align: center; /* Center the results text */
 }
