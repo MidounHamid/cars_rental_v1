@@ -96,12 +96,9 @@ class CarController extends Controller
             ->with(['carImages' => function ($query) {
                 $query->where('is_primary', true);
             }])
-            ->get();
+            ->paginate(6); // Show 6 cars per page (adjust number as needed)
 
-        // Filter out cars with no primary image (if necessary)
-        foreach ($cars as $car) {
-            $car->primaryImage = $car->carImages->first(); // Get the first primary image (if any)
-        }
+        // No need to filter out cars with no primary image since we're using the eager loading above
 
         $brands = Brand::all();
         return view('client.home.home', compact('cars', 'brands'));

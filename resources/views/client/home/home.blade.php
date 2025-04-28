@@ -138,8 +138,12 @@
                             </div>
                         </div>
                     @endforeach
-
                 @endif
+            </div>
+
+            <!-- Add pagination links here -->
+            <div class="pagination-container">
+                {{ $cars->links('vendor.pagination.custom-car-home') }}
             </div>
         </div>
     </section>
