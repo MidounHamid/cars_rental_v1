@@ -1,0 +1,42 @@
+/* public/css/pagination.css or in your main CSS file */
+
+.pagination {
+    display: flex;
+    margin: 20px 0;
+    align-items: center;
+}
+
+.pagination a, .pagination span {
+    padding: 5px 10px;
+    margin: 0 5px;
+    border-radius: 3px;
+    text-decoration: none;
+    color: #333;
+}
+
+.pagination a {
+    background-color: #f0f0f0;
+    border: 1px solid #ddd;
+}
+
+.pagination a:hover {
+    background-color: #e0e0e0;
+}
+
+.pagination span.disabled {
+    color: #aaa;
+    background-color: #f8f8f8;
+    border: 1px solid #eee;
+}
+
+.pagination span.active {
+    background-color: #4a90e2;
+    color: white;
+    border: 1px solid #3a80d2;
+}
+
+.results-info {
+    color: #666;
+    font-size: 14px;
+    margin-bottom: 20px;
+}

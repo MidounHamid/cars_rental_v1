@@ -7,6 +7,7 @@
 
     <link rel="stylesheet"
         href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" />
+        <link href="{{ asset('css/pagination.css') }}" rel="stylesheet">
 
     {{-- Optional custom table styling --}}
     {{-- <link rel="stylesheet" href="table.css" /> --}}

@@ -53,6 +53,5 @@
     </table>
 
     <!-- Add pagination -->
-    {{ $cars->links() }}
-</div>
+    {{ $cars->links('vendor.pagination.custom') }}</div>
 @endsection
