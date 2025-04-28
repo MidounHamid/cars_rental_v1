@@ -723,7 +723,7 @@ body {
     .page-container {
         padding: 15px;
     }
-    
+
     .car-image {
         width: 350px;
         height: 220px;
@@ -741,7 +741,7 @@ body {
     .page-container {
         flex-direction: column;
     }
-    
+
     .sidebar {
         width: 100%;
         height: auto;
@@ -749,16 +749,16 @@ body {
         top: 0;
         margin-bottom: 20px;
     }
-    
+
     .car-card {
         flex-direction: column;
     }
-    
+
     .car-image {
         width: 100%;
         height: 200px;
     }
-    
+
     .car-specs {
         grid-template-columns: 1fr;
     }
@@ -1000,4 +1000,4 @@ select[data-search="true"] option:checked {
     .sidebar {
         display: none;
     }
-} 
+}
