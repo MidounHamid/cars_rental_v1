@@ -68,12 +68,12 @@
                     <p>No cars available at the moment.</p>
                 @else
                     @foreach ($cars as $car)
-                        <div class="car-card">
+                        <div class="car-card-home">
                             @php
                                 $primaryImage = $car->carImages->firstWhere('is_primary', true);
                             @endphp
 
-                            <div class="car-image">
+                            <div class="car-image-home">
                                 @if ($primaryImage)
                                     <img src="{{ asset('storage/' . $primaryImage->image_path) }}" alt="{{ $car->model }}">
                                 @else
