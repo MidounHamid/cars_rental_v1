@@ -200,6 +200,18 @@
 
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a href="{{route('locations.index')}}" class="nav-link">
+                        <span class="nav-icon material-symbols-rounded">list_alt</span>
+                        <span class="nav-label">Locations</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{route('car_delivery_locations.index')}}" class="nav-link">
+                        <span class="nav-icon material-symbols-rounded">list_alt</span>
+                        <span class="nav-label">Car delivery locations</span>
+                    </a>
+                </li>
             </ul>
 
             {{-- <ul class="nav-list secondary-nav">

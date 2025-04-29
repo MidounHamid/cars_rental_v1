@@ -17,6 +17,8 @@ use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\SpecificationController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\CarDeliveryLocationController;
+use App\Http\Controllers\LocationController;
 
 // ======= Client Routes =======
 Route::get('/', [CarController::class, 'clientHome'])->name('dashboard'); // Client home page
@@ -58,6 +60,8 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::resource('promotions', PromotionController::class);
     Route::resource('reviews', ReviewController::class);
     Route::resource('specifications', SpecificationController::class);
+    Route::resource('locations',LocationController::class);
+    Route::resource('car_delivery_locations',CarDeliveryLocationController::class);
 });
 
 require __DIR__.'/auth.php';

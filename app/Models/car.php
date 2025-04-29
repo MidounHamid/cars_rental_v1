@@ -73,4 +73,10 @@ class Car extends Model
     {
         return $this->belongsToMany(Specification::class, 'car_specifications', 'car_id', 'specification_id');
     }
+
+    public function deliveryLocations()
+{
+    return $this->belongsToMany(Location::class, 'car_delivery_locations');
+}
+
 }
