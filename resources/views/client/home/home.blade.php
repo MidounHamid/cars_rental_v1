@@ -1,6 +1,6 @@
 <x-app-layout>
-
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
 
     <div class="hero-section">
         <!-- Hero Content - Text to the left of car -->
@@ -25,17 +25,6 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="to">WHERE YOU GO</label>
-                        <div class="address-input-wrapper">
-                            <input type="text" id="to" name="to" class="address-input"
-                                placeholder="Enter destination">
-                            <div class="address-suggestions" id="to-suggestions">
-                                <!-- Will be populated dynamically -->
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
                         <label>CHOOSE DATES</label>
                         <div class="date-range-container">
                             <div class="date-input-wrapper">
@@ -53,8 +42,6 @@
                     <button type="submit" class="search-button">Search</button>
                 </form>
             </div>
-
-            {{-- <a href="#" class="hero-button mt-8">about us</a> --}}
         </div>
     </div>
 
@@ -148,6 +135,9 @@
         </div>
     </section>
 
+    <!-- Add Flatpickr JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.js"></script>
+
     <script>
         // Function to fetch agency cities from the server using Laravel route
         async function fetchAgencyCities() {
@@ -167,13 +157,11 @@
         // Function to populate suggestion lists
         function populateSuggestions(cities) {
             const fromSuggestions = document.getElementById('from-suggestions');
-            const toSuggestions = document.getElementById('to-suggestions');
 
             // Clear existing suggestions
             fromSuggestions.innerHTML = '';
-            toSuggestions.innerHTML = '';
 
-            // Add city suggestions to both lists
+            // Add city suggestions to the list
             cities.forEach(city => {
                 // Create suggestion for "from" field
                 const fromItem = document.createElement('div');
@@ -183,15 +171,6 @@
                     selectAddress('from', city);
                 };
                 fromSuggestions.appendChild(fromItem);
-
-                // Create suggestion for "to" field
-                const toItem = document.createElement('div');
-                toItem.className = 'suggestion-item';
-                toItem.textContent = city;
-                toItem.onclick = function() {
-                    selectAddress('to', city);
-                };
-                toSuggestions.appendChild(toItem);
             });
         }
 
@@ -240,50 +219,38 @@
                 showSuggestions('from');
             });
 
-            const toInput = document.getElementById('to');
-            toInput.addEventListener('input', function() {
-                filterSuggestions('to', this.value);
-            });
-            toInput.addEventListener('focus', function() {
-                showSuggestions('to');
-            });
-
             // Hide suggestions when clicking outside
             document.addEventListener('click', function(event) {
                 if (!event.target.closest('.address-input-wrapper')) {
                     document.getElementById('from-suggestions').style.display = 'none';
-                    document.getElementById('to-suggestions').style.display = 'none';
                 }
             });
 
             // Initialize date pickers
-            if (typeof flatpickr === 'function') {
-                // Start date picker
-                const startDatePicker = flatpickr("#start-date", {
-                    dateFormat: "m/d/Y",
-                    minDate: "today",
-                    onChange: function(selectedDates, dateStr) {
-                        // Update end date minimum when start date changes
-                        if (selectedDates[0]) {
-                            endDatePicker.set('minDate', selectedDates[0]);
-                        }
+            const startDatePicker = flatpickr("#start-date", {
+                dateFormat: "m/d/Y",
+                minDate: "today",
+                onChange: function(selectedDates, dateStr) {
+                    // Update end date minimum when start date changes
+                    if (selectedDates[0]) {
+                        endDatePicker.set('minDate', selectedDates[0]);
                     }
-                });
+                }
+            });
 
-                // End date picker
-                const endDatePicker = flatpickr("#end-date", {
-                    dateFormat: "m/d/Y",
-                    minDate: "today"
-                });
+            // End date picker
+            const endDatePicker = flatpickr("#end-date", {
+                dateFormat: "m/d/Y",
+                minDate: "today"
+            });
 
-                // Set initial values to today and tomorrow
-                const today = new Date();
-                const tomorrow = new Date();
-                tomorrow.setDate(today.getDate() + 1);
+            // Set initial values to today and tomorrow
+            const today = new Date();
+            const tomorrow = new Date();
+            tomorrow.setDate(today.getDate() + 1);
 
-                startDatePicker.setDate(today);
-                endDatePicker.setDate(tomorrow);
-            }
+            startDatePicker.setDate(today);
+            endDatePicker.setDate(tomorrow);
         });
     </script>
 </x-app-layout>
