@@ -3,7 +3,7 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Josefin Sans', sans-serif;
+    /* font-family: 'Josefin Sans', sans-serif; */
 }
 
 body {
@@ -30,6 +30,11 @@ body {
     font-size: 1.75rem;
     font-weight: bold;
     text-decoration: none;
+}
+.logo-img{
+    width: auto;
+    height: 30px;
+    object-fit: cover;
 }
 
 /* ===== Search ===== */
@@ -93,24 +98,36 @@ body {
 .navbar-link, .navbar-link-login, .navbar-link-signup {
     text-decoration: none;
     font-size: 1.125rem;
-    font-weight: bold;
+    /* font-weight: bold; */
     color: black;
     transition: color 0.3s ease;
 }
 
+
+/* Add styles for current/active state */
+.navbar-link.current {
+    background-color: #c82333;
+    color: white;
+    padding: 15px;
+    border-radius: 8px;
+}
+.navbar-link.current:hover{
+    color: white;
+}
+
 .navbar-link:hover {
-    color: #d39e00;
+    color: #c82333;
 }
 
 .navbar-link-login, .navbar-link-signup {
-    background-color: #d39e00;
+    background-color: #c82333;
     color: white;
     padding: 0.5rem 1rem;
     border-radius: 5px;
 }
 
 .navbar-link-login:hover, .navbar-link-signup:hover {
-    background-color: #b58600;
+    background-color: #c82333;
 }
 
 /* ===== Desktop Profile Menu ===== */

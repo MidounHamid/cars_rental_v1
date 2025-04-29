@@ -5,7 +5,9 @@
 @endphp
 
 <nav class="navbar">
-    <h2 class="logo">Logo</h2>
+    <h2 class="logo">
+        <img src="{{asset('images/logo-azidcar.png')}}" alt="logo-azidcar" class="logo-img">
+    </h2>
 
     <input type="text" id="search-box" class="search-input" placeholder="Search...">
 
@@ -47,10 +49,18 @@
     </label>
 
     <ul class="navbar-links">
-        <li class="navbar-item"><a href="#" class="navbar-link">Home</a></li>
-        <li class="navbar-item"><a href="#" class="navbar-link">Browse Car</a></li>
-        <li class="navbar-item"><a href="#" class="navbar-link">Promotion</a></li>
-        <li class="navbar-item"><a href="#" class="navbar-link">Contact Us</a></li>
+        <li class="navbar-item">
+            <a href="{{route('dashboard')}}" class="navbar-link {{ request()->routeIs('dashboard') ? 'current' : '' }}">Home</a>
+        </li>
+        <li class="navbar-item">
+            <a href="{{route('cars.listing')}}" class="navbar-link {{ request()->routeIs('cars.listing') ? 'current' : '' }}">Browse Car</a>
+        </li>
+        <li class="navbar-item">
+            <a href="#" class="navbar-link {{ request()->routeIs('promotion') ? 'current' : '' }}">Promotion</a>
+        </li>
+        <li class="navbar-item">
+            <a href="#" class="navbar-link {{ request()->routeIs('contact') ? 'current' : '' }}">Contact Us</a>
+        </li>
 
         @guest
             <li class="navbar-item"><a href="{{ route('login') }}" class="navbar-link-login">Login</a></li>
