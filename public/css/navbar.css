@@ -331,7 +331,7 @@ button.dropdown-item {
         top: 70px;
         left: 0;
         width: 100%;
-        background-color: #d39e00;
+        background-color: white;
         padding: 1rem 0;
         z-index: 999;
     }
@@ -350,7 +350,7 @@ button.dropdown-item {
         display: block;
         padding: 0.75rem 1rem;
         width: 100%;
-        color: white;
+        color: bla;
     }
 
     .search-input {
