@@ -21,7 +21,7 @@
             <h3>Quick Links</h3>
             <ul>
                 <li><a href="/">Accueil</a></li>
-                <li><a href="{{ route('cars.index') }}">Liste des voitures</a></li>
+                <li><a href="#">Liste des voitures</a></li>
                 <li><a href="#">Blog</a></li>
                 <li><a href="#">Contactez-nous</a></li>
             </ul>
@@ -39,4 +39,4 @@
     <div class="footer-copyright">
         Copyright © {{ date('Y') }} AZIDCAR
     </div>
-</footer> 
+</footer>

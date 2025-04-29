@@ -129,10 +129,13 @@
             </div>
         </main>
     </div>
-    <script src="car-listing.js"></script>
 
-    <!-- Pagination Links -->
-    <div class="pagination">
-        {{ $cars->links() }}
-    </div>
+
+          <!-- Add pagination links here -->
+          <div class="pagination-container">
+            {{ $cars->links('vendor.pagination.custom-car-home') }}
+        </div>
+
+
+        <script src="car-listing.js"></script>
 </x-app-layout>
