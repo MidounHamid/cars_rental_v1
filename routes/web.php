@@ -19,9 +19,12 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\CarDeliveryLocationController;
 use App\Http\Controllers\LocationController;
+use App\Http\Controllers\client\HomeController;
 
 // ======= Client Routes =======
-Route::get('/', [CarController::class, 'clientHome'])->name('dashboard'); // Client home page
+
+
+Route::get('/', [HomeController::class, 'index'])->name('dashboard');
 Route::get('/abouts', function () {
     return view('client.abouts.abouts');
 })->middleware(['auth', 'verified'])->name('abouts');

@@ -1,40 +1,35 @@
 <x-app-layout>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css"> <!-- Flatpickr CSS -->
 
     <div class="hero-section">
-        <!-- Hero Content - Text to the left of car -->
         <div class="hero-content">
             <h1 class="hero-title">Find Your Perfect Car</h1>
-            <p class="hero-subtitle">Your go-to solution for vehicle rentals of all categories. Whether you need a
-                compact car for city trips, a spacious SUV for family adventures, or a luxury car for a special
-                occasion, we have what you need.</p>
+            <p class="hero-subtitle">Your go-to solution for vehicle rentals of all categories. Whether you need a compact car for city trips, a spacious SUV for family adventures, or a luxury car for a special occasion, we have what you need.</p>
 
             <!-- Search Form with Input Fields -->
             <div class="search-container">
                 <form class="search-form" action="{{ route('cars.listing') }}" method="GET">
+                    <!-- FROM LOCATION -->
                     <div class="form-group">
                         <label for="from">WHERE YOU FROM</label>
-                        <div class="address-input-wrapper">
-                            <input type="text" id="from" name="from" class="address-input"
-                                placeholder="Enter your address">
-                            <div class="address-suggestions" id="from-suggestions">
-                                <!-- Will be populated dynamically -->
-                            </div>
-                        </div>
+                        <select name="from" id="from" class="address-input" required>
+                            @foreach($locations as $location)
+                                <option value="{{ $location->name }}">{{ $location->name }}</option>
+                            @endforeach
+                        </select>
                     </div>
 
+                    <!-- DATE RANGE -->
                     <div class="form-group">
                         <label>CHOOSE DATES</label>
                         <div class="date-range-container">
                             <div class="date-input-wrapper">
-                                <input type="text" id="start-date" name="start_date" class="date-input"
-                                    placeholder="From" readonly>
+                                <input type="text" id="start-date" name="start_date" class="date-input" placeholder="From" readonly>
                             </div>
                             <div class="date-separator">-</div>
                             <div class="date-input-wrapper">
-                                <input type="text" id="end-date" name="end_date" class="date-input" placeholder="To"
-                                    readonly>
+                                <input type="text" id="end-date" name="end_date" class="date-input" placeholder="To" readonly>
                             </div>
                         </div>
                     </div>
@@ -44,7 +39,6 @@
             </div>
         </div>
     </div>
-
 
     <!-- Car Listing Section -->
     <section class="car-listing-section">
@@ -128,123 +122,30 @@
                 @endif
             </div>
 
-            <!-- Add pagination links here -->
             <div class="pagination-container">
                 {{ $cars->links('vendor.pagination.custom-car-home') }}
             </div>
         </div>
     </section>
 
-    <!-- Add Flatpickr JS -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.js"></script>
-
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script>
-        // Function to fetch agency cities from the server using Laravel route
-        async function fetchAgencyCities() {
-            try {
-                const response = await fetch('{{ route('agencies.cities') }}');
-                if (!response.ok) {
-                    throw new Error('Failed to fetch cities');
-                }
-                const cities = await response.json();
-                return cities;
-            } catch (error) {
-                console.error('Error fetching agency cities:', error);
-                return [];
-            }
-        }
-
-        // Function to populate suggestion lists
-        function populateSuggestions(cities) {
-            const fromSuggestions = document.getElementById('from-suggestions');
-
-            // Clear existing suggestions
-            fromSuggestions.innerHTML = '';
-
-            // Add city suggestions to the list
-            cities.forEach(city => {
-                // Create suggestion for "from" field
-                const fromItem = document.createElement('div');
-                fromItem.className = 'suggestion-item';
-                fromItem.textContent = city;
-                fromItem.onclick = function() {
-                    selectAddress('from', city);
-                };
-                fromSuggestions.appendChild(fromItem);
-            });
-        }
-
-        // Function to handle address selection
-        function selectAddress(field, address) {
-            document.getElementById(field).value = address;
-            // Hide suggestions after selection
-            document.getElementById(field + '-suggestions').style.display = 'none';
-        }
-
-        // Function to show suggestions container
-        function showSuggestions(fieldId) {
-            document.getElementById(fieldId + '-suggestions').style.display = 'block';
-        }
-
-        // Function to filter suggestions based on input
-        function filterSuggestions(field, inputValue) {
-            const suggestionsContainer = document.getElementById(`${field}-suggestions`);
-            suggestionsContainer.style.display = 'block';
-            const items = suggestionsContainer.getElementsByClassName('suggestion-item');
-
-            inputValue = inputValue.toLowerCase();
-
-            for (let i = 0; i < items.length; i++) {
-                const itemText = items[i].textContent.toLowerCase();
-                if (itemText.includes(inputValue)) {
-                    items[i].style.display = "block";
-                } else {
-                    items[i].style.display = "none";
-                }
-            }
-        }
-
-        // Initialize the page
-        document.addEventListener('DOMContentLoaded', async function() {
-            // Fetch and populate city suggestions
-            const cities = await fetchAgencyCities();
-            populateSuggestions(cities);
-
-            // Add input event listeners for filtering
-            const fromInput = document.getElementById('from');
-            fromInput.addEventListener('input', function() {
-                filterSuggestions('from', this.value);
-            });
-            fromInput.addEventListener('focus', function() {
-                showSuggestions('from');
-            });
-
-            // Hide suggestions when clicking outside
-            document.addEventListener('click', function(event) {
-                if (!event.target.closest('.address-input-wrapper')) {
-                    document.getElementById('from-suggestions').style.display = 'none';
-                }
-            });
-
-            // Initialize date pickers
+        document.addEventListener('DOMContentLoaded', function () {
             const startDatePicker = flatpickr("#start-date", {
-                dateFormat: "m/d/Y",
+                dateFormat: "Y-m-d",
                 minDate: "today",
-                onChange: function(selectedDates, dateStr) {
-                    // Update end date minimum when start date changes
+                onChange: function (selectedDates) {
                     if (selectedDates[0]) {
                         endDatePicker.set('minDate', selectedDates[0]);
                     }
                 }
             });
 
-            // End date picker
             const endDatePicker = flatpickr("#end-date", {
-                dateFormat: "m/d/Y",
-                minDate: "today"
+                dateFormat: "Y-m-d",
+                minDate: "today",
             });
 
-            // Set initial values to today and tomorrow
             const today = new Date();
             const tomorrow = new Date();
             tomorrow.setDate(today.getDate() + 1);

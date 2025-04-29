@@ -18,6 +18,8 @@
                 <th>Transmission</th>
                 <th>Seats</th>
                 <th>Is Available</th>
+                <th>Primary Image</th>
+                <th>Delivery Locations</th> <!-- New column for delivery locations -->
                 <th>Actions</th>
             </tr>
         </thead>
@@ -35,6 +37,25 @@
                     <td>{{ $car->transmission }}</td>
                     <td>{{ $car->seats }}</td>
                     <td>{{ $car->is_available ? 'Yes' : 'No' }}</td>
+
+                    <!-- Display the primary image -->
+                    <td>
+                        @if($car->primaryImage)
+                            <img src="{{ asset('storage/'.$car->primaryImage->path) }}" alt="Primary Image" style="width: 50px; height: auto;">
+                        @else
+                            N/A
+                        @endif
+                    </td>
+
+                    <!-- Display the delivery locations -->
+                    <td>
+                        @forelse ($car->deliveryLocations as $location)
+                            <span>{{ $location->name }}</span><br>
+                        @empty
+                            N/A
+                        @endforelse
+                    </td>
+
                     <td>
                         <a href="{{ route('cars.edit', $car->id) }}" class="btn btn-primary">Edit</a>
                         <form action="{{ route('cars.destroy', $car->id) }}" method="POST" style="display: inline;">
@@ -46,12 +67,13 @@
                 </tr>
             @empty
                 <tr>
-                    <td colspan="12">No cars found.</td>
+                    <td colspan="14">No cars found.</td>
                 </tr>
             @endforelse
         </tbody>
     </table>
 
     <!-- Add pagination -->
-    {{ $cars->links('vendor.pagination.custom') }}</div>
+    {{ $cars->links('vendor.pagination.custom') }}
+</div>
 @endsection

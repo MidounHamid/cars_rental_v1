@@ -90,55 +90,50 @@ class CarController extends Controller
     }
 
 
-    public function clientHome()
-    {
-        $cars = Car::with(['brand', 'carType', 'fuelType', 'agency', 'insurance'])
-            ->with(['carImages' => function ($query) {
-                $query->where('is_primary', true);
-            }])
-            ->paginate(6); // Show 6 cars per page (adjust number as needed)
+    // public function clientHome()
+    // {
+    //     $cars = Car::with(['brand', 'carType', 'fuelType', 'agency', 'insurance'])
+    //         ->with(['carImages' => function ($query) {
+    //             $query->where('is_primary', true);
+    //         }])
+    //         ->paginate(6); // Show 6 cars per page (adjust number as needed)
 
-        // No need to filter out cars with no primary image since we're using the eager loading above
+    //     // No need to filter out cars with no primary image since we're using the eager loading above
 
-        $brands = Brand::all();
-        return view('client.home.home', compact('cars', 'brands'));
-    }
+    //     $brands = Brand::all();
+    //     return view('client.home.home', compact('cars', 'brands'));
+    // }
     public function carListing(Request $request)
-    {
-        // Fetch search inputs from the request
-        $from = $request->input('from');
-        $to = $request->input('to');
-        $start_date = $request->input('start_date');
-        $end_date = $request->input('end_date');
+{
+    $from = $request->input('from');
+    $start_date = $request->input('start_date');
+    $end_date = $request->input('end_date');
 
-        // Query cars with filters
-        $query = Car::query();
+    $query = Car::query();
 
-        if ($from) {
-            // Use 'city' instead of 'location'
-            $query->where('city', 'like', '%' . $from . '%');
-        }
-
-
-        if ($to) {
-            // Assuming 'destination' is a column in the cars table
-            $query->where('destination', 'like', '%' . $to . '%');
-        }
-
-        if ($start_date) {
-            // Convert start_date to date format and filter
-            $query->whereDate('available_from', '>=', Carbon::parse($start_date));
-        }
-
-        if ($end_date) {
-            // Convert end_date to date format and filter
-            $query->whereDate('available_to', '<=', Carbon::parse($end_date));
-        }
-
-        // Get the filtered cars with pagination
-        $cars = $query->paginate(10);  // Adding pagination for better performance
-
-        // Return the view with the filtered cars
-        return view('client.cars.listing', compact('cars'));  // Use the correct view path
+    // Filter by delivery location (city, airport, train_station)
+    if ($from) {
+        $query->whereHas('deliveryLocations', function ($q) use ($from) {
+            $q->where('name', 'like', '%' . $from . '%');
+        });
     }
+
+    // Filter by availability based on bookings
+    if ($start_date && $end_date) {
+        $start = Carbon::parse($start_date);
+        $end = Carbon::parse($end_date);
+
+        $query->whereDoesntHave('bookings', function ($q) use ($start, $end) {
+            $q->where(function ($subQuery) use ($start, $end) {
+                $subQuery->whereDate('start_date', '<=', $end)
+                         ->whereDate('end_date', '>=', $start);
+            });
+        });
+    }
+
+    $cars = $query->paginate(10);
+
+    return view('client.cars.listing', compact('cars'));
+}
+
 }
