@@ -2,7 +2,6 @@
     <!-- External Styles -->
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 
-    <!-- Hero Section -->
     <div class="hero-section">
         <div class="hero-content">
             <h1 class="hero-title">Find Your Perfect Car</h1>
@@ -11,26 +10,28 @@
             </p>
 
             <!-- Search Form -->
-            <div class="search-container">
+            <div class="search-form-container">
                 <form class="search-form" action="{{ route('cars.listing') }}" method="GET">
                     <div class="form-group">
-                        <label for="from">WHERE YOU FROM</label>
-                        <select name="from" id="from" class="address-input" required>
-                            @foreach($locations as $location)
-                                <option value="{{ $location->name }}">
-                                    {{ $location->name }} - {{ ucfirst(str_replace('_', ' ', $location->type)) }}
-                                </option>
-                            @endforeach
-                        </select>
+                        <label>WHERE YOU FROM</label>
+                        <div class="location-input-wrapper">
+                            <input type="text" class="location-input" placeholder="Choose Location">
+                            <div class="location-dropdown">
+                                @foreach($locations as $location)
+                                    <div class="location-option" data-value="{{ $location->name }}">
+                                        {{ $location->name }} - {{ ucfirst(str_replace('_', ' ', $location->type)) }}
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label>CHOOSE DATES</label>
-                        <div class="date-range-container">
-                            <input type="text" id="start-date" name="start_date" class="date-input" placeholder="From" readonly>
-                            <input type="text" id="end-date" name="end_date" class="date-input" placeholder="To" readonly>
+                        <div class="dates-input-wrapper">
+                            <input type="text" class="dates-input" name="dates" placeholder="Select dates" readonly>
                         </div>
                     </div>
-                    <button type="submit" class="search-button">Search</button>
+                    <button type="submit" class="search-btn">Search</button>
                 </form>
             </div>
         </div>
@@ -101,54 +102,244 @@
         </div>
     </section>
 
-   <!-- DateRangePicker Script -->
-<script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
-<script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+    <!-- Scripts -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 
-<script>
-    $(function() {
-        // Get today and tomorrow dates
-        const today = moment();
-        const tomorrow = moment().add(1, 'days');
+    <style>
+    .search-form-container {
+        background: white;
+        padding: 24px 32px;
+        border-radius: 8px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        max-width: 800px;
+        width: 90%;
+    }
+
+    .search-form {
+        display: flex;
+        gap: 24px;
+        align-items: flex-end;
+    }
+
+    .form-group {
+        flex: 1;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 10px;
+        color: #4a5568;
+        font-size: 14px;
+        font-weight: 500;
+        letter-spacing: 0.5px;
+    }
+
+    .location-input-wrapper {
+        position: relative;
+        background: white;
+        border: 1px solid #e2e8f0;
+        border-radius: 4px;
+        min-width: 280px;
+    }
+
+    .location-input {
+        width: 100%;
+        padding: 12px;
+        border: none;
+        background: transparent;
+        font-size: 14px;
+        color: #2d3748;
+        outline: none;
+    }
+
+    .location-dropdown {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: white;
+        border: 1px solid #e2e8f0;
+        border-radius: 4px;
+        margin-top: 4px;
+        max-height: 200px;
+        overflow-y: auto;
+        display: none;
+        z-index: 10;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+
+    .location-option {
+        padding: 12px;
+        cursor: pointer;
+        color: #4a5568;
+        font-size: 14px;
+    }
+
+    .location-option:hover {
+        background-color: #f7fafc;
+    }
+
+    .dates-input-wrapper {
+        position: relative;
+        background: white;
+        border: 1px solid #e2e8f0;
+        border-radius: 4px;
+        min-width: 280px;
+    }
+
+    .dates-input {
+        width: 100%;
+        padding: 12px;
+        border: none;
+        background: transparent;
+        font-size: 14px;
+        color: #2d3748;
+        outline: none;
+    }
+
+    .search-btn {
+        background-color: #2d3748;
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 4px;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background-color 0.2s;
+        height: 44px;
+    }
+
+    .search-btn:hover {
+        background-color: #1a202c;
+    }
+
+    /* DateRangePicker customization */
+    .daterangepicker {
+        border: none;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        font-family: inherit;
+    }
+
+    .daterangepicker .calendar-table {
+        border: none;
+        background: white;
+    }
+
+    .daterangepicker td.active {
+        background-color: #2d3748 !important;
+        color: white !important;
+    }
+
+    .daterangepicker td.in-range {
+        background-color: #e2e8f0;
+        color: #2d3748;
+    }
+
+    .daterangepicker td.available:hover {
+        background-color: #f7fafc;
+    }
+
+    .daterangepicker .calendar-table th,
+    .daterangepicker .calendar-table td {
+        width: 36px;
+        height: 36px;
+    }
+
+    .daterangepicker .drp-buttons {
+        border-top: 1px solid #e2e8f0;
+        padding: 1rem;
+    }
+
+    .daterangepicker .drp-selected {
+        font-size: 14px;
+        color: #4a5568;
+    }
+
+    .daterangepicker .applyBtn,
+    .daterangepicker .cancelBtn {
+        padding: 8px 16px;
+        border-radius: 4px;
+        font-size: 14px;
+    }
+
+    .daterangepicker .applyBtn {
+        background-color: #2d3748;
+        border-color: transparent;
+    }
+
+    .daterangepicker .cancelBtn {
+        color: #4a5568;
+        border-color: #e2e8f0;
+        background: white;
+    }
+    </style>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Location input handling
+        const locationInput = document.querySelector('.location-input');
+        const locationDropdown = document.querySelector('.location-dropdown');
+        const locationOptions = document.querySelectorAll('.location-option');
+
+        locationInput.addEventListener('focus', () => {
+            locationDropdown.style.display = 'block';
+        });
+
+        locationInput.addEventListener('blur', () => {
+            setTimeout(() => {
+                locationDropdown.style.display = 'none';
+            }, 200);
+        });
+
+        locationInput.addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            locationOptions.forEach(option => {
+                const text = option.textContent.toLowerCase();
+                option.style.display = text.includes(searchTerm) ? 'block' : 'none';
+            });
+        });
+
+        locationOptions.forEach(option => {
+            option.addEventListener('click', () => {
+                locationInput.value = option.textContent;
+                locationDropdown.style.display = 'none';
+            });
+        });
 
         // Initialize DateRangePicker
-        $('#date-range').daterangepicker({
-            startDate: today,
-            endDate: tomorrow,
-            minDate: today,
-            opens: 'left',
+        $('.dates-input').daterangepicker({
+            autoUpdateInput: false,
+            opens: 'center',
             showDropdowns: false,
-            showWeekNumbers: false,
-            autoApply: false,
+            minDate: moment(),
+            startDate: moment(),
+            endDate: moment().add(1, 'days'),
             locale: {
                 format: 'YYYY-MM-DD',
                 separator: ' to ',
                 applyLabel: 'Apply',
                 cancelLabel: 'Cancel',
-                fromLabel: 'From',
-                toLabel: 'To',
-                customRangeLabel: 'Custom',
-                weekLabel: 'W',
-                daysOfWeek: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
+                daysOfWeek: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
                 monthNames: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
                 firstDay: 1
             },
-            ranges: {
-                'Today': [moment(), moment()],
-                'Tomorrow': [moment().add(1, 'days'), moment().add(1, 'days')],
-                'Next 7 Days': [moment(), moment().add(6, 'days')],
-                'Next 30 Days': [moment(), moment().add(29, 'days')],
-                'This Month': [moment().startOf('month'), moment().endOf('month')],
-                'Next Month': [moment().add(1, 'month').startOf('month'), moment().add(1, 'month').endOf('month')]
-            }
+            linkedCalendars: true,
+            showCustomRangeLabel: false,
+            alwaysShowCalendars: true,
+            autoApply: false
         });
 
-        // Add custom footer text if needed
-        $('.daterangepicker').append('<div class="range-calendar-info">Double-click on a date to select it as a single-day range.</div>');
+        $('.dates-input').on('apply.daterangepicker', function(ev, picker) {
+            $(this).val(picker.startDate.format('YYYY-MM-DD') + ' to ' + picker.endDate.format('YYYY-MM-DD'));
+        });
 
-        // Update the input with the initial date range
-        $('#date-range').val(today.format('YYYY-MM-DD') + ' to ' + tomorrow.format('YYYY-MM-DD'));
+        $('.dates-input').on('cancel.daterangepicker', function(ev, picker) {
+            $(this).val('');
+        });
     });
-</script>
+    </script>
 </x-app-layout>
