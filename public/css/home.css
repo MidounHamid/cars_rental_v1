@@ -544,3 +544,219 @@
     font-weight: 500;
     font-size: 0.9rem;
 }
+
+/* DateRangePicker Custom Styles */
+
+
+.daterangepicker {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    border: none;
+    border-radius: 0;
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.15);
+    padding: 0;
+}
+
+/* Calendar container */
+.daterangepicker .calendars {
+    display: flex;
+}
+
+/* Month header styling */
+.daterangepicker .calendar-table .month {
+    font-size: 18px;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: #111;
+}
+
+/* Table styling */
+.daterangepicker .calendar-table table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+/* Day of week header */
+.daterangepicker .calendar-table thead tr:first-child th {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: #333;
+    padding: 8px 0;
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #eee;
+}
+
+/* Day cells */
+.daterangepicker td {
+    height: 40px;
+    width: 40px;
+    text-align: center;
+    vertical-align: middle;
+    border: 1px solid #eee;
+    color: #333;
+    font-size: 14px;
+}
+
+/* Hover state */
+.daterangepicker td.available:hover {
+    background-color: #f0f0f0;
+    cursor: pointer;
+}
+
+/* Selected date styling */
+.daterangepicker td.active,
+.daterangepicker td.active:hover {
+    background-color: #0f172a;
+    color: white;
+    font-weight: bold;
+    border-color: #0f172a;
+}
+
+/* In-range styling */
+.daterangepicker td.in-range {
+    background-color: #f0f0f0;
+    color: #111;
+    border-color: #eee;
+}
+
+/* Off-range and disabled days */
+.daterangepicker td.off,
+.daterangepicker td.off.in-range,
+.daterangepicker td.off.start-date,
+.daterangepicker td.off.end-date {
+    background-color: #fff;
+    color: #aaa;
+}
+
+.daterangepicker td.disabled {
+    color: #ccc;
+    text-decoration: line-through;
+    cursor: not-allowed;
+}
+
+/* Previous/next month navigation */
+.daterangepicker .prev,
+.daterangepicker .next {
+    font-size: 18px;
+    padding: 4px 8px;
+    cursor: pointer;
+    color: #111;
+}
+
+.daterangepicker .prev:hover,
+.daterangepicker .next:hover {
+    background-color: #f0f0f0;
+}
+
+/* Footer buttons */
+.daterangepicker .buttons {
+    display: flex;
+    justify-content: flex-end;
+    padding: 12px;
+    border-top: 1px solid #eee;
+}
+
+.daterangepicker .buttons .btn {
+    padding: 8px 16px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+.daterangepicker .cancelBtn {
+    background-color: transparent;
+    color: #444;
+}
+
+.daterangepicker .applyBtn {
+    background-color: #0f172a;
+    color: white;
+}
+
+/* Range input display */
+.daterangepicker-input {
+    border: 1px solid #ddd;
+    border-radius: 0;
+    padding: 8px 12px;
+    font-size: 14px;
+    width: 100%;
+    cursor: pointer;
+}
+
+/* Calendar table container */
+.daterangepicker .drp-calendar {
+    max-width: 350px;
+    padding: 8px;
+}
+
+.daterangepicker .drp-calendar.left {
+    border-right: 1px solid #eee;
+}
+
+/* Instructions text */
+.daterangepicker .range-calendar-info {
+    text-align: center;
+    padding: 10px;
+    font-size: 13px;
+    color: #666;
+    border-top: 1px solid #eee;
+}
+
+/* Make the calendar same width as the page */
+.daterangepicker.show-calendar {
+    /* width: 100%; */
+    max-width: 780px;
+    margin-top: 5px;
+}
+
+/* Today styling */
+.daterangepicker td.today {
+    background-color: transparent;
+    color: #131c30;
+    font-weight: bold;
+    position: relative;
+}
+
+/* Month dropdown styles */
+.daterangepicker select.monthselect,
+.daterangepicker select.yearselect {
+    border: 1px solid #ddd;
+    border-radius: 0;
+    padding: 4px;
+    font-size: 14px;
+}
+
+/* Ranges section if enabled */
+.daterangepicker .ranges {
+    border-right: 1px solid #eee;
+    padding: 10px;
+}
+
+.daterangepicker .ranges li {
+    padding: 8px 12px;
+    cursor: pointer;
+    font-size: 14px;
+    color: #333;
+}
+
+.daterangepicker .ranges li:hover {
+    background-color: #f0f0f0;
+}
+
+.daterangepicker .ranges li.active {
+    background-color: #0f172a;
+    color: #fff;
+}
+.daterangepicker table.table-condensed tbody tr td.active, .daterangepicker table.table-condensed tbody tr td.end-date, .daterangepicker table.table-condensed tbody tr td.start-date {
+    background-color: #111827;
+}
+
+
+.daterangepicker.show-calendar .ranges {
+    margin-top: 8px;
+    display: none;
+}
+.daterangepicker .table-condensed tbody tr td.available {
+    color: #565a5c;
+}
