@@ -1,26 +1,28 @@
 <x-app-layout>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css"> <!-- Flatpickr CSS -->
+    <!-- External Styles -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 
+    <!-- Hero Section -->
     <div class="hero-section">
         <div class="hero-content">
             <h1 class="hero-title">Find Your Perfect Car</h1>
-            <p class="hero-subtitle">Your go-to solution for vehicle rentals of all categories. Whether you need a compact car for city trips, a spacious SUV for family adventures, or a luxury car for a special occasion, we have what you need.</p>
+            <p class="hero-subtitle">
+                Your go-to solution for vehicle rentals of all categories. Whether you need a compact car for city trips, a spacious SUV for family adventures, or a luxury car for a special occasion, we have what you need.
+            </p>
 
-            <!-- Search Form with Input Fields -->
+            <!-- Search Form -->
             <div class="search-container">
                 <form class="search-form" action="{{ route('cars.listing') }}" method="GET">
-                    <!-- FROM LOCATION -->
                     <div class="form-group">
                         <label for="from">WHERE YOU FROM</label>
                         <select name="from" id="from" class="address-input" required>
                             @foreach($locations as $location)
-                                <option value="{{ $location->name }}">{{ $location->name }}</option>
+                                <option value="{{ $location->name }}">
+                                    {{ $location->name }} - {{ ucfirst(str_replace('_', ' ', $location->type)) }}
+                                </option>
                             @endforeach
                         </select>
                     </div>
-
-                    <!-- DATE RANGE -->
                     <div class="form-group">
                         <label>CHOOSE DATES</label>
                         <div class="date-range-container">
@@ -28,14 +30,13 @@
                             <input type="text" id="end-date" name="end_date" class="date-input" placeholder="To" readonly>
                         </div>
                     </div>
-
                     <button type="submit" class="search-button">Search</button>
                 </form>
             </div>
         </div>
     </div>
 
-    <!-- Car Listing Section -->
+    <!-- Car Listings -->
     <section class="car-listing-section">
         <div class="container">
             <h2 class="listing-title">Location de voitures au Maroc</h2>
@@ -45,9 +46,7 @@
                 @else
                     @foreach ($cars as $car)
                         <div class="car-card-home">
-                            @php
-                                $primaryImage = $car->carImages->firstWhere('is_primary', true);
-                            @endphp
+                            @php $primaryImage = $car->carImages->firstWhere('is_primary', true); @endphp
 
                             <div class="car-image-home">
                                 @if ($primaryImage)
@@ -64,34 +63,16 @@
                                 </div>
 
                                 <div class="car-specs">
-                                    <div class="spec-item">
-                                        <i class="fas fa-users"></i>
-                                        <span>{{ $car->seats }} seats</span>
-                                    </div>
-                                    <div class="spec-item">
-                                        <i class="fas fa-gas-pump"></i>
-                                        <span>{{ $car->fuelType->fuel_type }}</span>
-                                    </div>
-                                    <div class="spec-item">
-                                        <i class="fas fa-cog"></i>
-                                        <span>{{ $car->transmission }}</span>
-                                    </div>
-                                    <div class="spec-item">
-                                        <i class="fas fa-map-marker-alt"></i>
-                                        <span>{{ $car->city }}</span>
-                                    </div>
+                                    <div class="spec-item"><i class="fas fa-users"></i><span>{{ $car->seats }} seats</span></div>
+                                    <div class="spec-item"><i class="fas fa-gas-pump"></i><span>{{ $car->fuelType->fuel_type }}</span></div>
+                                    <div class="spec-item"><i class="fas fa-cog"></i><span>{{ $car->transmission }}</span></div>
+                                    <div class="spec-item"><i class="fas fa-map-marker-alt"></i><span>{{ $car->city }}</span></div>
                                 </div>
 
                                 <div class="car-features">
-                                    <div class="feature insurance-feature">
-                                        <i class="fas fa-shield-alt"></i>
-                                        <span>Full Insurance</span>
-                                    </div>
+                                    <div class="feature insurance-feature"><i class="fas fa-shield-alt"></i><span>Full Insurance</span></div>
                                     <div class="car-description">
-                                        <div class="description-header">
-                                            <i class="fas fa-info-circle"></i>
-                                            <span>Description</span>
-                                        </div>
+                                        <div class="description-header"><i class="fas fa-info-circle"></i><span>Description</span></div>
                                         <p>{{ $car->insurance->description ?? 'No insurance info' }}</p>
                                     </div>
                                 </div>
@@ -106,10 +87,7 @@
 
                                 <div class="car-status">
                                     <span class="availability">{{ $car->is_available ? 'Available' : 'Not Available' }}</span>
-                                    <div class="reviews">
-                                        <i class="fas fa-star"></i>
-                                        <span>4.8 (120 reviews)</span>
-                                    </div>
+                                    <div class="reviews"><i class="fas fa-star"></i><span>4.8 (120 reviews)</span></div>
                                 </div>
                             </div>
                         </div>
@@ -123,30 +101,54 @@
         </div>
     </section>
 
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const startDatePicker = flatpickr("#start-date", {
-                dateFormat: "Y-m-d",
-                minDate: "today",
-                onChange: function (selectedDates) {
-                    if (selectedDates[0]) {
-                        endDatePicker.set('minDate', selectedDates[0]);
-                    }
-                }
-            });
+   <!-- DateRangePicker Script -->
+<script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 
-            const endDatePicker = flatpickr("#end-date", {
-                dateFormat: "Y-m-d",
-                minDate: "today",
-            });
+<script>
+    $(function() {
+        // Get today and tomorrow dates
+        const today = moment();
+        const tomorrow = moment().add(1, 'days');
 
-            const today = new Date();
-            const tomorrow = new Date();
-            tomorrow.setDate(today.getDate() + 1);
-
-            startDatePicker.setDate(today);
-            endDatePicker.setDate(tomorrow);
+        // Initialize DateRangePicker
+        $('#date-range').daterangepicker({
+            startDate: today,
+            endDate: tomorrow,
+            minDate: today,
+            opens: 'left',
+            showDropdowns: false,
+            showWeekNumbers: false,
+            autoApply: false,
+            locale: {
+                format: 'YYYY-MM-DD',
+                separator: ' to ',
+                applyLabel: 'Apply',
+                cancelLabel: 'Cancel',
+                fromLabel: 'From',
+                toLabel: 'To',
+                customRangeLabel: 'Custom',
+                weekLabel: 'W',
+                daysOfWeek: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
+                monthNames: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+                firstDay: 1
+            },
+            ranges: {
+                'Today': [moment(), moment()],
+                'Tomorrow': [moment().add(1, 'days'), moment().add(1, 'days')],
+                'Next 7 Days': [moment(), moment().add(6, 'days')],
+                'Next 30 Days': [moment(), moment().add(29, 'days')],
+                'This Month': [moment().startOf('month'), moment().endOf('month')],
+                'Next Month': [moment().add(1, 'month').startOf('month'), moment().add(1, 'month').endOf('month')]
+            }
         });
-    </script>
+
+        // Add custom footer text if needed
+        $('.daterangepicker').append('<div class="range-calendar-info">Double-click on a date to select it as a single-day range.</div>');
+
+        // Update the input with the initial date range
+        $('#date-range').val(today.format('YYYY-MM-DD') + ' to ' + tomorrow.format('YYYY-MM-DD'));
+    });
+</script>
 </x-app-layout>

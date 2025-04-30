@@ -29,6 +29,6 @@ class DatabaseSeeder extends Seeder
         \App\Models\Agency::factory(10)->create();
 
         // Créer des voitures en utilisant les données des tables de référence
-        \App\Models\Car::factory(10)->create();
+        \App\Models\Car::factory(20)->create();
     }
 }
