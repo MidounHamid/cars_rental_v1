@@ -2,8 +2,15 @@
 
 namespace App\Http\Controllers\client;
 
+use App\Models\Brand;
 use App\Models\Car;
+use App\Models\CarType;
+use App\Models\FuelType;
 use App\Models\Location;
+use App\Models\Specification;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
+
 
 class HomeController
 {
@@ -11,12 +18,50 @@ class HomeController
     {
         // Paginate the cars instead of fetching all and using take()
         $cars = Car::with(['brand', 'fuelType', 'carType']) // eager load if needed
-                    ->latest()
-                    ->paginate(6); // Paginate the results
+            ->latest()
+            ->paginate(6); // Paginate the results
 
         // Get all locations
         $locations = Location::orderBy('name')->get();
 
         return view('client.home.home', compact('cars', 'locations'));
+    }
+
+    public function carListing(Request $request)
+    {
+        $from = $request->input('from');
+        $start_date = $request->input('start_date');
+        $end_date = $request->input('end_date');
+
+        $query = Car::query();
+        $locations = Location::orderBy('name')->get();
+        $brands = Brand::orderBy('brand')->get();
+        $fuelTypes = FuelType::select('fuel_type')->distinct()->orderBy('fuel_type')->get();
+        $typeCars = CarType::select('name')->distinct()->orderBy('name')->get();
+        $specifications = Specification::orderBy('specification')->get();
+        // Filter by delivery location
+        if ($from) {
+            $query->whereHas('deliveryLocations', function ($q) use ($from) {
+                $q->where('name', 'like', '%' . $from . '%');
+            });
+        }
+
+        // Filter by availability
+        if ($start_date && $end_date) {
+            $start = Carbon::parse($start_date);
+            $end = Carbon::parse($end_date);
+
+            $query->whereDoesntHave('bookings', function ($q) use ($start, $end) {
+                $q->where(function ($subQuery) use ($start, $end) {
+                    $subQuery->whereDate('start_date', '<=', $end)
+                        ->whereDate('end_date', '>=', $start);
+                });
+            });
+        }
+
+        $cars = $query->paginate(10);
+
+        // ✅ Pass $brands to the view
+        return view('client.cars.listing', compact('cars', 'locations', 'brands', 'fuelTypes','typeCars','specifications'));
     }
 }

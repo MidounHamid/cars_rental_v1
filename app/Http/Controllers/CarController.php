@@ -10,6 +10,7 @@ use App\Models\Insurance;
 use App\Models\Car;
 use App\Http\Requests\StoreCarRequest;
 use App\Http\Requests\UpdateCarRequest;
+use App\Models\Location;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -103,37 +104,5 @@ class CarController extends Controller
     //     $brands = Brand::all();
     //     return view('client.home.home', compact('cars', 'brands'));
     // }
-    public function carListing(Request $request)
-{
-    $from = $request->input('from');
-    $start_date = $request->input('start_date');
-    $end_date = $request->input('end_date');
-
-    $query = Car::query();
-
-    // Filter by delivery location (city, airport, train_station)
-    if ($from) {
-        $query->whereHas('deliveryLocations', function ($q) use ($from) {
-            $q->where('name', 'like', '%' . $from . '%');
-        });
-    }
-
-    // Filter by availability based on bookings
-    if ($start_date && $end_date) {
-        $start = Carbon::parse($start_date);
-        $end = Carbon::parse($end_date);
-
-        $query->whereDoesntHave('bookings', function ($q) use ($start, $end) {
-            $q->where(function ($subQuery) use ($start, $end) {
-                $subQuery->whereDate('start_date', '<=', $end)
-                         ->whereDate('end_date', '>=', $start);
-            });
-        });
-    }
-
-    $cars = $query->paginate(10);
-
-    return view('client.cars.listing', compact('cars'));
-}
 
 }
