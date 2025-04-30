@@ -24,13 +24,8 @@
                     <div class="form-group">
                         <label>CHOOSE DATES</label>
                         <div class="date-range-container">
-                            <div class="date-input-wrapper">
-                                <input type="text" id="start-date" name="start_date" class="date-input" placeholder="From" readonly>
-                            </div>
-                            <div class="date-separator">-</div>
-                            <div class="date-input-wrapper">
-                                <input type="text" id="end-date" name="end_date" class="date-input" placeholder="To" readonly>
-                            </div>
+                            <input type="text" id="start-date" name="start_date" class="date-input" placeholder="From" readonly>
+                            <input type="text" id="end-date" name="end_date" class="date-input" placeholder="To" readonly>
                         </div>
                     </div>
 

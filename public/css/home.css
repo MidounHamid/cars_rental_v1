@@ -29,6 +29,10 @@
     background-size: cover;
     background-position: bottom right;
     padding-top: 60px; /* Add padding to account for fixed navbar */
+    min-height: 70vh;
+    /* display: flex;
+    align-items: center; */
+    padding-left: 80px; /* Déplace tout plus vers la gauche */
 }
 
 /* Hero Content Styling */
@@ -90,6 +94,17 @@
     gap: 1.25rem;
 }
 
+
+
+    /* Style commun pour tous les inputs et le bouton */
+    .address-input,
+    .date-range-container,
+    .search-button {
+        height: 46px; /* Hauteur uniforme pour tous les éléments */
+        border-radius: 6px;
+        font-size: 14px;
+    }
+
 .form-group {
     flex: 1 1 200px;
 }
@@ -119,7 +134,8 @@
 
 .address-input {
     width: 100%;
-    padding: 0.75rem 0.9375rem;
+    padding: 0 15px;
+
     border: 1px solid var(--border-color);
     border-radius: 5px;
     font-size: 1rem;
@@ -161,7 +177,22 @@
 .suggestion-item:last-child {
     border-bottom: none;
 }
+@media (max-width: 768px) {
+    .hero-section {
+        padding-left: 20px;
+        padding-right: 20px;
+    }
 
+    .search-form {
+        flex-direction: column;
+        gap: 20px;
+    }
+    
+    .search-button {
+        width: 100%;
+        margin-top: 0;
+    }
+}
 /* Date range styling */
 .date-range-container {
     display: flex;
@@ -248,9 +279,10 @@
     }
 
     .hero-content {
-        top: 50%;
-        max-width: 90%;
         padding: 1rem;
+        padding: 1rem;
+        margin-top: 100PX;
+        
     }
 
     .hero-title {
@@ -543,4 +575,49 @@
     color: var(--accent-color);
     font-weight: 500;
     font-size: 0.9rem;
+}
+
+
+.date-range-container {
+    display: flex;
+    border: 1px solid #e5e7eb;
+    overflow: hidden; /* Pour que les inputs internes ne dépassent pas */
+}
+
+.date-input {
+    height: 100%; /* Prend toute la hauteur du conteneur */
+    padding: 0 15px;
+    border: none;
+    background: white;
+    color: #6b7280;
+    width: 50%;
+}
+
+.date-input + .date-input {
+    border-left: 1px solid #e5e7eb; /* Séparateur entre les dates */
+}
+
+.search-button {
+    height: 46px;
+    width: 85px; /* Réduit la largeur du bouton */
+    background-color: #14213d;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-weight: 500;
+    cursor: pointer;
+    margin-top: 28px;
+    padding: 0; /* Enlève le padding pour un contrôle total de la largeur */
+    white-space: nowrap; /* Empêche le texte de passer à la ligne */
+}
+
+/* Style pour le select */
+select.address-input {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236b7280' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 15px center;
+    padding-right: 35px;
 }

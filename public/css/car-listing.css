@@ -7,7 +7,7 @@
     --shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
 }
 
-* {
+/* * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -33,7 +33,7 @@ body {
     font-weight: bold;
     color: #2c3e50;
     text-decoration: none;
-}
+} */
 
 /* Sidebar Styles */
 .sidebar {
@@ -1001,3 +1001,427 @@ select[data-search="true"] option:checked {
         display: none;
     }
 }
+/* le style de side bar  */
+:root {
+    --primary-color: #2f2f2f;
+    --secondary-color: #4A5568;
+    --border-color: #E5E7EB;
+    --bg-dark: #f5f6f8;
+    --text-light: #9CA3AF;
+    --shadow-color: rgba(0, 0, 0, 0.05);
+}
+
+/* * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+} */
+
+/* body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background-color: #f5f6f8;
+    padding: 20px;
+    color: var(--primary-color);
+} */
+
+/* Main wrapper */
+.inspect-filter-form-wrapper {
+    width: 300px;
+    background: white;
+    border-radius: 8px;
+    padding: 1px;
+}
+
+/* Header styles */
+.sidebar-header {
+    background-color: var(--bg-dark);
+    padding: 16px 20px;
+    border-radius: 8px;
+    margin: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.sidebar-header-title {
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.sidebar-header-button {
+    font-size: 13px;
+    color: var(--text-light);
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.sidebar-header-button:hover {
+    color: var(--primary-color);
+}
+
+/* Widget common styles */
+.filter-widget {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    margin: 12px;
+    box-shadow: 0 1px 3px var(--shadow-color);
+}
+
+.filter-widget-title {
+    font-size: 14px;
+    font-weight: 600;
+    padding-bottom: 16px;
+    border-bottom: 1px dashed var(--border-color);
+    margin-bottom: 16px;
+}
+
+.filter-widget-content {
+    padding: 0 5px;
+}
+
+/* Input styles */
+.sidebar-search-input,
+.date-picker,
+.location-select {
+    width: 100%;
+    padding: 12px;
+    background-color: var(--bg-dark);
+    border: 1px solid transparent;
+    border-radius: 6px;
+    font-size: 14px;
+    color: var(--primary-color);
+    transition: all 0.2s ease;
+}
+
+.search-input:focus,
+.date-picker:focus,
+.location-select:focus {
+    outline: none;
+    border-color: var(--secondary-color);
+    background-color: white;
+}
+
+.search-input::placeholder,
+.date-picker::placeholder,
+.location-select::placeholder {
+    color: var(--text-light);
+}
+
+/* Date picker specific styles */
+.date-picker-wrapper {
+    position: relative;
+}
+
+.calendar-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 1;
+}
+
+.calendar-icon img {
+    width: 20px;
+    height: 20px;
+    opacity: 0.6;
+}
+
+.date-picker {
+    padding-left: 40px;
+}
+
+/* Select styles */
+.location-select {
+    appearance: none;
+    width: 100%;
+    padding: 10px 12px;
+    background-color: white;
+    border: 1px solid #E5E7EB;
+    border-radius: 6px;
+    font-size: 14px;
+    color: var(--primary-color);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%239CA3AF' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 16px;
+    padding-right: 40px;
+}
+
+.location-select:hover {
+    border-color: #D1D5DB;
+}
+
+.location-select:focus {
+    outline: none;
+    border-color: #9CA3AF;
+    box-shadow: 0 0 0 1px #9CA3AF;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%239CA3AF' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+}
+
+.location-select option {
+    padding: 8px 12px;
+    background-color: white;
+    color: var(--primary-color);
+    font-size: 14px;
+}
+
+/* Style for the select dropdown */
+select.location-select::-ms-expand {
+    display: none;
+}
+
+/* Custom dropdown styling */
+.location-select option:checked {
+    background-color: #F3F4F6;
+    color: var(--primary-color);
+}
+
+.location-select option:hover {
+    background-color: #F3F4F6;
+}
+
+/* Checkbox styles */
+.checkbox-group {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    user-select: none;
+    padding: 2px;
+}
+
+.checkbox-label input[type="checkbox"] {
+    display: none;
+}
+
+.checkbox-custom {
+    position: relative;
+    width: 20px;
+    height: 20px;
+    margin-right: 12px;
+}
+
+.checkbox-custom svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    overflow: visible;
+    width: 20px;
+    height: 20px;
+}
+
+.checkbox-custom .path {
+    fill: none;
+    stroke: var(--secondary-color);
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    transition: stroke-dasharray 0.5s ease, stroke-dashoffset 0.5s ease;
+    stroke-dasharray: 241 9999999;
+    stroke-dashoffset: 0;
+}
+
+.checkbox-label input[type="checkbox"]:checked ~ .checkbox-custom .path {
+    stroke-dasharray: 70.5096664428711 9999999;
+    stroke-dashoffset: -262.2723388671875;
+}
+
+.label-text {
+    font-size: 14px;
+    color: var(--primary-color);
+    line-height: 1.4;
+}
+
+/* Search box in Features and Attributes */
+.search-box {
+    position: relative;
+    margin-bottom: 15px;
+}
+
+.search-box input {
+    padding-right: 35px;
+}
+
+.search-icon {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 14px;
+    height: 14px;
+    color: var(--text-light);
+    pointer-events: none;
+}
+
+/* Flatpickr customization */
+.flatpickr-calendar {
+    background: white !important;
+    box-shadow: 0 4px 6px var(--shadow-color) !important;
+    border-radius: 8px !important;
+    border: 1px solid var(--border-color) !important;
+}
+
+.flatpickr-day {
+    color: var(--primary-color) !important;
+    border-radius: 6px !important;
+}
+
+.flatpickr-day.selected,
+.flatpickr-day.selected:hover {
+    background: var(--secondary-color) !important;
+    border-color: var(--secondary-color) !important;
+    color: white !important;
+}
+
+.flatpickr-day.today {
+    border-color: var(--secondary-color) !important;
+}
+
+.flatpickr-day:hover {
+    background: var(--bg-dark) !important;
+    border-color: var(--bg-dark) !important;
+}
+
+.flatpickr-months .flatpickr-month {
+    background: white !important;
+    color: var(--primary-color) !important;
+    fill: var(--primary-color) !important;
+}
+
+.flatpickr-current-month .flatpickr-monthDropdown-months {
+    background: white !important;
+}
+
+.flatpickr-current-month .flatpickr-monthDropdown-months,
+.flatpickr-current-month input.cur-year {
+    color: var(--primary-color) !important;
+    font-weight: 600 !important;
+}
+
+.flatpickr-weekday {
+    color: var(--text-light) !important;
+}
+
+.flatpickr-prev-month,
+.flatpickr-next-month {
+    fill: var(--text-light) !important;
+}
+
+.flatpickr-prev-month:hover,
+.flatpickr-next-month:hover {
+    fill: var(--primary-color) !important;
+}
+
+/* Custom Select with Search */
+.custom-select-container {
+    position: relative;
+    width: 100%;
+}
+
+.select-search-wrapper {
+    position: relative;
+    width: 100%;
+    border: 1px solid #E5E7EB;
+    border-radius: 6px;
+    background: white;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.select-search-wrapper:hover {
+    border-color: #D1D5DB;
+}
+
+.select-search {
+    width: 100%;
+    padding: 10px 35px 10px 12px;
+    border: none;
+    background: transparent;
+    font-size: 14px;
+    color: var(--primary-color);
+    cursor: pointer;
+}
+
+.select-search:focus {
+    outline: none;
+}
+
+.select-search-wrapper .search-icon {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #9CA3AF;
+    pointer-events: none;
+    width: 16px;
+    height: 16px;
+}
+
+.select-options {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    margin-top: 4px;
+    background: white;
+    border: 1px solid #E5E7EB;
+    border-radius: 6px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 1000;
+    display: none;
+}
+
+.custom-select-container.active .select-options {
+    display: block;
+}
+
+.select-option {
+    padding: 10px 12px;
+    font-size: 14px;
+    color: var(--primary-color);
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.select-option:hover {
+    background-color: #F3F4F6;
+}
+
+.select-option.selected {
+    background-color: #F3F4F6;
+}
+
+/* Divider line between options */
+.select-option:not(:last-child) {
+    border-bottom: 1px solid #F3F4F6;
+}
+
+/* Scrollbar styling for the options */
+.select-options::-webkit-scrollbar {
+    width: 6px;
+}
+
+.select-options::-webkit-scrollbar-track {
+    background: #F3F4F6;
+    border-radius: 3px;
+}
+
+.select-options::-webkit-scrollbar-thumb {
+    background: #D1D5DB;
+    border-radius: 3px;
+}
+
+.select-options::-webkit-scrollbar-thumb:hover {
+    background: #9CA3AF;
+} 
