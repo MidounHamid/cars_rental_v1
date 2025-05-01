@@ -22,32 +22,60 @@ class CarFilter extends Component
     public $specifications;
     public $start_date;
     public $end_date;
+    public $daterange = ''; // Added daterange property
     public $pickup_location;
     public $car_brand;
     public $car_model;
     public $car_type;
     public $fuel_type = [];
     public $specifications_checked = [];
-    public $features = [];
 
     // Search variables
     public $pickup_location_search = '';
     public $car_type_search = '';
     public $car_model_search = '';
+    public $pickup_location_name = ''; // Added to store location name
+    public $car_type_name = ''; // Added to store car type name
+
+    // Define event listeners
+    protected function getListeners()
+    {
+        return [
+            'set-dates' => 'setDates',
+            'clear-dates' => 'clearDates',
+        ];
+    }
 
     public function mount()
     {
         // Initialize filter options
         $this->locations = Location::orderBy('name')->get();
-        $this->fuelTypes = FuelType::select('fuel_type')->distinct()->orderBy('fuel_type')->get();
-
-        $this->typeCars = CarType::select('name')->distinct()->orderBy('name')->get();
+        $this->fuelTypes = FuelType::select('id', 'fuel_type')->distinct()->orderBy('fuel_type')->get();
+        $this->typeCars = CarType::select('id', 'name')->distinct()->orderBy('name')->get();
         $this->specifications = Specification::orderBy('specification')->get();
     }
 
     public function updated($propertyName)
     {
         // Reset pagination when filters change
+        $this->resetPage();
+    }
+
+    // Event handler for when dates are selected
+    public function setDates($data)
+    {
+        $this->start_date = $data['start'];
+        $this->end_date = $data['end'];
+        $this->daterange = $data['display'];
+        $this->resetPage();
+    }
+
+    // Event handler for when dates are cleared
+    public function clearDates()
+    {
+        $this->start_date = null;
+        $this->end_date = null;
+        $this->daterange = '';
         $this->resetPage();
     }
 
@@ -58,8 +86,26 @@ class CarFilter extends Component
         $this->car_model_search = trim($model);
         $this->resetPage();
 
-        // Add this line to dispatch an event for the date picker
+        // Dispatch an event for the date picker
         $this->dispatch('model-selected');
+    }
+
+    // Method to handle pickup location selection
+    public function selectPickupLocation($id, $name)
+    {
+        $this->pickup_location = $id;
+        $this->pickup_location_name = $name;
+        $this->pickup_location_search = $name;
+        $this->resetPage();
+    }
+
+    // Method to handle car type selection
+    public function selectCarType($id, $name)
+    {
+        $this->car_type = $id;
+        $this->car_type_name = $name;
+        $this->car_type_search = $name;
+        $this->resetPage();
     }
 
     public function filterCars()
@@ -90,45 +136,17 @@ class CarFilter extends Component
             $query->where('car_type_id', $this->car_type);
         }
 
-        // Filter by fuel type
+        // Filter by fuel type - Using whereHas to query through relationship
         if (!empty($this->fuel_type)) {
-            $query->whereIn('fuel_type_id', $this->fuel_type);
+            $query->whereHas('fuelType', function ($q) {
+                $q->where('id', $this->fuel_type);
+            });
         }
 
         // Filter by specifications
         if (!empty($this->specifications_checked)) {
             $query->whereHas('specifications', function ($q) {
                 $q->whereIn('specifications.id', $this->specifications_checked);
-            });
-        }
-
-        // Filter by features
-        if (!empty($this->features)) {
-            $query->where(function ($q) {
-                foreach ($this->features as $feature) {
-                    switch ($feature) {
-                        case 'gps':
-                            $q->orWhereHas('specifications', function ($sq) {
-                                $sq->where('specification', 'like', '%GPS%');
-                            });
-                            break;
-                        case 'unlimited_mileage':
-                            $q->orWhereHas('specifications', function ($sq) {
-                                $sq->where('specification', 'like', '%kilométrage illimité%');
-                            });
-                            break;
-                        case 'free_shuttle':
-                            $q->orWhereHas('specifications', function ($sq) {
-                                $sq->where('specification', 'like', '%navette gratuite%');
-                            });
-                            break;
-                        case 'fuel_policy':
-                            $q->orWhereHas('specifications', function ($sq) {
-                                $sq->where('specification', 'like', '%plein/plein%');
-                            });
-                            break;
-                    }
-                }
             });
         }
 
@@ -153,14 +171,16 @@ class CarFilter extends Component
         // Reset all filters and pagination
         $this->reset([
             'pickup_location',
+            'pickup_location_name',
             'car_brand',
             'car_model',
             'car_type',
+            'car_type_name',
             'fuel_type',
             'specifications_checked',
-            'features',
             'start_date',
             'end_date',
+            'daterange', // Added daterange to reset
             'pickup_location_search',
             'car_type_search',
             'car_model_search'
@@ -188,13 +208,25 @@ class CarFilter extends Component
                            return $car;
                        });
 
+        // Filter locations based on search term
+        $filteredLocations = $this->locations->filter(function($location) {
+            return $this->pickup_location_search === '' ||
+                stripos($location->name, $this->pickup_location_search) !== false;
+        });
+
+        // Filter car types based on search term
+        $filteredCarTypes = $this->typeCars->filter(function($type) {
+            return $this->car_type_search === '' ||
+                stripos($type->name, $this->car_type_search) !== false;
+        });
+
         // Return view with filtered data
         return view('livewire.car-filter', [
             'cars' => $this->filterCars(),
             'carModels' => $carModels,
-            'locations' => $this->locations,
+            'locations' => $filteredLocations,
             'fuelTypes' => $this->fuelTypes,
-            'typeCars' => $this->typeCars,
+            'typeCars' => $filteredCarTypes,
             'specifications' => $this->specifications,
         ]);
     }
