@@ -60,4 +60,19 @@ class HomeController
 
         return view('client.cars.listing', compact('cars', 'locations'));
     }
+
+    public function carDetail($id)
+    {
+        $car = Car::with(['brand', 'fuelType', 'carType', 'specifications', 'carImages'])
+            ->findOrFail($id);
+
+        // Get related cars (same category or brand)
+        $relatedCars = Car::where('car_type_id', $car->car_type_id)
+            ->orWhere('brand_id', $car->brand_id)
+            ->where('id', '!=', $car->id)
+            ->take(2)
+            ->get();
+
+        return view('client.cars.cardetail', compact('car', 'relatedCars'));
+    }
 }
