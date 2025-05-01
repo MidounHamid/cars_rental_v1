@@ -26,8 +26,7 @@
                         </div>
                         <div class="select-options">
                             @foreach ($carModels as $car)
-                                <div class="select-option" wire:click="{{ $car->model }}"
->
+                                <div class="select-option" wire:click="selectModel('{{ $car->model }}')">
                                     {{ $car->model }}
                                 </div>
                             @endforeach
@@ -37,61 +36,369 @@
                 </div>
             </div>
 
+<!-- Date Picker -->
+<div class="filter-widget">
+    <h2 class="filter-widget-title">Choose Dates</h2>
+    <div class="filter-widget-content">
+        <div class="date-picker-wrapper" x-data="{
+            showDatePicker: false,
+            startDate: $wire.start_date,
+            endDate: $wire.end_date,
+            currentMonth: new Date().getMonth(),
+            currentYear: new Date().getFullYear(),
+            nextMonth: new Date().getMonth() + 1 > 11 ? 0 : new Date().getMonth() + 1,
+            nextYear: new Date().getMonth() + 1 > 11 ? new Date().getFullYear() + 1 : new Date().getFullYear(),
+            weekdays: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+            months: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
 
-            <!-- Date Picker -->
-            <div class="filter-widget">
-                <h2 class="filter-widget-title">Choose Dates</h2>
-                <div class="filter-widget-content">
-                    <div class="date-picker-wrapper" x-data="{
-                        showDatePicker: false,
-                        startDate: @entangle('start_date'),
-                        endDate: @entangle('end_date'),
-                        init() {
-                            flatpickr('.date-picker-input', {
-                                dateFormat: 'Y-m-d',
-                                onChange: (selectedDates, dateStr, instance) => {
-                                    if (selectedDates.length === 2) {
-                                        this.startDate = selectedDates[0].toISOString().split('T')[0];
-                                        this.endDate = selectedDates[1].toISOString().split('T')[0];
-                                    }
-                                }
-                            });
-                        }
-                    }">
-                        <span class="calendar-icon">
-                            <img src="https://turbo.redq.io/wp-content/uploads/2023/05/date-picker-icon.png"
-                                alt="calendar">
-                        </span>
-                        <input type="text" class="date-picker" placeholder="Choose dates" readonly
-                            x-on:click="showDatePicker = true"
-                            x-text="startDate && endDate ?
-                                `${new Date(startDate).toLocaleDateString()} - ${new Date(endDate).toLocaleDateString()}` :
-                                'Choose dates'">
+            init() {
+                // Initialize with current date if none provided
+                if (!this.startDate) {
+                    const today = new Date();
+                    this.startDate = today.toISOString().split('T')[0];
+                }
 
-                        <!-- Date Picker Dropdown -->
-                        <div class="date-picker-dropdown" x-show="showDatePicker"
-                            x-on:click.away="showDatePicker = false" x-transition>
-                            <div class="date-picker-grid">
-                                <div>
-                                    <label>Start Date</label>
-                                    <input type="date" wire:model="start_date" x-model="startDate"
-                                        class="date-picker-input">
+                // Listen for model-selected event from Livewire
+                $wire.$on('model-selected', () => {
+                    this.startDate = $wire.start_date;
+                    this.endDate = $wire.end_date;
+                });
+            },
+
+            toggleDatePicker() {
+                this.showDatePicker = !this.showDatePicker;
+            },
+
+            formatDateForDisplay(dateStr) {
+                if (!dateStr) return '';
+                const date = new Date(dateStr);
+                return date.toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' });
+            },
+
+            formatDateRange() {
+                if (this.startDate && !this.endDate) {
+                    return this.formatDateForDisplay(this.startDate);
+                } else if (this.startDate && this.endDate) {
+                    return `${this.formatDateForDisplay(this.startDate)}`;
+                }
+                return 'Choose dates';
+            },
+
+            getDaysInMonth(year, month) {
+                return new Date(year, month + 1, 0).getDate();
+            },
+
+            getFirstDayOfMonth(year, month) {
+                return new Date(year, month, 1).getDay();
+            },
+
+            isSelectedDate(date, month, year) {
+                const currentDate = new Date(year, month, date).toISOString().split('T')[0];
+
+                if (this.startDate && this.endDate) {
+                    return currentDate >= this.startDate && currentDate <= this.endDate;
+                }
+
+                return this.startDate === currentDate;
+            },
+
+            isToday(date, month, year) {
+                const today = new Date();
+                return date === today.getDate() && month === today.getMonth() && year === today.getFullYear();
+            },
+
+            selectDate(date, month, year) {
+                const selectedDate = new Date(year, month, date).toISOString().split('T')[0];
+
+                if (!this.startDate || (this.startDate && this.endDate) || selectedDate < this.startDate) {
+                    // Start a new selection
+                    this.startDate = selectedDate;
+                    this.endDate = null;
+                } else {
+                    // Complete the range
+                    this.endDate = selectedDate;
+
+                    // Update Livewire component values
+                    $wire.start_date = this.startDate;
+                    $wire.end_date = this.endDate;
+
+                    // Close the picker after selection
+                    this.showDatePicker = false;
+
+                    // Refresh the component
+                    $wire.$refresh();
+                }
+            },
+
+            nextMonthPanel() {
+                this.currentMonth = (this.currentMonth + 1) % 12;
+                if (this.currentMonth === 0) this.currentYear++;
+
+                this.nextMonth = (this.nextMonth + 1) % 12;
+                if (this.nextMonth === 0) this.nextYear++;
+            },
+
+            prevMonthPanel() {
+                this.currentMonth = (this.currentMonth - 1 + 12) % 12;
+                if (this.currentMonth === 11) this.currentYear--;
+
+                this.nextMonth = (this.nextMonth - 1 + 12) % 12;
+                if (this.nextMonth === 11) this.nextYear--;
+            }
+        }">
+            <div class="input-wrapper" @click="toggleDatePicker()">
+                <span class="calendar-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                        <line x1="16" y1="2" x2="16" y2="6"></line>
+                        <line x1="8" y1="2" x2="8" y2="6"></line>
+                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                    </svg>
+                </span>
+                <input type="text"
+                    class="date-picker-input"
+                    placeholder="Choose dates"
+                    readonly
+                    x-bind:value="formatDateRange()">
+            </div>
+
+            <!-- Date Picker Dropdown -->
+            <div class="date-picker-dropdown" x-show="showDatePicker" @click.away="showDatePicker = false">
+                <div class="date-picker-header">
+                    <button type="button" class="prev-month-btn" @click="prevMonthPanel">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="15 18 9 12 15 6"></polyline>
+                        </svg>
+                    </button>
+                    <div class="date-picker-months">
+                        <div class="month-display">
+                            <span x-text="months[currentMonth] + ' ' + currentYear"></span>
+                        </div>
+                        <div class="month-display">
+                            <span x-text="months[nextMonth] + ' ' + nextYear"></span>
+                        </div>
+                    </div>
+                    <button type="button" class="next-month-btn" @click="nextMonthPanel">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="9 18 15 12 9 6"></polyline>
+                        </svg>
+                    </button>
+                </div>
+
+                <div class="date-picker-calendars">
+                    <!-- Current Month Calendar -->
+                    <div class="calendar-month">
+                        <div class="calendar-weekdays">
+                            <template x-for="day in weekdays">
+                                <div class="weekday" x-text="day"></div>
+                            </template>
+                        </div>
+                        <div class="calendar-days">
+                            <!-- Empty cells for days before the 1st -->
+                            <template x-for="i in getFirstDayOfMonth(currentYear, currentMonth)">
+                                <div class="day-cell empty"></div>
+                            </template>
+
+                            <!-- Actual days -->
+                            <template x-for="day in getDaysInMonth(currentYear, currentMonth)">
+                                <div
+                                    class="day-cell"
+                                    :class="{
+                                        'current-day': isToday(day, currentMonth, currentYear),
+                                        'selected': isSelectedDate(day, currentMonth, currentYear)
+                                    }"
+                                    @click="selectDate(day, currentMonth, currentYear)"
+                                >
+                                    <span x-text="day"></span>
                                 </div>
-                                <div>
-                                    <label>End Date</label>
-                                    <input type="date" wire:model="end_date" x-model="endDate"
-                                        class="date-picker-input">
+                            </template>
+                        </div>
+                    </div>
+
+                    <!-- Next Month Calendar -->
+                    <div class="calendar-month">
+                        <div class="calendar-weekdays">
+                            <template x-for="day in weekdays">
+                                <div class="weekday" x-text="day"></div>
+                            </template>
+                        </div>
+                        <div class="calendar-days">
+                            <!-- Empty cells for days before the 1st -->
+                            <template x-for="i in getFirstDayOfMonth(nextYear, nextMonth)">
+                                <div class="day-cell empty"></div>
+                            </template>
+
+                            <!-- Actual days -->
+                            <template x-for="day in getDaysInMonth(nextYear, nextMonth)">
+                                <div
+                                    class="day-cell"
+                                    :class="{
+                                        'current-day': isToday(day, nextMonth, nextYear),
+                                        'selected': isSelectedDate(day, nextMonth, nextYear)
+                                    }"
+                                    @click="selectDate(day, nextMonth, nextYear)"
+                                >
+                                    <span x-text="day"></span>
                                 </div>
-                            </div>
-                            <button class="date-picker-apply" x-on:click="showDatePicker = false">
-                                Apply
-                            </button>
+                            </template>
                         </div>
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+</div>
 
-            <!-- Pickup Location -->
+<style>
+.date-picker-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    padding: 8px 12px;
+    background-color: #fff;
+}
+
+.calendar-icon {
+    margin-right: 8px;
+    color: #666;
+}
+
+.date-picker-input {
+    border: none;
+    outline: none;
+    width: 100%;
+    font-size: 14px;
+    padding: 4px 0;
+    cursor: pointer;
+}
+
+.date-picker-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 999;
+    width: 600px;
+    background-color: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    margin-top: 8px;
+    padding: 16px;
+}
+
+.date-picker-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.date-picker-months {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+}
+
+.month-display {
+    text-align: center;
+    font-weight: 600;
+    font-size: 14px;
+    width: 50%;
+}
+
+.prev-month-btn, .next-month-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px 8px;
+    color: #666;
+}
+
+.date-picker-calendars {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.calendar-month {
+    width: 50%;
+}
+
+.calendar-weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    margin-bottom: 8px;
+}
+
+.weekday {
+    text-align: center;
+    font-size: 12px;
+    font-weight: 600;
+    color: #666;
+    padding: 4px 0;
+}
+
+.calendar-days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+}
+
+.day-cell {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 32px;
+    width: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 13px;
+    margin: 0 auto;
+}
+
+.day-cell:hover {
+    background-color: #f5f5f5;
+}
+
+.day-cell.empty {
+    pointer-events: none;
+}
+
+.day-cell.current-day {
+    background-color: #e6f7ff;
+    font-weight: 600;
+}
+
+.day-cell.selected {
+    background-color: #1a73e8;
+    color: white;
+}
+
+@media (max-width: 768px) {
+    .date-picker-dropdown {
+        width: 100%;
+    }
+
+    .date-picker-calendars {
+        flex-direction: column;
+    }
+
+    .calendar-month {
+        width: 100%;
+        margin-bottom: 16px;
+    }
+}
+</style>
+
+            <!-- Pickup Location Fix -->
             <div class="filter-widget">
                 <h2 class="filter-widget-title">Pickup Location</h2>
                 <div class="filter-widget-content">
@@ -108,12 +415,10 @@
                         </div>
                         <div class="select-options">
                             @foreach ($locations as $location)
-                                <div class="select-option" wire:click="$set('pickup_location', '{{ $location->id }}')"
-                                    :class="{
-                                        'selected': '{{ $location->id }}'
-                                        === '{{ $pickup_location }}'
-                                    }">
-                                    {{ $location->name }} - {{ ucfirst(str_replace('_', ' ', $location->type)) }}
+                                <div class="select-option"
+                                    wire:click="selectPickupLocation('{{ $location->id }}', '{{ trim($location->name) }}')"
+                                    @if ($pickup_location == $location->id) class="selected" @endif>
+                                    {{ trim($location->name) }} - {{ ucfirst(str_replace('_', ' ', $location->type)) }}
                                 </div>
                             @endforeach
                         </div>
@@ -121,7 +426,8 @@
                 </div>
             </div>
 
-            <!-- Choose car type -->
+
+            <!-- Choose car type Fix -->
             <div class="filter-widget">
                 <h2 class="filter-widget-title">Choose type of car</h2>
                 <div class="filter-widget-content">
@@ -138,8 +444,10 @@
                         </div>
                         <div class="select-options">
                             @foreach ($typeCars as $type)
-                                <div class="select-option" wire:click="{{ $type->id }}">
-                                    {{ $type->name }}
+                                <div class="select-option"
+                                    wire:click="selectCarType('{{ $type->id }}', '{{ trim($type->name) }}')"
+                                    @if ($car_type == $type->id) class="selected" @endif>
+                                    {{ trim($type->name) }}
                                 </div>
                             @endforeach
                         </div>
@@ -147,7 +455,7 @@
                 </div>
             </div>
 
-            <!-- Fuel Type -->
+            <!-- Fuel Type Fix -->
             <div class="filter-widget">
                 <h2 class="filter-widget-title">Fuel Type</h2>
                 <div class="filter-widget-content">
@@ -163,7 +471,7 @@
                                             class="path"></path>
                                     </svg>
                                 </span>
-                                <span class="label-text">{{ $fuelType->fuel_type }}</span>
+                                <span class="label-text">{{ trim($fuelType->fuel_type) }}</span>
                             </label>
                         @endforeach
                     </div>

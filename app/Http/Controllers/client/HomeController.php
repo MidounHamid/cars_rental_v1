@@ -35,10 +35,7 @@ class HomeController
 
         $query = Car::query();
         $locations = Location::orderBy('name')->get();
-        $brands = Brand::orderBy('brand')->get();
-        $fuelTypes = FuelType::select('fuel_type')->distinct()->orderBy('fuel_type')->get();
-        $typeCars = CarType::select('name')->distinct()->orderBy('name')->get();
-        $specifications = Specification::orderBy('specification')->get();
+
         // Filter by delivery location
         if ($from) {
             $query->whereHas('deliveryLocations', function ($q) use ($from) {
@@ -61,7 +58,6 @@ class HomeController
 
         $cars = $query->paginate(10);
 
-        // ✅ Pass $brands to the view
-        return view('client.cars.listing', compact('cars', 'locations', 'brands', 'fuelTypes','typeCars','specifications'));
+        return view('client.cars.listing', compact('cars', 'locations'));
     }
 }
