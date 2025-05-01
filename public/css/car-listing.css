@@ -13,10 +13,11 @@
     display: flex;
     max-width: 1400px;
     margin: 0 auto;
-    padding: 0;
-    gap: 10px;
+    padding: 20px;
+    gap: 20px;
     position: relative;
     align-items: flex-start;
+    min-height: 100vh;
 }
 
 
@@ -207,7 +208,7 @@
 .main-content {
     flex: 1;
     min-width: 0;
-    padding: 32px 32px 32px 32px;
+    padding: 32px;
     display: flex;
     flex-direction: column;
     background: #fff;
@@ -226,13 +227,33 @@
     text-align: left;
 }
 
+/* Cars Grid Container */
 .cars-grid {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 20px;
     width: 100%;
     padding: 0;
     margin: 0;
+}
+
+/* Scrollbar styles for cars grid */
+.cars-grid::-webkit-scrollbar {
+    width: 6px;
+}
+
+.cars-grid::-webkit-scrollbar-track {
+    background: #f8f9fa;
+    border-radius: 3px;
+}
+
+.cars-grid::-webkit-scrollbar-thumb {
+    background: #cbd5e0;
+    border-radius: 3px;
+}
+
+.cars-grid::-webkit-scrollbar-thumb:hover {
+    background: #a0aec0;
 }
 
 /* Car Card */
@@ -748,6 +769,15 @@
     .car-specs {
         grid-template-columns: 1fr;
     }
+
+    .main-content {
+        padding: 20px;
+    }
+    
+    .cars-grid {
+        max-height: none;
+        overflow-y: visible;
+    }
 }
 
 /* Style de la scrollbar pour la sidebar */
@@ -1005,6 +1035,34 @@ select[data-search="true"] option:checked {
     background: white;
     border-radius: 8px;
     padding: 1px;
+    position: sticky;
+    top: 20px;
+}
+
+/* Supprimer les styles de scrollbar de la sidebar qui ne sont plus nécessaires */
+.inspect-filter-form-wrapper::-webkit-scrollbar {
+    display: none;
+}
+
+/* Ajuster le conteneur principal */
+.page-container {
+    display: flex;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+    gap: 20px;
+    position: relative;
+    align-items: flex-start;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .inspect-filter-form-wrapper {
+        position: relative;
+        top: 0;
+        width: 100%;
+        margin-bottom: 20px;
+    }
 }
 
 /* Header styles */
@@ -1425,4 +1483,53 @@ select.location-select::-ms-expand {
     padding-top: 1rem;
     border-top: 1px solid #eee;
     margin-top: auto;
+}
+
+/* Scrollbar styles for the sidebar */
+.inspect-filter-form-wrapper::-webkit-scrollbar {
+    width: 4px;
+}
+
+.inspect-filter-form-wrapper::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 2px;
+}
+
+.inspect-filter-form-wrapper::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 2px;
+}
+
+.inspect-filter-form-wrapper::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .inspect-filter-form-wrapper {
+        position: relative;
+        top: 0;
+        height: auto;
+        width: 100%;
+        margin-bottom: 20px;
+    }
+}
+
+/* Scrollbar styles for main content */
+.main-content::-webkit-scrollbar {
+    width: 6px;
+}
+
+.main-content::-webkit-scrollbar-track {
+    background: #f8f9fa;
+    border-radius: 3px;
+}
+
+.main-content::-webkit-scrollbar-thumb {
+    background: #cbd5e0;
+    border-radius: 3px;
+}
+
+.main-content::-webkit-scrollbar-thumb:hover {
+    background: #a0aec0;
 }
