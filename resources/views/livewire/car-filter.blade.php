@@ -192,6 +192,34 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Features -->
+            <div class="filter-widget">
+                <h2 class="filter-widget-title">Features</h2>
+                <div class="filter-widget-content">
+                    <div class="search-box">
+                        <input type="text" placeholder="Search features" class="sidebar-search-input">
+                    </div>
+                    <div class="checkbox-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" wire:model.live="features" value="gps">
+                            <span class="label-text">GPS</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" wire:model.live="features" value="unlimited_mileage">
+                            <span class="label-text">Kilométrage illimité</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" wire:model.live="features" value="free_shuttle">
+                            <span class="label-text">Navette gratuite</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" wire:model.live="features" value="fuel_policy">
+                            <span class="label-text">Politique carburant: Plein/Plein</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
         </form>
     </div>
 
@@ -254,12 +282,9 @@
                             <div class="car-description">
                                 {{ $car->description ?? 'Luxurious car with premium features, perfect for both city driving and long trips.' }}
                             </div>
-                            <div class="car-footer">
-                                <div class="car-price">
-                                    <span class="price">{{ number_format($car->price_per_day, 0, ',', ' ') }}</span>
-                                    <span class="price-currency">DH/Day</span>
-                                </div>
-                                <button class="book-now">BOOK NOW</button>
+                            <div class="car-card-footer">
+                                <div class="car-price">${{ number_format($car->price_per_day, 2) }}/Day</div>
+                                <a href="{{ route('cars.detail', $car->id) }}" class="book-now">Book Now</a>
                             </div>
                         </div>
                     </div>

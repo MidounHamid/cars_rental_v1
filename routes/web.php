@@ -31,6 +31,7 @@ Route::get('/abouts', function () {
 
 
 Route::get('/car-listing', [HomeController::class, 'carListing'])->name('cars.listing');
+Route::get('/car-detail/{id}', [HomeController::class, 'carDetail'])->name('cars.detail');
 
 // Add the route for fetching agency cities
 Route::get('/agencies/cities', [AgencieController::class, 'getCities'])->name('agencies.cities');

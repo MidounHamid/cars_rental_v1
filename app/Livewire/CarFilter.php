@@ -28,6 +28,7 @@ class CarFilter extends Component
     public $car_type;
     public $fuel_type = [];
     public $specifications_checked = [];
+    public $features = [];
 
     // Search variables
     public $pickup_location_search = '';
@@ -101,6 +102,36 @@ class CarFilter extends Component
             });
         }
 
+        // Filter by features
+        if (!empty($this->features)) {
+            $query->where(function ($q) {
+                foreach ($this->features as $feature) {
+                    switch ($feature) {
+                        case 'gps':
+                            $q->orWhereHas('specifications', function ($sq) {
+                                $sq->where('specification', 'like', '%GPS%');
+                            });
+                            break;
+                        case 'unlimited_mileage':
+                            $q->orWhereHas('specifications', function ($sq) {
+                                $sq->where('specification', 'like', '%kilométrage illimité%');
+                            });
+                            break;
+                        case 'free_shuttle':
+                            $q->orWhereHas('specifications', function ($sq) {
+                                $sq->where('specification', 'like', '%navette gratuite%');
+                            });
+                            break;
+                        case 'fuel_policy':
+                            $q->orWhereHas('specifications', function ($sq) {
+                                $sq->where('specification', 'like', '%plein/plein%');
+                            });
+                            break;
+                    }
+                }
+            });
+        }
+
         // Filter by date range (availability check)
         if ($this->start_date && $this->end_date) {
             $start = Carbon::parse($this->start_date);
@@ -127,6 +158,7 @@ class CarFilter extends Component
             'car_type',
             'fuel_type',
             'specifications_checked',
+            'features',
             'start_date',
             'end_date',
             'pickup_location_search',

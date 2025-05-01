@@ -367,6 +367,7 @@
     cursor: pointer;
     font-weight: 600;
     transition: background-color 0.3s ease;
+    text-decoration: none;
 }
 .book-now:hover {
     background-color: #b31419;
@@ -1163,77 +1164,94 @@ select.location-select::-ms-expand {
     display: flex;
     flex-direction: column;
     gap: 12px;
+    margin-top: 12px;
+    max-height: 200px;
+    overflow-y: auto;
+    padding-right: 8px;
 }
 
 .checkbox-label {
     display: flex;
     align-items: center;
+    gap: 8px;
     cursor: pointer;
-    user-select: none;
-    padding: 2px;
+    transition: all 0.2s ease;
+}
+
+.checkbox-label:hover {
+    color: var(--primary-color);
 }
 
 .checkbox-label input[type="checkbox"] {
-    display: none;
-}
-
-.checkbox-custom {
+    width: 16px;
+    height: 16px;
+    border: 2px solid var(--border-color);
+    border-radius: 4px;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
     position: relative;
-    width: 20px;
-    height: 20px;
-    margin-right: 12px;
+    transition: all 0.2s ease;
 }
 
-.checkbox-custom svg {
+.checkbox-label input[type="checkbox"]:checked {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.checkbox-label input[type="checkbox"]:checked::after {
+    content: '✓';
     position: absolute;
-    top: 0;
-    left: 0;
-    overflow: visible;
-    width: 20px;
-    height: 20px;
-}
-
-.checkbox-custom .path {
-    fill: none;
-    stroke: var(--secondary-color);
-    stroke-width: 2;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-    transition: stroke-dasharray 0.5s ease, stroke-dashoffset 0.5s ease;
-    stroke-dasharray: 241 9999999;
-    stroke-dashoffset: 0;
-}
-
-.checkbox-label input[type="checkbox"]:checked ~ .checkbox-custom .path {
-    stroke-dasharray: 70.5096664428711 9999999;
-    stroke-dashoffset: -262.2723388671875;
+    color: white;
+    font-size: 12px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 
 .label-text {
     font-size: 14px;
-    color: var(--primary-color);
-    line-height: 1.4;
+    color: var(--secondary-color);
 }
 
-/* Search box in Features and Attributes */
+/* Search box styles */
 .search-box {
     position: relative;
-    margin-bottom: 15px;
+    margin-bottom: 12px;
 }
 
 .search-box input {
-    padding-right: 35px;
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    font-size: 14px;
+    transition: all 0.2s ease;
 }
 
-.search-icon {
-    position: absolute;
-    right: 12px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 14px;
-    height: 14px;
-    color: var(--text-light);
-    pointer-events: none;
+.search-box input:focus {
+    border-color: var(--primary-color);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(47, 47, 47, 0.1);
+}
+
+/* Scrollbar styles for checkbox group */
+.checkbox-group::-webkit-scrollbar {
+    width: 4px;
+}
+
+.checkbox-group::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 2px;
+}
+
+.checkbox-group::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 2px;
+}
+
+.checkbox-group::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
 }
 
 /* Flatpickr customization */
@@ -1398,4 +1416,13 @@ select.location-select::-ms-expand {
 
 .select-options::-webkit-scrollbar-thumb:hover {
     background: #9CA3AF;
+}
+
+.car-card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 1rem;
+    border-top: 1px solid #eee;
+    margin-top: auto;
 }

@@ -71,17 +71,16 @@ class Car extends Model
 
     public function specifications()
     {
-        return $this->belongsToMany(Specification::class, 'car_specifications', 'car_id', 'specification_id');
+        return $this->belongsToMany(Specification::class, 'car_spefications', 'car_id', 'specification_id');
     }
-    public function bookings()
-{
-    return $this->hasMany(Booking::class);
-}
 
+    public function bookings()
+    {
+        return $this->hasMany(Booking::class);
+    }
 
     public function deliveryLocations()
-{
-    return $this->belongsToMany(Location::class, 'car_delivery_locations');
-}
-
+    {
+        return $this->belongsToMany(Location::class, 'car_delivery_locations');
+    }
 }
