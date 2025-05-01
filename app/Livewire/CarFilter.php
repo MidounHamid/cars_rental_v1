@@ -38,19 +38,9 @@ class CarFilter extends Component
     {
         // Initialize filter options
         $this->locations = Location::orderBy('name')->get();
+        $this->fuelTypes = FuelType::select('fuel_type')->distinct()->orderBy('fuel_type')->get();
 
-        // Fix: Get unique fuel types by using groupBy and pluck in the collection
-        $this->fuelTypes = FuelType::select('id', 'fuel_type')
-            ->orderBy('fuel_type')
-            ->get()
-            ->unique('fuel_type');  // This ensures we get unique fuel types at the collection level
-
-        // Fix: Get unique car types by using groupBy and pluck in the collection
-        $this->typeCars = CarType::select('id', 'name')
-            ->orderBy('name')
-            ->get()
-            ->unique('name');  // This ensures we get unique car types at the collection level
-
+        $this->typeCars = CarType::select('name')->distinct()->orderBy('name')->get();
         $this->specifications = Specification::orderBy('specification')->get();
     }
 
@@ -71,22 +61,6 @@ class CarFilter extends Component
         $this->dispatch('model-selected');
     }
 
-    // Fix: Method to handle car type selection
-    public function selectCarType($id, $name)
-    {
-        $this->car_type = $id;
-        $this->car_type_search = $name;
-        $this->resetPage();
-    }
-
-    // Fix: Method to handle pickup location selection
-    public function selectPickupLocation($id, $name)
-    {
-        $this->pickup_location = $id;
-        $this->pickup_location_search = $name;
-        $this->resetPage();
-    }
-
     public function filterCars()
     {
         $query = Car::with(['brand', 'carType', 'fuelType', 'carImages', 'agency']);
@@ -94,20 +68,20 @@ class CarFilter extends Component
         // Filter by car brand
         if ($this->car_brand) {
             $query->whereHas('brand', function ($q) {
-                $q->where('brand', 'like', '%' . trim($this->car_brand) . '%');
+                $q->where('brand', 'like', '%' . $this->car_brand . '%');
             });
         }
 
         // Filter by pickup location
         if ($this->pickup_location) {
             $query->whereHas('deliveryLocations', function ($q) {
-                $q->where('locations.id', $this->pickup_location);
+                $q->where('id', $this->pickup_location);
             });
         }
 
         // Filter by car model
         if ($this->car_model) {
-            $query->where('model', 'like', '%' . trim($this->car_model) . '%');
+            $query->where('model', 'like', '%' . $this->car_model . '%');
         }
 
         // Filter by car type
@@ -168,12 +142,12 @@ class CarFilter extends Component
         $carModels = Car::select('cars.id', 'cars.model')
                        ->when($this->car_brand, function($query) {
                            $query->join('brands', 'cars.brand_id', '=', 'brands.id')
-                                 ->where('brands.brand', 'like', '%' . trim($this->car_brand) . '%');
+                                 ->where('brands.brand', 'like', '%' . $this->car_brand . '%');
                        })
                        ->when($this->car_model_search, function($query) {
-                           $query->where('cars.model', 'like', '%' . trim($this->car_model_search) . '%');
+                           $query->where('cars.model', 'like', '%' . $this->car_model_search . '%');
                        })
-                       ->distinct('cars.model')  // Use distinct at the database level
+                       ->distinct('cars.model')
                        ->orderBy('cars.model')
                        ->get()
                        // Clean up spaces in model names
@@ -186,15 +160,9 @@ class CarFilter extends Component
         return view('livewire.car-filter', [
             'cars' => $this->filterCars(),
             'carModels' => $carModels,
-            'locations' => $this->locations->filter(function($location) {
-                return empty($this->pickup_location_search) ||
-                       stripos($location->name, $this->pickup_location_search) !== false;
-            }),
+            'locations' => $this->locations,
             'fuelTypes' => $this->fuelTypes,
-            'typeCars' => $this->typeCars->filter(function($type) {
-                return empty($this->car_type_search) ||
-                       stripos($type->name, $this->car_type_search) !== false;
-            }),
+            'typeCars' => $this->typeCars,
             'specifications' => $this->specifications,
         ]);
     }

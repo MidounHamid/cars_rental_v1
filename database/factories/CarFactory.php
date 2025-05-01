@@ -26,7 +26,7 @@ class CarFactory extends Factory
             'car_type_id' => \App\Models\CarType::factory(),
             'city' => $this->faker->city,
             'price_per_day' => $this->faker->randomFloat(2, 30, 150),  // Price range adjusted for realism
-            'fuel_types_id' => \App\Models\FuelType::factory(),
+'fuel_types_id' => \App\Models\FuelType::inRandomOrder()->first()->id,
             'transmission' => $this->faker->randomElement(['Automatic', 'Manual', 'CVT', 'Semi-Automatic']),
             'seats' => $this->faker->numberBetween(2, 7),
             'is_available' => $this->faker->boolean,
