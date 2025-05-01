@@ -52,7 +52,7 @@
             <link rel="stylesheet" type="text/css"
                 href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 
-            @push('scripts')
+                @push('scripts')
                 <script>
                     document.addEventListener('livewire:initialized', function () {
                         initDateRangePicker();
@@ -92,16 +92,18 @@
 
                             $('#daterange').on('apply.daterangepicker', function(ev, picker) {
                                 $(this).val(picker.startDate.format('DD/MM/YYYY') + ' - ' + picker.endDate.format('DD/MM/YYYY'));
-                                window.Livewire.dispatch('set-dates', {
-                                    start: picker.startDate.format('YYYY-MM-DD'),
-                                    end: picker.endDate.format('YYYY-MM-DD'),
-                                    display: $(this).val()
-                                });
+
+                                // Use Livewire's call() method instead of dispatch
+                                @this.call('setDates',
+                                    picker.startDate.format('YYYY-MM-DD'),
+                                    picker.endDate.format('YYYY-MM-DD'),
+                                    $(this).val()
+                                );
                             });
 
                             $('#daterange').on('cancel.daterangepicker', function(ev, picker) {
                                 $(this).val('');
-                                window.Livewire.dispatch('clear-dates');
+                                @this.call('clearDates');
                             });
                         }
                     }
