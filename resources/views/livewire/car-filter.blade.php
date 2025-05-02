@@ -376,7 +376,7 @@
                                 <img src="{{ asset('storage/' . $primaryImage->image_path) }}"
                                     alt="{{ $car->brand->brand }} {{ $car->model }}">
                             @else
-                                <img src="{{ asset('storage/defaultcarimage.png') }}" alt="Default Image">
+                                <img src="{{ asset('images/defaultcarimage.png') }}" alt="Default Image">
                             @endif
                         </div>
                         <div class="car-info">

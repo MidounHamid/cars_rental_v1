@@ -59,7 +59,7 @@
                                 @if ($primaryImage)
                                     <img src="{{ asset('storage/' . $primaryImage->image_path) }}" alt="{{ $car->model }}">
                                 @else
-                                    <img src="{{ asset('storage/defaultcarimage.png') }}" alt="Default Car Image">
+                                    <img src="{{ asset('images/defaultcarimage.png') }}" alt="Default Car Image">
                                 @endif
                             </div>
 
