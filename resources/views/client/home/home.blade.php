@@ -15,12 +15,13 @@
             <div class="search-form-container">
                 <form class="search-form" action="{{ route('cars.listing') }}" method="GET">
                     <div class="form-group">
-                        <label>WHERE YOU FROM</label>
+                        <label>PICKUP LOCATION</label>
                         <div class="location-input-wrapper">
-                            <input type="text" class="location-input" name="from" placeholder="Choose Location">
+                            <input type="text" class="location-input" name="from" id="from-location" 
+                                   placeholder="Choose Location" autocomplete="off">
                             <div class="location-dropdown">
                                 @foreach ($locations as $location)
-                                    <div class="location-option" data-value="{{ $location->name }}">
+                                    <div class="location-option" data-value="{{ $location->id }}" data-name="{{ $location->name }}">
                                         {{ $location->name }} - {{ ucfirst(str_replace('_', ' ', $location->type)) }}
                                     </div>
                                 @endforeach
@@ -30,16 +31,15 @@
                     <div class="form-group">
                         <label>CHOOSE DATES</label>
                         <div class="dates-input-wrapper">
-                            <input type="text" class="dates-input" name="dates" placeholder="Select dates"
-                                readonly>
+                            <input type="text" class="dates-input" name="dates" placeholder="Select dates" readonly>
                             <input type="hidden" name="start_date" id="start_date">
                             <input type="hidden" name="end_date" id="end_date">
-
                         </div>
                     </div>
                     <button type="submit" class="search-btn">Search</button>
                 </form>
             </div>
+            
         </div>
     </div>
 
@@ -318,7 +318,10 @@
 
             locationOptions.forEach(option => {
                 option.addEventListener('click', () => {
-                    locationInput.value = option.textContent;
+                    const locationId = option.getAttribute('data-value');
+                    const locationName = option.getAttribute('data-name');
+                    locationInput.value = locationName;
+                    locationInput.setAttribute('data-location-id', locationId);
                     locationDropdown.style.display = 'none';
                 });
             });
@@ -327,7 +330,7 @@
             $('.dates-input').daterangepicker({
                 autoUpdateInput: false,
                 opens: 'center',
-                showDropdowns: false,
+                showDropdowns: true,
                 minDate: moment(),
                 startDate: moment(),
                 endDate: moment().add(1, 'days'),
@@ -351,9 +354,10 @@
 
             // When user applies the date range
             $('.dates-input').on('apply.daterangepicker', function (ev, picker) {
+                // Update the display
                 $(this).val(picker.startDate.format('YYYY-MM-DD') + ' to ' + picker.endDate.format('YYYY-MM-DD'));
 
-                // Set hidden inputs
+                // Set hidden inputs with the correct format
                 $('#start_date').val(picker.startDate.format('YYYY-MM-DD'));
                 $('#end_date').val(picker.endDate.format('YYYY-MM-DD'));
             });
@@ -365,6 +369,25 @@
                 $('#end_date').val('');
             });
 
+            // Handle form submission
+            document.querySelector('.search-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const startDate = document.getElementById('start_date').value;
+                const endDate = document.getElementById('end_date').value;
+                const locationId = locationInput.getAttribute('data-location-id');
+                
+                // Create the URL with query parameters
+                const baseUrl = this.getAttribute('action');
+                const params = new URLSearchParams();
+                
+                if (locationId) params.append('pickup_location', locationId);
+                if (startDate) params.append('start_date', startDate);
+                if (endDate) params.append('end_date', endDate);
+                
+                // Redirect to the listing page with the parameters
+                window.location.href = `${baseUrl}?${params.toString()}`;
+            });
         });
     </script>
 </x-app-layout>

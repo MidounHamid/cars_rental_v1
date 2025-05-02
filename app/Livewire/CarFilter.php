@@ -61,6 +61,27 @@ class CarFilter extends Component
         $this->fuelTypes = FuelType::select('id', 'fuel_type')->distinct()->orderBy('fuel_type')->get();
         $this->typeCars = CarType::select('id', 'name')->distinct()->orderBy('name')->get();
         $this->specifications = Specification::orderBy('specification')->get();
+
+        // Get search parameters from URL
+        $pickup_location = request('pickup_location');
+        $start_date = request('start_date');
+        $end_date = request('end_date');
+
+        // Set initial values if provided in URL
+        if ($pickup_location) {
+            $location = Location::find($pickup_location);
+            if ($location) {
+                $this->pickup_location = $location->id;
+                $this->pickup_location_name = $location->name;
+                $this->pickup_location_search = $location->name;
+            }
+        }
+
+        if ($start_date && $end_date) {
+            $this->start_date = $start_date;
+            $this->end_date = $end_date;
+            $this->daterange = Carbon::parse($start_date)->format('d/m/Y') . ' - ' . Carbon::parse($end_date)->format('d/m/Y');
+        }
     }
 
     public function updated($propertyName)
