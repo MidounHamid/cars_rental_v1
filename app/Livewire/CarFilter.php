@@ -113,9 +113,10 @@ class CarFilter extends Component
 
         if ($this->pickup_location) {
             $query->whereHas('deliveryLocations', function ($q) {
-                $q->where('id', $this->pickup_location);
+                $q->where('locations.id', $this->pickup_location);
             });
         }
+
 
         if ($this->car_model) {
             $query->where('model', 'like', '%' . $this->car_model . '%');
