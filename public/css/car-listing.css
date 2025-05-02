@@ -773,7 +773,7 @@
     .main-content {
         padding: 20px;
     }
-    
+
     .cars-grid {
         max-height: none;
         overflow-y: visible;
@@ -1218,59 +1218,82 @@ select.location-select::-ms-expand {
 }
 
 /* Checkbox styles */
-.checkbox-group {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    margin-top: 12px;
-    max-height: 200px;
-    overflow-y: auto;
-    padding-right: 8px;
-}
-
-.checkbox-label {
-    display: flex;
-    align-items: center;
-    gap: 8px;
+/* Animated checkbox with background */
+.container-checkbox {
     cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.checkbox-label:hover {
-    color: var(--primary-color);
-}
-
-.checkbox-label input[type="checkbox"] {
-    width: 16px;
-    height: 16px;
-    border: 2px solid var(--border-color);
-    border-radius: 4px;
-    cursor: pointer;
-    appearance: none;
-    -webkit-appearance: none;
     position: relative;
-    transition: all 0.2s ease;
-}
+    display: inline-flex;
+    align-items: center;
+  }
 
-.checkbox-label input[type="checkbox"]:checked {
-    background-color: var(--primary-color);
-    border-color: var(--primary-color);
-}
+  .container-checkbox input {
+    display: none;
+  }
 
-.checkbox-label input[type="checkbox"]:checked::after {
-    content: '✓';
+  .container-checkbox svg {
+    overflow: visible;
+    position: relative;
+    z-index: 2;
+    width: 1.3em;
+  }
+
+  /* Background for the checkbox */
+  .container-checkbox::before {
+    content: "";
     position: absolute;
-    color: white;
-    font-size: 12px;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-}
+    width:  1.3em;
+    height: 1.3em;
+    background-color: white;
+    border-radius: 4px;
+    box-shadow: 0 0 0 1px #ddd;
+    z-index: 1;
+  }
 
-.label-text {
+  .path {
+    fill: none;
+    stroke: var(--secondary-color); /* Use your primary color */
+    stroke-width: 6;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    transition: stroke-dasharray 0.5s ease;
+    stroke-dasharray: 0 0 240 9999999;
+    stroke-dashoffset: 1;
+    scale: -1 1;
+    transform-origin: center;
+    animation: hi 0.5s;
+  }
+
+  .container-checkbox input:checked ~ svg .path {
+    stroke-dasharray: 0 262 70 9999999;
+    transition-delay: 0s;
+    scale: 1 1;
+    animation: none;
+  }
+
+  /* Optional: Change background color when checked */
+  .container-checkbox input:checked ~ ::before {
+    background-color: #f8f9fa;
+  }
+
+  @keyframes hi {
+    0% {
+      stroke-dashoffset: 20;
+    }
+    to {
+      stroke-dashoffset: 1;
+    }
+  }
+
+  /* For the label text */
+  .label-text {
+    margin-left: 12px;
     font-size: 14px;
-    color: var(--secondary-color);
-}
+    color: #333;
+  }
+
+
+
+
 
 /* Search box styles */
 .search-box {

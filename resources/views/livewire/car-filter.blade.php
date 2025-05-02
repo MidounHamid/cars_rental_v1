@@ -52,9 +52,9 @@
             <link rel="stylesheet" type="text/css"
                 href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 
-                @push('scripts')
+            @push('scripts')
                 <script>
-                    document.addEventListener('livewire:initialized', function () {
+                    document.addEventListener('livewire:initialized', function() {
                         initDateRangePicker();
 
                         // Re-initialize when Livewire updates the DOM
@@ -91,7 +91,8 @@
                             });
 
                             $('#daterange').on('apply.daterangepicker', function(ev, picker) {
-                                $(this).val(picker.startDate.format('DD/MM/YYYY') + ' - ' + picker.endDate.format('DD/MM/YYYY'));
+                                $(this).val(picker.startDate.format('DD/MM/YYYY') + ' - ' + picker.endDate.format(
+                                'DD/MM/YYYY'));
 
                                 // Use Livewire's call() method instead of dispatch
                                 @this.call('setDates',
@@ -251,6 +252,9 @@
                     font-weight: 500;
                     color: #333;
                 }
+
+
+
             </style>
 
             <!-- Pickup Location -->
@@ -338,7 +342,7 @@
                     </div>
                     <div class="checkbox-group">
                         @foreach ($specifications as $specification)
-                        <label class="checkbox-label">
+                            {{-- <label class="checkbox-label">
                             <input type="checkbox" wire:model.live="specifications_checked"
                             value="{{ $specification->id }}" class="hidden-checkbox">
                         <span class="checkbox-custom">
@@ -347,9 +351,21 @@
                                     d="M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16"
                                     class="path"></path>
                             </svg>
-                        </span>
-                        <span class="label-text">{{ $specification->specification }}</span>
-                        </label>
+                        </span> --}}
+
+
+
+                        <label class="container-checkbox">
+                            <input type="checkbox" wire:model.live="specifications_checked" value="{{ $specification->id }}" />
+                            <svg viewBox="0 0 64 64" height="2em" width="2em">
+                              <path
+                                d="M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16"
+                                pathLength="575.0541381835938"
+                                class="path"
+                              ></path>
+                            </svg>
+                            <span class="label-text">{{ $specification->specification }}</span>
+                          </label>
                         @endforeach
                     </div>
                 </div>
