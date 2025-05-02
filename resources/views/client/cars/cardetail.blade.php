@@ -38,7 +38,7 @@
             <!-- Car Details Section -->
             <div class="car-details">
                 <h1 class="car-title">{{ $car->brand->brand }} {{ $car->model }}</h1>
-                <p class="car-price">${{ number_format($car->price_per_day, 2) }}/Day</p>
+                <p class="car-price">{{ number_format($car->price_per_day, 2) }}/Day</p>
 
                 <!-- Pickup Form Section -->
                 <div class="form-section">
@@ -139,7 +139,7 @@
                         @if($relatedCar->carImages->isNotEmpty())
                             <img src="{{ asset('storage/' . $relatedCar->carImages->first()->image_path) }}" alt="{{ $relatedCar->brand->brand }} {{ $relatedCar->model }}">
                         @else
-                            <img src="{{ asset('images/cars/default.jpg') }}" alt="{{ $relatedCar->brand->brand }} {{ $relatedCar->model }}">
+                            <img src="{{ asset('images/defaultcarimage.png') }}" alt="{{ $relatedCar->brand->brand }} {{ $relatedCar->model }}">
                         @endif
                     </div>
                     <div class="product-content">

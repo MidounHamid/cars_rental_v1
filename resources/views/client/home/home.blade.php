@@ -92,10 +92,11 @@
 
                                 <div class="car-footer">
                                     <div class="price-section">
-                                        <span class="price">€{{ $car->price_per_day }}</span>
+                                        <span class="price">{{ $car->price_per_day }}</span>
                                         <span class="price-period">/Day</span>
                                     </div>
-                                    <button class="book-now">BOOK NOW</button>
+                                    <button class="book-now" >                                <a href="{{ route('cars.detail', $car->id) }}" class="book-now">Book Now</a>
+                                    </button>
                                 </div>
 
                                 <div class="car-status">

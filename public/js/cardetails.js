@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', function() {
         thumb.addEventListener('click', function() {
             // Change main image
             mainImage.src = this.getAttribute('data-src');
-            
+
             // Update active state
             thumbnails.forEach(t => t.classList.remove('active'));
             this.classList.add('active');
@@ -54,13 +54,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Accordion functionality
     const accordionHeaders = document.querySelectorAll('.accordion-header');
-    
+
     accordionHeaders.forEach(header => {
         header.addEventListener('click', function() {
             const accordionItem = this.parentElement;
             const content = this.nextElementSibling;
             const icon = this.querySelector('.accordion-icon');
-            
+
             // Toggle content visibility
             if (content.style.display === 'block') {
                 content.style.display = 'none';
@@ -71,4 +71,4 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
-}); 
+});
