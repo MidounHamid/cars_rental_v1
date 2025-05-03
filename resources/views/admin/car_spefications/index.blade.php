@@ -29,7 +29,7 @@
                 </tr>
             @empty
                 <tr>
-                    <td colspan="3">No car specifications found.</td>
+                    <td colspan="6">No car specifications found.</td>
                 </tr>
             @endforelse
         </tbody>

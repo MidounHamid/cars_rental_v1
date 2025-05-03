@@ -16,8 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('car_id');
             $table->string('image_path');
             $table->boolean('is_primary')->nullable()->default( FALSE);
-            $table->timestamp('created_at')->nullable()->useCurrent();
-
+            $table->timestamps();
 
             $table->foreign('car_id')->references('id')->on('cars');
 

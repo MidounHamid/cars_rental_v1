@@ -6,6 +6,7 @@ use App\Models\Car;
 use App\Models\Car_image;
 use App\Models\CarImage;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class CarImageController extends Controller
 {
@@ -14,7 +15,10 @@ class CarImageController extends Controller
      */
     public function index()
     {
-        $carImages = CarImage::with('car')->paginate(10);
+        $carImages = CarImage::with('car')
+            ->where('is_primary', true)
+            ->get();
+
         return view('admin.car_images.index', compact('carImages'));
     }
 
@@ -32,20 +36,40 @@ class CarImageController extends Controller
      */
     public function store(Request $request)
     {
-        // Check if the checkbox for 'is_primary' is checked and convert it to integer (1 for true, 0 for false)
+        // Check if the checkbox for 'is_primary' is checked
         $isPrimary = $request->has('is_primary') ? 1 : 0;
 
-        // Store the image file
-        $imagePath = $request->file('image_path')->store('car_images', 'public');
+        // Start a database transaction
+        DB::beginTransaction();
 
-        // Create the Car_image record
-        CarImage::create([
-            'car_id' => $request->car_id,
-            'image_path' => $imagePath,
-            'is_primary' => $isPrimary,  // Use the converted value
-        ]);
+        try {
+            // If this image is set as primary, update all other images for this car to non-primary
+            if ($isPrimary) {
+                CarImage::where('car_id', $request->car_id)
+                    ->where('is_primary', 1)
+                    ->update(['is_primary' => 0]);
+            }
 
-        return redirect()->route('car_images.index')->with('success', 'L\'image de la voiture a été ajoutée avec succès.');
+            // Store the image file
+            $imagePath = $request->file('image_path')->store('car_images', 'public');
+
+            // Create the Car_image record
+            CarImage::create([
+                'car_id' => $request->car_id,
+                'image_path' => $imagePath,
+                'is_primary' => $isPrimary,
+            ]);
+
+            // Commit the transaction
+            DB::commit();
+
+            return redirect()->route('car_images.index')->with('success', 'L\'image de la voiture a été ajoutée avec succès.');
+        } catch (\Exception $e) {
+            // Something went wrong, rollback the transaction
+            DB::rollback();
+
+            return redirect()->back()->with('error', 'An error occurred: ' . $e->getMessage())->withInput();
+        }
     }
 
     /**
@@ -76,15 +100,39 @@ class CarImageController extends Controller
             'is_primary' => $request->has('is_primary') ? 1 : 0, // Convert checkbox value
         ];
 
-        // If there's a new image, store it
-        if ($request->hasFile('image_path')) {
-            $formFields['image_path'] = $request->file('image_path')->store('car_images', 'public');
+        // Start a database transaction
+        DB::beginTransaction();
+
+        try {
+            // If this image is being set as primary and it wasn't primary before,
+            // or if the car_id has changed and it's marked as primary,
+            // then update all other images for this car to non-primary
+            if ($formFields['is_primary'] == 1 &&
+                ($car_image->is_primary == 0 || $car_image->car_id != $formFields['car_id'])) {
+                CarImage::where('car_id', $formFields['car_id'])
+                    ->where('id', '!=', $car_image->id)
+                    ->where('is_primary', 1)
+                    ->update(['is_primary' => 0]);
+            }
+
+            // If there's a new image, store it
+            if ($request->hasFile('image_path')) {
+                $formFields['image_path'] = $request->file('image_path')->store('car_images', 'public');
+            }
+
+            // Update the Car_image record
+            $car_image->update($formFields);
+
+            // Commit the transaction
+            DB::commit();
+
+            return redirect()->route('car_images.index')->with('success', 'L\'image de la voiture a été mise à jour avec succès.');
+        } catch (\Exception $e) {
+            // Something went wrong, rollback the transaction
+            DB::rollback();
+
+            return redirect()->back()->with('error', 'An error occurred: ' . $e->getMessage())->withInput();
         }
-
-        // Update the Car_image record
-        $car_image->update($formFields);
-
-        return redirect()->route('car_images.index')->with('success', 'L\'image de la voiture a été mise à jour avec succès.');
     }
 
     /**
@@ -94,5 +142,13 @@ class CarImageController extends Controller
     {
         $car_image->delete();
         return redirect()->route('car_images.index')->with('success', 'L\'image de la voiture a été supprimée avec succès.');
+    }
+
+    public function showByCar($carId)
+    {
+        $car = Car::findOrFail($carId);
+        $images = CarImage::where('car_id', $carId)->get();
+
+        return view('admin.car_images.by_car', compact('car', 'images'));
     }
 }

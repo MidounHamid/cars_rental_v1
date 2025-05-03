@@ -21,8 +21,8 @@ class Car extends Model
         'agency_id',
         'brand_id',
         'insurance_id',
-        'available_from',  // Added missing date field
-        'available_to',    // Added missing date field
+        'available_from',
+        'available_to',
     ];
 
     /**
@@ -38,10 +38,16 @@ class Car extends Model
         'seats' => 'integer',
     ];
 
-    // Relations
+    // Returns all car images
     public function carImages()
     {
         return $this->hasMany(CarImage::class);
+    }
+
+    // Get the primary image specifically marked as primary
+    public function primaryImage()
+    {
+        return $this->hasOne(CarImage::class)->where('is_primary', true);
     }
 
     public function brand()

@@ -30,7 +30,7 @@
                 </tr>
             @empty
                 <tr>
-                    <td colspan="4">No insurance found.</td>
+                    <td colspan="6">No insurance found.</td>
                 </tr>
             @endforelse
         </tbody>

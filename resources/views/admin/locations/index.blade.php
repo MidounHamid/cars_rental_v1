@@ -28,7 +28,7 @@
                 </tr>
             @empty
                 <tr>
-                    <td colspan="3">No locations found.</td>
+                    <td colspan="6">No locations found.</td>
                 </tr>
             @endforelse
         </tbody>

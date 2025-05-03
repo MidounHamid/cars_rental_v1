@@ -29,7 +29,7 @@ class UpdatebookingRequest extends FormRequest
             'total_price' => 'numeric|min:0',
             'status' => 'nullable|in:pending,confirmed,cancelled',
             'payment_id' => 'nullable|exists:payments,id',
-            'promotion_id' => 'exists:promotions,id',
+            'promotion_id' => 'nullable|exists:promotions,id'
         ];
     }
 }

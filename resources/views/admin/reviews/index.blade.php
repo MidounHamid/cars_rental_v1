@@ -37,7 +37,7 @@
                 </tr>
             @empty
                 <tr>
-                    <td colspan="5">No reviews found.</td>
+                    <td colspan="6">No reviews found.</td>
                 </tr>
             @endforelse
         </tbody>

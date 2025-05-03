@@ -66,6 +66,11 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::resource('specifications', SpecificationController::class);
     Route::resource('locations',LocationController::class);
     Route::resource('car_delivery_locations',CarDeliveryLocationController::class);
+
+
+
+    Route::get('/car-images/by-car/{car}', [CarImageController::class, 'showByCar'])->name('car_images.by_car');
+
 });
 
 require __DIR__.'/auth.php';
