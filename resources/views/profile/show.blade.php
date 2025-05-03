@@ -1,7 +1,14 @@
 <x-app-layout>
+    @php
+    $profileImage = Auth::user()?->image && trim(Auth::user()?->image) !== ''
+        ? asset('storage/' . Auth::user()->image)
+        : asset('images/default.png');
+@endphp
+
+
     <!-- Ajout du lien vers Material Symbols -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" />
-    
+
     <style>
         * {
             margin: 0;
@@ -262,7 +269,7 @@
         <div class="sidebar">
             <div class="profile-header">
                 <div class="profile-avatar">
-                    <img src="{{ auth()->user()->image ? Storage::url(auth()->user()->image) : asset('default-avatar.png') }}" alt="Profile Image" style="width: 120px; height: 120px; border-radius: 8px; object-fit: cover;">
+                    <img src="{{ $profileImage }}" alt="Profile Image" style="width: 120px; height: 120px; border-radius: 8px; object-fit: cover;">
                 </div>
                 <div class="profile-info">
                     <div class="profile-name">{{ auth()->user()->name }}</div>
@@ -314,7 +321,7 @@
                     Basic Information
                     <a href="{{ route('profile.edit') }}" class="btn-edit">Edit Profile</a>
                 </h2>
-                
+
                 <div class="info-grid">
                     <div class="info-group">
                         <label>Full Name</label>

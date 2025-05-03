@@ -1,7 +1,15 @@
 <x-app-layout>
+    @php
+    $profileImage = Auth::user()?->image && trim(Auth::user()?->image) !== ''
+        ? asset('storage/' . Auth::user()->image)
+        : asset('images/default.png');
+@endphp
+
+
+
     <!-- Ajout du lien vers Material Symbols -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" />
-    
+
     <style>
         * {
             margin: 0;
@@ -330,7 +338,7 @@
         <div class="sidebar">
             <div class="profile-header">
                 <div class="profile-avatar">
-                    <img src="{{ auth()->user()->image ? Storage::url(auth()->user()->image) : asset('default-avatar.png') }}" alt="Profile Image" style="width: 120px; height: 120px; border-radius: 8px; object-fit: cover;">
+                    <img  src="{{ $profileImage }}" alt="Profile Image" style="width: 120px; height: 120px; border-radius: 8px; object-fit: cover;">
                 </div>
                 <div class="profile-info">
                     <div class="profile-name">{{ auth()->user()->name }}</div>
@@ -378,21 +386,21 @@
             <form method="POST" action="{{ route('profile.update') }}" enctype="multipart/form-data">
                 @csrf
                 @method('patch')
-                
+
                 <h1 class="settings-title">Settings</h1>
 
                 <div class="settings-section">
                     <h2 class="section-title">Basic Information</h2>
-                    
+
                     <div class="upload-section">
                         <div class="upload-preview">
-                            <img src="{{ auth()->user()->image ? Storage::url(auth()->user()->image) : asset('default-avatar.png') }}" alt="Avatar">
+                            <img  src="{{ $profileImage }}" alt="Avatar">
                             <label for="image" class="edit-image-btn">
                                 <span class="material-symbols-rounded">edit</span>
                             </label>
                             <input type="file" name="image" id="image" class="hidden-file-input" accept="image/*">
                         </div>
-                        
+
                         <div class="profile-form-section">
                             <div class="form-group">
                                 <label class="form-label">Full Name</label>
@@ -448,7 +456,7 @@
                         <x-input-error :messages="$errors->updatePassword->get('password_confirmation')" class="mt-2" />
                     </div>
                 </div>
-                
+
                 <div class="form-actions">
                     @if (session('status') === 'profile-updated')
                         <p class="text-success">Profile updated successfully.</p>
