@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -89,4 +90,18 @@ class Car extends Model
     {
         return $this->belongsToMany(Location::class, 'car_delivery_locations');
     }
+
+
+
+
+    public function getIsAvailableAttribute()
+{
+    $today = Carbon::today();
+
+    return !$this->bookings()
+        ->whereIn('status', ['pending', 'confirmed'])
+        ->whereDate('start_date', '<=', $today)
+        ->whereDate('end_date', '>=', $today)
+        ->exists();
+}
 }

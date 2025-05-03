@@ -402,6 +402,7 @@
                                     <i class="fas fa-{{ $car->is_available ? 'check-circle' : 'times-circle' }}"></i>
                                     {{ $car->is_available ? 'Available' : 'Unavailable' }}
                                 </span>
+
                             </div>
                             <div class="car-specs">
                                 <div class="car-spec-item">

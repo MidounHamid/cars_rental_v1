@@ -59,25 +59,10 @@
             <div class="form-group">
                 <label for="is_available">Available</label>
                 <select name="is_available" class="form-input">
-                    <option value="1" {{ old('is_available', true) == true ? 'selected' : '' }}>Yes</option>
-                    <option value="0" {{ old('is_available') == false ? 'selected' : '' }}>No</option>
+                    <option value="1" {{ old('is_available', '1') == '1' ? 'selected' : '' }}>Yes</option>
+                    <option value="0" {{ old('is_available', '1') == '0' ? 'selected' : '' }}>No</option>
                 </select>
-            </div>
-        </div>
-
-        <div class="form-row">
-            <div class="form-group">
-                <label for="available_from">Available From</label>
-                <input type="date" name="available_from" class="form-input" value="{{ old('available_from') }}">
-                @error('available_from')
-                    <span class="error-message">{{ $message }}</span>
-                @enderror
-            </div>
-
-            <div class="form-group">
-                <label for="available_to">Available To</label>
-                <input type="date" name="available_to" class="form-input" value="{{ old('available_to') }}">
-                @error('available_to')
+                @error('is_available')
                     <span class="error-message">{{ $message }}</span>
                 @enderror
             </div>
