@@ -332,6 +332,38 @@
         .text-gray-600 {
             color: #666;
         }
+
+        .password-field {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .password-field .form-control {
+            padding-right: 40px;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 10px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #666;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            margin: 0;
+        }
+
+        .toggle-password:hover {
+            color: #333;
+        }
+
+        .toggle-password .material-symbols-rounded {
+            font-size: 20px;
+        }
     </style>
 
     <div class="container">
@@ -394,11 +426,11 @@
 
                     <div class="upload-section">
                         <div class="upload-preview">
-                            <img  src="{{ $profileImage }}" alt="Avatar">
+                            <img src="{{ auth()->user()->image ? Storage::url(auth()->user()->image) : asset('default-avatar.png') }}" alt="Avatar">
                             <label for="image" class="edit-image-btn">
                                 <span class="material-symbols-rounded">edit</span>
                             </label>
-                            <input type="file" name="image" id="image" class="hidden-file-input" accept="image/*">
+                            <input type="file" name="image" id="image" class="hidden-file-input" accept="image/*" onchange="previewImage(this)">
                         </div>
 
                         <div class="profile-form-section">
@@ -442,17 +474,32 @@
                     <h2 class="section-title">Password</h2>
                     <div class="form-group">
                         <label class="form-label">Current Password</label>
-                        <input type="password" name="current_password" class="form-control">
+                        <div class="password-field">
+                            <input type="password" name="current_password" class="form-control">
+                            <button type="button" class="toggle-password" onclick="togglePassword(this)">
+                                <span class="material-symbols-rounded">visibility</span>
+                            </button>
+                        </div>
                         <x-input-error :messages="$errors->updatePassword->get('current_password')" class="mt-2" />
                     </div>
                     <div class="form-group">
                         <label class="form-label">New Password</label>
-                        <input type="password" name="password" class="form-control">
+                        <div class="password-field">
+                            <input type="password" name="password" class="form-control">
+                            <button type="button" class="toggle-password" onclick="togglePassword(this)">
+                                <span class="material-symbols-rounded">visibility</span>
+                            </button>
+                        </div>
                         <x-input-error :messages="$errors->updatePassword->get('password')" class="mt-2" />
                     </div>
                     <div class="form-group">
                         <label class="form-label">Confirm Password</label>
-                        <input type="password" name="password_confirmation" class="form-control">
+                        <div class="password-field">
+                            <input type="password" name="password_confirmation" class="form-control">
+                            <button type="button" class="toggle-password" onclick="togglePassword(this)">
+                                <span class="material-symbols-rounded">visibility</span>
+                            </button>
+                        </div>
                         <x-input-error :messages="$errors->updatePassword->get('password_confirmation')" class="mt-2" />
                     </div>
                 </div>
@@ -468,3 +515,30 @@
         </div>
     </div>
 </x-app-layout>
+
+<script>
+    function togglePassword(button) {
+        const input = button.parentElement.querySelector('input');
+        const icon = button.querySelector('.material-symbols-rounded');
+
+        if (input.type === 'password') {
+            input.type = 'text';
+            icon.textContent = 'visibility_off';
+        } else {
+            input.type = 'password';
+            icon.textContent = 'visibility';
+        }
+    }
+
+    function previewImage(input) {
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+
+            reader.onload = function(e) {
+                document.getElementById('preview-image').src = e.target.result;
+            }
+
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+</script>

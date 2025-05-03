@@ -4,7 +4,7 @@
     <div class="footer-container">
         <!-- Logo -->
         <div class="footer-logo">
-            <img src="images/logo-azidcar.png" alt="AZIDCAR">
+            <img src="{{ asset('images/logo-azidcar.png') }}" alt="AZIDCAR">
         </div>
         <!-- Visit Us -->
         <div class="footer-block">
@@ -37,6 +37,6 @@
         </div>
     </div>
     <div class="footer-copyright">
-        Copyright © {{ date('Y') }} AZIDCAR
+        Copyright {{ date('Y') }} AZIDCAR
     </div>
 </footer>
