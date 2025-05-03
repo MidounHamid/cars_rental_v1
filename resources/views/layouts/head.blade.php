@@ -14,15 +14,15 @@
     @auth
     <div class="mobile-profile">
         <button type="button" class="mobile-profile-trigger">
-            <img src="{{ $profileImage }}" alt="Profile" class="profile-img">
+            <img src="{{ $profileImage }}" alt="Profile" class="profile-img" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">
             <span class="profile-name">{{ Auth::user()->name }}</span>
         </button>
         <div class="mobile-profile-dropdown">
-            <a href="#" class="dropdown-item">
+            <a href="{{ route('profile.edit') }}" class="dropdown-item">
                 <span class="material-symbols-rounded">person</span>
                 <span>My Profile</span>
             </a>
-            <a href="#" class="dropdown-item">
+            <a href="{{ route('profile.edit') }}" class="dropdown-item">
                 <span class="material-symbols-rounded">settings</span>
                 <span>Settings</span>
             </a>
@@ -68,7 +68,7 @@
         @else
             <li class="navbar-item profile-menu">
                 <button type="button" class="profile-trigger">
-                    <img src="{{ $profileImage }}" alt="Profile" class="profile-img">
+                    <img src="{{ $profileImage }}" alt="Profile" class="profile-img" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">
                     <span>{{ Auth::user()->name }}</span>
                     <span class="material-symbols-rounded">expand_more</span>
                 </button>
@@ -81,11 +81,11 @@
                         </div>
                     </div>
                     <div class="dropdown-body">
-                        <a href="#" class="dropdown-item">
+                        <a href="{{ route('profile.show') }}" class="dropdown-item">
                             <span class="material-symbols-rounded">person</span>
                             <span>My Profile</span>
                         </a>
-                        <a href="#" class="dropdown-item">
+                        <a href="{{ route('profile.edit') }}" class="dropdown-item">
                             <span class="material-symbols-rounded">settings</span>
                             <span>Settings</span>
                         </a>

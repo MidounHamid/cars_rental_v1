@@ -12,6 +12,16 @@ use Illuminate\View\View;
 class ProfileController extends Controller
 {
     /**
+     * Display the user's profile.
+     */
+    public function show(Request $request): View
+    {
+        return view('profile.show', [
+            'user' => $request->user(),
+        ]);
+    }
+
+    /**
      * Display the user's profile form.
      */
     public function edit(Request $request): View
@@ -26,7 +36,21 @@ class ProfileController extends Controller
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
-        $request->user()->fill($request->validated());
+        $data = $request->validated();
+        
+        // Handle driver license upload
+        if ($request->hasFile('driver_license')) {
+            $driverLicensePath = $request->file('driver_license')->store('driver_licenses', 'public');
+            $data['driver_license'] = $driverLicensePath;
+        }
+
+        // Handle profile image upload
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('profile_images', 'public');
+            $data['image'] = $imagePath;
+        }
+
+        $request->user()->fill($data);
 
         if ($request->user()->isDirty('email')) {
             $request->user()->email_verified_at = null;
@@ -34,7 +58,8 @@ class ProfileController extends Controller
 
         $request->user()->save();
 
-        return Redirect::route('profile.edit')->with('status', 'profile-updated');
+        // Redirection vers la page de profil au lieu de la page d'édition
+        return Redirect::route('profile.show')->with('status', 'profile-updated');
     }
 
     /**
