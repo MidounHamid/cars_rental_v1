@@ -30,7 +30,7 @@
                 </tr>
             @empty
                 <tr>
-                    <td colspan="4">No promotions found.</td>
+                    <td colspan="6">No promotions found.</td>
                 </tr>
             @endforelse
         </tbody>

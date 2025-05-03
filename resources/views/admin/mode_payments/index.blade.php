@@ -26,7 +26,7 @@
                 </tr>
             @empty
                 <tr>
-                    <td colspan="2">No payment modes found.</td>
+                    <td colspan="6">No payment modes found.</td>
                 </tr>
             @endforelse
         </tbody>

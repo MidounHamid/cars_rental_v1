@@ -56,7 +56,7 @@
                     </td>
                 </tr>
             @empty
-                <tr><td colspan="8">No users found.</td></tr>
+                <tr><td colspan="6">No users found.</td></tr>
             @endforelse
         </tbody>
     </table>

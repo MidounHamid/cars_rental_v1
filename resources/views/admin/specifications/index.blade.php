@@ -26,7 +26,7 @@
                 </tr>
             @empty
                 <tr>
-                    <td colspan="2">No specifications found.</td>
+                    <td colspan="6">No specifications found.</td>
                 </tr>
             @endforelse
         </tbody>

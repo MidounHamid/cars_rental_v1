@@ -12,6 +12,13 @@ class Booking extends Model
         'status', 'payment_id', 'promotion_id'
     ];
 
+
+    protected $casts = [
+        'start_date' => 'date',
+        'end_date' => 'date',
+        // other casts...
+    ];
+
     public function user() {
         return $this->belongsTo(User::class);
     }

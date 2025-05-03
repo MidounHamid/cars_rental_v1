@@ -17,12 +17,14 @@
         <tbody>
             @forelse ($carImages as $image)
                 <tr>
-                    <td>{{ $image->car_id }}</td>
+                    <td>{{ $image->car_id }}-{{$image->car->model}}</td>
                     <td><img src="{{ asset('storage/' . $image->image_path) }}" alt="Car Image" width="100"></td>
                     <td>{{ $image->is_primary ? 'Yes' : 'No' }}</td>
-                    
+
                     <td>
                         <a href="{{ route('car_images.edit', $image->id) }}" class="btn btn-primary btn-sm">Edit</a>
+                        <a href="{{ route('car_images.by_car', $image->car_id) }}" class="btn btn-primary btn-sm">Show All Images</a>
+
                         <form action="{{ route('car_images.destroy', $image->id) }}" method="POST" style="display:inline;">
                             @csrf
                             @method('DELETE')

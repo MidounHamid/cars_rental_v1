@@ -19,7 +19,7 @@
                     <th>Seats</th>
                     <th>Is Available</th>
                     <th>Primary Image</th>
-                    <th>Delivery Locations</th> <!-- New column for delivery locations -->
+                    <th>Delivery Locations</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -41,7 +41,7 @@
                         <!-- Display the primary image -->
                         <td>
                             @if ($car->primaryImage)
-                                <img src="{{ asset('storage/' . $car->primaryImage->path) }}" alt="Primary Image"
+                                <img src="{{ asset('storage/' . $car->primaryImage->image_path) }}" alt="Primary Image"
                                     style="width: 50px; height: auto;">
                             @else
                                 N/A

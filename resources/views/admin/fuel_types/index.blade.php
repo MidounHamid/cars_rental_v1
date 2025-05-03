@@ -26,7 +26,7 @@
                 </tr>
             @empty
                 <tr>
-                    <td colspan="2">No fuel types found.</td>
+                    <td colspan="6">No fuel types found.</td>
                 </tr>
             @endforelse
         </tbody>
