@@ -17,9 +17,9 @@ class HomeController extends Controller
     public function index()
     {
         // Paginate the cars instead of fetching all and using take()
-        $cars = Car::with(['brand', 'fuelType', 'carType', 'carImages']) 
-            ->where('is_available', true)
-            ->latest()
+        $cars = Car::with(['brand', 'fuelType', 'carType', 'carImages'])
+            // ->where('is_available', true)
+            // ->latest()
             ->paginate(6);
 
         // Get all locations
@@ -37,10 +37,10 @@ class HomeController extends Controller
 
         // Start building the query
         $query = Car::with(['brand', 'fuelType', 'carType', 'carImages', 'specifications']);
-        
+
         // Get locations for the search form
         $locations = Location::orderBy('name')->get();
-        
+
         // For filtering data in the view
         $fuelTypes = FuelType::orderBy('fuel_type')->get();
         $carTypes = CarType::orderBy('name')->get();
@@ -92,11 +92,11 @@ class HomeController extends Controller
         ];
 
         return view('client.cars.listing', compact(
-            'cars', 
-            'locations', 
-            'fuelTypes', 
-            'carTypes', 
-            'brands', 
+            'cars',
+            'locations',
+            'fuelTypes',
+            'carTypes',
+            'brands',
             'searchParams'
         ));
     }

@@ -17,7 +17,7 @@
                     <div class="form-group">
                         <label>PICKUP LOCATION</label>
                         <div class="location-input-wrapper">
-                            <input type="text" class="location-input" name="from" id="from-location" 
+                            <input type="text" class="location-input" name="from" id="from-location"
                                    placeholder="Choose Location" autocomplete="off">
                             <div class="location-dropdown">
                                 @foreach ($locations as $location)
@@ -39,7 +39,7 @@
                     <button type="submit" class="search-btn">Search</button>
                 </form>
             </div>
-            
+
         </div>
     </div>
 
@@ -100,8 +100,11 @@
                                 </div>
 
                                 <div class="car-status">
-                                    <span class="availability">{{ $car->is_available ? 'Available' : 'Not Available' }}</span>
-                                    <div class="reviews"><i class="fas fa-star"></i><span>4.8 (120 reviews)</span></div>
+                                    <span class="status-badge {{ $car->is_available ? 'available' : 'unavailable' }}">
+                                        <i class="fas fa-{{ $car->is_available ? 'check-circle' : 'times-circle' }}"></i>
+                                        {{ $car->is_available ? 'Available' : 'Unavailable' }}
+                                    </span>
+                                                                        <div class="reviews"><i class="fas fa-star"></i><span>4.8 (120 reviews)</span></div>
                                 </div>
                             </div>
                         </div>
@@ -372,19 +375,19 @@
             // Handle form submission
             document.querySelector('.search-form').addEventListener('submit', function(e) {
                 e.preventDefault();
-                
+
                 const startDate = document.getElementById('start_date').value;
                 const endDate = document.getElementById('end_date').value;
                 const locationId = locationInput.getAttribute('data-location-id');
-                
+
                 // Create the URL with query parameters
                 const baseUrl = this.getAttribute('action');
                 const params = new URLSearchParams();
-                
+
                 if (locationId) params.append('pickup_location', locationId);
                 if (startDate) params.append('start_date', startDate);
                 if (endDate) params.append('end_date', endDate);
-                
+
                 // Redirect to the listing page with the parameters
                 window.location.href = `${baseUrl}?${params.toString()}`;
             });

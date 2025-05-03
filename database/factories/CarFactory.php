@@ -2,6 +2,11 @@
 
 namespace Database\Factories;
 
+use App\Models\Agency;
+use App\Models\Brand;
+use App\Models\CarType;
+use App\Models\FuelType;
+use App\Models\Insurance;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -9,12 +14,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class CarFactory extends Factory
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
-    public function definition()
+    public function definition(): array
     {
         $carModels = [
             'Toyota Corolla',
@@ -25,23 +25,22 @@ class CarFactory extends Factory
             'Ford Mustang',
             'Chevrolet Malibu',
             'Nissan Altima',
-            'Mercedes-Benz C-Class'
+            'Mercedes-Benz C-Class',
         ];
 
         return [
-            'model' => $this->faker->randomElement($carModels),  // Randomly selects from a predefined list of car models
-            'car_type_id' => \App\Models\CarType::inRandomOrder()->first()->id,
+            'model' => $this->faker->randomElement($carModels),
+            'car_type_id' => CarType::inRandomOrder()->value('id'),
             'city' => $this->faker->city,
-            'price_per_day' => $this->faker->randomFloat(2, 30, 150),  // Price range adjusted for realism
-            'fuel_types_id' => \App\Models\FuelType::inRandomOrder()->first()->id,
+            'price_per_day' => $this->faker->randomFloat(2, 30, 150),
+            'fuel_types_id' => FuelType::inRandomOrder()->value('id'),
             'transmission' => $this->faker->randomElement(['Automatic', 'Manual', 'CVT', 'Semi-Automatic']),
             'seats' => $this->faker->numberBetween(2, 7),
-            'is_available' => $this->faker->boolean,
-            'agency_id' => \App\Models\Agency::factory(),
-            'brand_id' => \App\Models\Brand::factory(),
-            'insurance_id' => \App\Models\Insurance::factory(),
-            'available_from' => $this->faker->dateTimeBetween('now', '+1 year')->format('Y-m-d'), // Random date within the next year
-            'available_to' => $this->faker->dateTimeBetween('+1 week', '+1 year')->format('Y-m-d'), // Random date after 'available_from'
+            'is_available' => true, // ✅ Always true by default
+
+            'agency_id' => Agency::factory(),
+            'brand_id' => Brand::factory(),
+            'insurance_id' => Insurance::factory(),
         ];
     }
 }

@@ -29,7 +29,7 @@ class DatabaseSeeder extends Seeder
         // Create other models first
         \App\Models\Brand::factory(10)->create();
         \App\Models\Insurance::factory(10)->create();
-        \App\Models\Agency::factory(10)->create();
+        \App\Models\Agency::factory(1)->create();
 
         // Now create cars using existing relationships
         \App\Models\Car::factory(20)->create();
