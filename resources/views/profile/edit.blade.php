@@ -418,11 +418,11 @@
                     
                     <div class="upload-section">
                         <div class="upload-preview">
-                            <img src="{{ auth()->user()->image ? Storage::url(auth()->user()->image) : asset('default-avatar.png') }}" alt="Avatar">
+                            <img id="preview-image" src="{{ auth()->user()->image ? Storage::url(auth()->user()->image) : asset('default-avatar.png') }}" alt="Avatar">
                             <label for="image" class="edit-image-btn">
                                 <span class="material-symbols-rounded">edit</span>
                             </label>
-                            <input type="file" name="image" id="image" class="hidden-file-input" accept="image/*">
+                            <input type="file" name="image" id="image" class="hidden-file-input" accept="image/*" onchange="previewImage(this)">
                         </div>
                         
                         <div class="profile-form-section">
@@ -519,6 +519,18 @@
         } else {
             input.type = 'password';
             icon.textContent = 'visibility';
+        }
+    }
+
+    function previewImage(input) {
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                document.getElementById('preview-image').src = e.target.result;
+            }
+            
+            reader.readAsDataURL(input.files[0]);
         }
     }
 </script>
