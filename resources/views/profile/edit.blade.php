@@ -426,7 +426,7 @@
 
                     <div class="upload-section">
                         <div class="upload-preview">
-                            <img src="{{ auth()->user()->image ? Storage::url(auth()->user()->image) : asset('default-avatar.png') }}" alt="Avatar">
+                            <img src="{{ $profileImage }}" alt="Avatar">
                             <label for="image" class="edit-image-btn">
                                 <span class="material-symbols-rounded">edit</span>
                             </label>

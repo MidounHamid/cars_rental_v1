@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdatespecificationRequest extends FormRequest
+class UpdateFeatureRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,7 +22,7 @@ class UpdatespecificationRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'specification' => 'required|string|max:255',  // Ensure it's a required string with a max length of 255 characters
+            'feature' => 'required|string|max:255',  // Ensure it's a required string with a max length of 255 characters
         ];
     }
 }

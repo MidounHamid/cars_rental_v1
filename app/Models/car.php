@@ -76,9 +76,9 @@ class Car extends Model
         return $this->belongsTo(Insurance::class);
     }
 
-    public function specifications()
+    public function features()
     {
-        return $this->belongsToMany(Specification::class, 'car_spefications', 'car_id', 'specification_id');
+        return $this->belongsToMany(Feature::class, 'car_features', 'car_id', 'feature_id');
     }
 
     public function bookings()

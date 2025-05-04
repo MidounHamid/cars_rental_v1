@@ -9,19 +9,17 @@
         @method('PUT')
 
         <div class="form-row">
-            <!-- Name -->
             <div class="form-group">
                 <label for="name">Name</label>
-                <input type="text" name="name" id="name" value="{{ old('name', $user->name) }}" class="form-input" required>
+                <input type="text" name="name" id="name" class="form-input" value="{{ old('name', $user->name) }}" required>
                 @error('name')
                     <span class="error-message">{{ $message }}</span>
                 @enderror
             </div>
 
-            <!-- Email -->
             <div class="form-group">
                 <label for="email">Email</label>
-                <input type="email" name="email" id="email" value="{{ old('email', $user->email) }}" class="form-input" required>
+                <input type="email" name="email" id="email" class="form-input" value="{{ old('email', $user->email) }}" required>
                 @error('email')
                     <span class="error-message">{{ $message }}</span>
                 @enderror
@@ -29,27 +27,24 @@
         </div>
 
         <div class="form-row">
-            <!-- Password -->
             <div class="form-group">
-                <label for="password">Password (Leave blank to keep current)</label>
+                <label for="password">Password (leave blank to keep)</label>
                 <input type="password" name="password" id="password" class="form-input">
                 @error('password')
                     <span class="error-message">{{ $message }}</span>
                 @enderror
             </div>
 
-            <!-- Phone -->
             <div class="form-group">
                 <label for="phone">Phone Number</label>
-                <input type="text" name="phone" id="phone" value="{{ old('phone', $user->phone) }}" class="form-input" maxlength="15">
-                @error('phone')
+                <input type="tel" id="phone" name="phone_number" class="form-input" value="{{ old('phone_number', $user->phone_number) }}">
+                @error('phone_number')
                     <span class="error-message">{{ $message }}</span>
                 @enderror
             </div>
         </div>
 
         <div class="form-row">
-            <!-- Image Upload -->
             <div class="form-group">
                 <label for="image">Profile Image</label>
                 <div class="file-upload">
@@ -60,26 +55,47 @@
                     <span class="error-message">{{ $message }}</span>
                 @enderror
 
-                @if($user->image)
-                    <div class="logo-preview mt-2" >
-                        <img src="{{ asset('storage/' . $user->image) }}" alt="Current Image">
-                        <div class="form-check mt-2">
-                            <input type="checkbox" name="remove_image" id="remove_image" class="checkbox">
-                            <label for="remove_image">Remove current image</label>
-                        </div>
+                <div class="logo-preview mt-2" style="text-align: center;">
+                    <img id="image-preview-img"
+                         src="{{ $user->image ? asset('storage/' . $user->image) : '' }}"
+                         style="{{ $user->image ? '' : 'display: none;' }} max-height: 150px; border-radius: 10px; border: 2px solid #ccc; margin-top: 10px;"
+                         alt="Image Preview">
+                </div>
+
+                @if ($user->image)
+                    <div class="form-check mt-2">
+                        <input type="checkbox" name="remove_image" id="remove_image" class="checkbox">
+                        <label for="remove_image">Remove current image</label>
                     </div>
                 @endif
             </div>
 
-            <!-- Admin Checkbox -->
             <div class="form-group">
                 <label class="checkbox-label" for="is_admin">Administrator</label>
                 <div class="styled-checkbox">
                     <input type="hidden" name="is_admin" value="0">
-                    <input type="checkbox" name="is_admin" id="is_admin" class="checkbox" value="1" {{ $user->is_admin ? 'checked' : '' }}>
-                    <label for="is_admin" class="checkbox-text">Grant admin privileges</label>
+                    <input type="checkbox" id="is_admin" name="is_admin" class="checkbox" value="1" {{ old('is_admin', $user->is_admin) ? 'checked' : '' }}>
+                    <label for="is_admin" class="checkbox-text">Make this user an administrator</label>
                 </div>
                 @error('is_admin')
+                    <span class="error-message">{{ $message }}</span>
+                @enderror
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="address">Address</label>
+                <input type="text" id="address" name="address" class="form-input" value="{{ old('address', $user->address) }}">
+                @error('address')
+                    <span class="error-message">{{ $message }}</span>
+                @enderror
+            </div>
+
+            <div class="form-group">
+                <label for="driver_license">Driver License</label>
+                <input type="text" id="driver_license" name="driver_license" class="form-input" value="{{ old('driver_license', $user->driver_license) }}">
+                @error('driver_license')
                     <span class="error-message">{{ $message }}</span>
                 @enderror
             </div>
@@ -92,3 +108,5 @@
     </form>
 </div>
 @endsection
+
+

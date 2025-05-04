@@ -5,15 +5,15 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class CarSpefication extends Model
+class CarFeature extends Model
 {
     use HasFactory;
 
-    protected $table = 'car_spefications';
+    protected $table = 'car_features';
 
     protected $fillable = [
         'car_id',
-        'specification_id',
+        'feature_id',
     ];
 
     // Relation avec le modèle Car
@@ -23,8 +23,8 @@ class CarSpefication extends Model
     }
 
     // Relation avec le modèle Specification
-    public function specification()
+    public function feature()
     {
-        return $this->belongsTo(Specification::class);
+        return $this->belongsTo(Feature ::class);
     }
 }

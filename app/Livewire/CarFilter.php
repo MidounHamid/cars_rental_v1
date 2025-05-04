@@ -4,7 +4,7 @@ namespace App\Livewire;
 
 use App\Models\Car;
 use App\Models\Location;
-use App\Models\Specification;
+use App\Models\Feature;  // Changed from Specification to Feature
 use App\Models\CarType;
 use App\Models\FuelType;
 use App\Models\Brand;
@@ -19,7 +19,7 @@ class CarFilter extends Component
     public $locations;
     public $fuelTypes;
     public $typeCars;
-    public $specifications;
+    public $features; // Changed from specifications to features
 
     public $start_date;
     public $end_date;
@@ -30,7 +30,7 @@ class CarFilter extends Component
     public $car_model;
     public $car_type;
     public $fuel_type = null;
-    public $specifications_checked = [];
+    public $features_checked = []; // Changed from specifications_checked to features_checked
 
     public $pickup_location_search = '';
     public $car_type_search = '';
@@ -46,8 +46,6 @@ class CarFilter extends Component
         'clear-dates' => 'clearDates',
     ];
 
-
-
     public function setDates($start, $end, $display = null)
     {
         $this->start_date = $start;
@@ -55,12 +53,13 @@ class CarFilter extends Component
         $this->daterange = $display ?? $this->daterange;
         $this->resetPage();
     }
+
     public function mount()
     {
         $this->locations = Location::orderBy('name')->get();
         $this->fuelTypes = FuelType::select('id', 'fuel_type')->distinct()->orderBy('fuel_type')->get();
         $this->typeCars = CarType::select('id', 'name')->distinct()->orderBy('name')->get();
-        $this->specifications = Specification::orderBy('specification')->get();
+        $this->features = Feature::orderBy('feature')->get();  // Changed from Specification to Feature
 
         // Get search parameters from URL
         $pickup_location = request('pickup_location');
@@ -88,7 +87,6 @@ class CarFilter extends Component
     {
         $this->resetPage();
     }
-
 
     public function clearDates()
     {
@@ -138,7 +136,6 @@ class CarFilter extends Component
             });
         }
 
-
         if ($this->car_model) {
             $query->where('model', 'like', '%' . $this->car_model . '%');
         }
@@ -147,17 +144,15 @@ class CarFilter extends Component
             $query->where('car_type_id', $this->car_type);
         }
 
-
         if ($this->fuel_type) {
             $query->whereHas('fuelType', function ($q) {
                 $q->where('id', $this->fuel_type);
             });
         }
 
-
-        if (!empty($this->specifications_checked)) {
-            $query->whereHas('specifications', function ($q) {
-                $q->whereIn('specifications.id', $this->specifications_checked);
+        if (!empty($this->features_checked)) {  // Changed from specifications_checked to features_checked
+            $query->whereHas('features', function ($q) {  // Changed from specifications to features
+                $q->whereIn('features.id', $this->features_checked);  // Changed from specifications to features
             });
         }
 
@@ -186,7 +181,7 @@ class CarFilter extends Component
             'car_type',
             'car_type_name',
             'fuel_type',
-            'specifications_checked',
+            'features_checked',  // Changed from specifications_checked to features_checked
             'start_date',
             'end_date',
             'daterange',
@@ -232,7 +227,7 @@ class CarFilter extends Component
             'locations' => $filteredLocations,
             'fuelTypes' => $this->fuelTypes,
             'typeCars' => $filteredCarTypes,
-            'specifications' => $this->specifications,
+            'features' => $this->features,  // Changed from specifications to features
         ]);
     }
 }

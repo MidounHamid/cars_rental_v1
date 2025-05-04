@@ -11,14 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('car_spefications', function (Blueprint $table) {
+        Schema::create('car_features', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('car_id');
-            $table->unsignedBigInteger('specification_id');
+            $table->unsignedBigInteger('feature_id');
 
             // Adding foreign key constraints
             $table->foreign('car_id')->references('id')->on('cars');
-            $table->foreign('specification_id')->references('id')->on('specifications');
+            $table->foreign('feature_id')->references('id')->on('features');
             $table->timestamps();
         });
     }
@@ -28,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('car_spefications');
+        Schema::dropIfExists('car_features');
     }
 };

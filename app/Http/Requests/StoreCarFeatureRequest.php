@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StorespecificationRequest extends FormRequest
+class StoreCarFeatureRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,7 +22,9 @@ class StorespecificationRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'specification' => 'required|string|max:255',  // Ensure it's a required string with a max length of 255 characters
+            'car_id' => 'required|exists:cars,id', // Validate that car_id exists in the cars table
+            'feature_id' => 'required|exists:features,id',
+ // Validate that specification_id exists in the specifications table
         ];
     }
 }

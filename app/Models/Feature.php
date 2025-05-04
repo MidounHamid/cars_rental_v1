@@ -5,17 +5,17 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Specification extends Model
+class Feature extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'specification',
+        'feature',
     ];
 
     //  la relation avec les voitures
     public function cars()
     {
-        return $this->belongsToMany(Car::class, 'car_spefications', 'specification_id', 'car_id');
+        return $this->belongsToMany(Car::class, 'car_features', 'feature_id', 'car_id');
     }
 }

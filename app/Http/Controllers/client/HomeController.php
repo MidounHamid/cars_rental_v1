@@ -8,7 +8,7 @@ use App\Models\Car;
 use App\Models\CarType;
 use App\Models\FuelType;
 use App\Models\Location;
-use App\Models\Specification;
+use App\Models\Feature; // Assuming Feature model is created for the 'features' field
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -17,7 +17,7 @@ class HomeController extends Controller
     public function index()
     {
         // Paginate the cars instead of fetching all and using take()
-        $cars = Car::with(['brand', 'fuelType', 'carType', 'carImages'])
+        $cars = Car::with(['brand', 'fuelType', 'carType', 'carImages', 'features']) // updated to features
             // ->where('is_available', true)
             // ->latest()
             ->paginate(6);
@@ -36,7 +36,7 @@ class HomeController extends Controller
         $end_date = $request->input('end_date');
 
         // Start building the query
-        $query = Car::with(['brand', 'fuelType', 'carType', 'carImages', 'specifications']);
+        $query = Car::with(['brand', 'fuelType', 'carType', 'carImages', 'features']); // updated to features
 
         // Get locations for the search form
         $locations = Location::orderBy('name')->get();
@@ -103,7 +103,7 @@ class HomeController extends Controller
 
     public function carDetail($id)
     {
-        $car = Car::with(['brand', 'fuelType', 'carType', 'specifications', 'carImages'])
+        $car = Car::with(['brand', 'fuelType', 'carType', 'features', 'carImages']) // updated to features
             ->findOrFail($id);
 
         // Get related cars (same category or brand)

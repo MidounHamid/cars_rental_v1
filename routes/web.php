@@ -18,8 +18,11 @@ use App\Http\Controllers\SpecificationController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\CarDeliveryLocationController;
+use App\Http\Controllers\CarFeatureController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\client\HomeController;
+use App\Http\Controllers\FeatureController;
+use App\Models\CarFeature;
 
 // ======= Client Routes =======
 
@@ -56,7 +59,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::resource('brands', BrandController::class);
     Route::resource('cars', CarController::class);
     Route::resource('car_images', CarImageController::class);
-    Route::resource('car_spefications', CarSpeficationController::class);
+    Route::resource('car_features', CarFeatureController::class);
     Route::resource('car_types', CarTypeController::class);
     Route::resource('fuel_types', FuelTypeController::class);
     Route::resource('insurances', InsuranceController::class);
@@ -64,7 +67,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::resource('payments', PaymentController::class);
     Route::resource('promotions', PromotionController::class);
     Route::resource('reviews', ReviewController::class);
-    Route::resource('specifications', SpecificationController::class);
+    Route::resource('features', FeatureController::class);
     Route::resource('locations',LocationController::class);
     Route::resource('car_delivery_locations',CarDeliveryLocationController::class);
 
