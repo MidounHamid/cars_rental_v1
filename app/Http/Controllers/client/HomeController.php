@@ -9,8 +9,10 @@ use App\Models\CarType;
 use App\Models\FuelType;
 use App\Models\Location;
 use App\Models\Feature; // Assuming Feature model is created for the 'features' field
+use App\Models\Specification;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Livewire\Livewire;
 
 class HomeController extends Controller
 {
@@ -70,7 +72,7 @@ class HomeController extends Controller
 
         // Additional filters that could be added via GET parameters
         if ($request->has('brand')) {
-            $query->whereHas('brand', function($q) use ($request) {
+            $query->whereHas('brand', function ($q) use ($request) {
                 $q->where('brand', $request->brand);
             });
         }
@@ -105,7 +107,7 @@ class HomeController extends Controller
 
     public function carDetail($id)
     {
-        $car = Car::with(['brand', 'fuelType', 'carType', 'features', 'carImages']) // updated to features
+        $car = Car::with(['brand', 'fuelType', 'carType', 'features', 'carImages'])
             ->findOrFail($id);
 
         // Get related cars (same category or brand)
@@ -115,6 +117,9 @@ class HomeController extends Controller
             ->take(3)
             ->get();
 
-        return view('client.cars.cardetail', compact('car', 'relatedCars'));
+        // Get specifications for the calculator
+        $specifications = Specification::all();
+
+        return view('client.cars.cardetail', compact('car', 'relatedCars', 'specifications'));
     }
 }

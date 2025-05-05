@@ -19,12 +19,11 @@ class DatabaseSeeder extends Seeder
         // Seed fixed unique car types
         $carTypes = ['SUV', 'Sedan', 'Coupe', 'Hatchback', 'Convertible', 'Truck', 'Minivan'];
 
-    foreach ($carTypes as $type) {
-        CarType::firstOrCreate(['name' => $type], [
-            'description' => fake()->text(100),
-        ]);
-    }
-
+        foreach ($carTypes as $type) {
+            CarType::firstOrCreate(['name' => $type], [
+                'description' => fake()->text(100),
+            ]);
+        }
 
         // Create other models first
         \App\Models\Brand::factory(10)->create();
@@ -33,6 +32,10 @@ class DatabaseSeeder extends Seeder
 
         // Now create cars using existing relationships
         \App\Models\Car::factory(20)->create();
+
+        // Call the specification seeder
+        $this->call([
+            SpecificationSeeder::class,
+        ]);
     }
 }
-

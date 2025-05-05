@@ -1,6 +1,127 @@
 <x-app-layout>
     @push('header')
         <link rel="stylesheet" href="{{ asset('css/cardetails.css') }}">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+        <style>
+            /* Additional styles to match screenshot */
+            .specifications-table {
+                margin-top: 20px;
+            }
+
+            .spec-row {
+                display: flex;
+                justify-content: space-around;
+                align-items: center;
+                padding: 12px 0;
+                border-bottom: 1px solid #eee;
+            }
+
+            .spec-name {
+                display: flex;
+                align-items: center;
+            }
+
+            .spec-icon {
+                margin-right: 10px;
+                color: #555;
+                width: 18px;
+            }
+
+            .spec-quantity {
+                display: flex;
+                align-items: center;
+            }
+
+            .quantity-btn {
+                width: 30px;
+                height: 30px;
+                border-radius: 4px;
+                background: #f5f5f5;
+                border: 1px solid #ddd;
+                cursor: pointer;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+
+            .quantity-value {
+                margin: 0 10px;
+                width: 30px;
+                text-align: center;
+            }
+
+            .reset-btn {
+                width: 30px;
+                height: 30px;
+                border-radius: 4px;
+                background: #f5f5f5;
+                border: 1px solid #ddd;
+                cursor: pointer;
+                margin-left: 5px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+
+            .price-details {
+                margin-top: 20px;
+            }
+
+            .price-row {
+                display: flex;
+                justify-content: space-between;
+                padding: 8px 0;
+                border-bottom: 1px solid #eee;
+            }
+
+            .price-row.total {
+                font-weight: bold;
+                border-top: 2px solid #eee;
+                margin-top: 10px;
+                padding-top: 15px;
+            }
+
+            .btn-book {
+                width: 100%;
+                padding: 15px;
+                /* background: #3c82f6; */
+                color: white;
+                border: none;
+                border-radius: 4px;
+                font-weight: bold;
+                cursor: pointer;
+                margin-top: 20px;
+            }
+
+            /* Flatpickr custom styling */
+            .flatpickr-calendar {
+                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+                border-radius: 8px;
+            }
+
+            .flatpickr-day.selected {
+                background: #3c82f6;
+                border-color: #3c82f6;
+            }
+
+            .spec-circle {
+                display: inline-block;
+                width: 12px;
+                height: 12px;
+                background-color: #3c82f6;
+                border-radius: 50%;
+                margin-right: 8px;
+            }
+        </style>
+        <script>
+            // Check if jQuery is already loaded
+            if (typeof jQuery === 'undefined') {
+                console.log('jQuery not found, loading from CDN');
+                document.write('<script src="https://code.jquery.com/jquery-3.6.0.min.js"><\/script>');
+            }
+        </script>
+        <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     @endpush
 
     <header class="header">
@@ -18,19 +139,21 @@
             <!-- Car Image Section with Gallery -->
             <div class="car-image-section">
                 <div class="car-image-box">
-                    @if($car->carImages->isNotEmpty())
-                        <img src="{{ asset('storage/' . $car->carImages->first()->image_path) }}" alt="{{ $car->brand->brand }} {{ $car->model }}" class="car-image" id="main-image">
+                    @if ($car->carImages->isNotEmpty())
+                        <img src="{{ asset('storage/' . $car->carImages->first()->image_path) }}"
+                            alt="{{ $car->brand->brand }} {{ $car->model }}" class="car-image" id="main-image">
                     @else
-                        <img src="{{ asset('images/defaultcarimage.png') }}" alt="{{ $car->brand->brand }} {{ $car->model }}" class="car-image" id="main-image">
+                        <img src="{{ asset('images/defaultcarimage.png') }}"
+                            alt="{{ $car->brand->brand }} {{ $car->model }}" class="car-image" id="main-image">
                     @endif
                     <div class="logo-badge">AZIDCAR</div>
                 </div>
                 <div class="thumbnail-gallery">
-                    @foreach($car->carImages as $image)
+                    @foreach ($car->carImages as $image)
                         <img src="{{ asset('storage/' . $image->image_path) }}"
-                             alt="{{ $car->brand->brand }} {{ $car->model }}"
-                             class="thumbnail {{ $loop->first ? 'active' : '' }}"
-                             data-src="{{ asset('storage/' . $image->image_path) }}">
+                            alt="{{ $car->brand->brand }} {{ $car->model }}"
+                            class="thumbnail {{ $loop->first ? 'active' : '' }}"
+                            data-src="{{ asset('storage/' . $image->image_path) }}">
                     @endforeach
                 </div>
             </div>
@@ -40,162 +163,8 @@
                 <h1 class="car-title">{{ $car->brand->brand }} {{ $car->model }}</h1>
                 <p class="car-price">{{ number_format($car->price_per_day, 2) }}/Day</p>
 
-                <!-- Pickup Form Section -->
-                <div class="form-section">
-                    <label class="form-label">Pickup Date & Time</label>
-                    <div class="form-control-wrapper">
-                        <svg class="form-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                            <line x1="16" y1="2" x2="16" y2="6"></line>
-                            <line x1="8" y1="2" x2="8" y2="6"></line>
-                            <line x1="3" y1="10" x2="21" y2="10"></line>
-                        </svg>
-                        <input type="text" class="form-control pickup-date" placeholder="Pickup Date">
-                    </div>
-                    <div class="form-control-wrapper">
-                        <svg class="form-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <circle cx="12" cy="12" r="10"></circle>
-                            <polyline points="12 6 12 12 16 14"></polyline>
-                        </svg>
-                        <input type="text" class="form-control pickup-time" placeholder="Pickup Time">
-                    </div>
-                </div>
-
-                <!-- Return Form Section -->
-                <div class="form-section">
-                    <label class="form-label">Return Date & Time</label>
-                    <div class="form-control-wrapper">
-                        <svg class="form-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                            <line x1="16" y1="2" x2="16" y2="6"></line>
-                            <line x1="8" y1="2" x2="8" y2="6"></line>
-                            <line x1="3" y1="10" x2="21" y2="10"></line>
-                        </svg>
-                        <input type="text" class="form-control return-date" placeholder="Return Date">
-                    </div>
-                    <div class="form-control-wrapper">
-                        <svg class="form-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <circle cx="12" cy="12" r="10"></circle>
-                            <polyline points="12 6 12 12 16 14"></polyline>
-                        </svg>
-                        <input type="text" class="form-control return-time" placeholder="Return Time">
-                    </div>
-                </div>
-
-                <!-- Specifications Table -->
-                <div class="specifications-section">
-                    <h3 class="section-title">
-                        <svg class="section-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
-                        </svg>
-                        Specifications Table
-                    </h3>
-                    <div class="specifications-table">
-                        <div class="spec-row">
-                            <div class="spec-name">
-                                <svg class="spec-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <circle cx="12" cy="12" r="10"/><path d="M12 2v10l4.5 4.5"/>
-                                </svg>
-                                GPS Navigation
-                            </div>
-                            <div class="spec-quantity">
-                                <button class="quantity-btn minus">-</button>
-                                <span class="quantity-value" data-price="50">0</span>
-                                <button class="quantity-btn plus">+</button>
-                                <button class="reset-btn">
-                                    <svg class="reset-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-                                    </svg>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="spec-row">
-                            <div class="spec-name">
-                                <svg class="spec-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
-                                </svg>
-                                Child Seat
-                            </div>
-                            <div class="spec-quantity">
-                                <button class="quantity-btn minus">-</button>
-                                <span class="quantity-value" data-price="30">0</span>
-                                <button class="quantity-btn plus">+</button>
-                                <button class="reset-btn">
-                                    <svg class="reset-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-                                    </svg>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="spec-row">
-                            <div class="spec-name">
-                                <svg class="spec-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12" y2="20"/>
-                                </svg>
-                                Wi-Fi Hotspot
-                            </div>
-                            <div class="spec-quantity">
-                                <button class="quantity-btn minus">-</button>
-                                <span class="quantity-value" data-price="25">0</span>
-                                <button class="quantity-btn plus">+</button>
-                                <button class="reset-btn">
-                                    <svg class="reset-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-                                    </svg>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="spec-row">
-                            <div class="spec-name">
-                                <svg class="spec-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-                                </svg>
-                                Driver Service
-                            </div>
-                            <div class="spec-quantity">
-                                <button class="quantity-btn minus">-</button>
-                                <span class="quantity-value" data-price="200">0</span>
-                                <button class="quantity-btn plus">+</button>
-                                <button class="reset-btn">
-                                    <svg class="reset-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-                                    </svg>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Pricing Info -->
-                <div class="pricing-info">
-                    <h3 class="section-title">
-                        <svg class="section-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
-                        </svg>
-                        Pricing Info
-                    </h3>
-                    <div class="price-details">
-                        <div class="price-row">
-                            <span>Base Rate (per day)</span>
-                            <span class="base-rate">{{ number_format($car->price_per_day, 2) }} MAD</span>
-                        </div>
-                        <div class="price-row">
-                            <span>Rental Duration</span>
-                            <span class="rental-duration">0 days</span>
-                        </div>
-                        <div class="price-row">
-                            <span>Additional Options</span>
-                            <span class="additional-options">0.00 MAD</span>
-                        </div>
-                        <div class="price-row total">
-                            <span>Total Price</span>
-                            <span class="total-price">0.00 MAD</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Book Now Button -->
-                <button class="btn-book">Book Now</button>
+                <!-- Livewire Car Rental Calculator Component -->
+                @livewire('car-rental-calculator', ['car' => $car])
 
                 <!-- Category Info -->
                 <div class="category-line">
@@ -221,7 +190,7 @@
                         </div>
                         <div class="accordion-content">
                             <ul class="features-list">
-                                @foreach($car->features as $feature)
+                                @foreach ($car->features as $feature)
                                     <li>• {{ $feature->name }}</li>
                                 @endforeach
                             </ul>
@@ -236,13 +205,15 @@
     <section class="container explore-section">
         <h2 class="explore-title">Explore Our Products</h2>
         <div class="products-grid">
-            @foreach($relatedCars as $relatedCar)
+            @foreach ($relatedCars as $relatedCar)
                 <div class="product-card">
                     <div class="product-image">
-                        @if($relatedCar->carImages->isNotEmpty())
-                            <img src="{{ asset('storage/' . $relatedCar->carImages->first()->image_path) }}" alt="{{ $relatedCar->brand->brand }} {{ $relatedCar->model }}">
+                        @if ($relatedCar->carImages->isNotEmpty())
+                            <img src="{{ asset('storage/' . $relatedCar->carImages->first()->image_path) }}"
+                                alt="{{ $relatedCar->brand->brand }} {{ $relatedCar->model }}">
                         @else
-                            <img src="{{ asset('images/defaultcarimage.png') }}" alt="{{ $relatedCar->brand->brand }} {{ $relatedCar->model }}">
+                            <img src="{{ asset('images/defaultcarimage.png') }}"
+                                alt="{{ $relatedCar->brand->brand }} {{ $relatedCar->model }}">
                         @endif
                     </div>
                     <div class="product-content">
@@ -273,5 +244,71 @@
 </x-app-layout>
 
 @push('scripts')
-    <script src="{{ asset('js/cardetails.js') }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Image carousel functionality
+            initImageCarousel();
+
+            // Accordion functionality
+            initAccordion();
+        });
+
+        function initImageCarousel() {
+            const mainImage = document.getElementById('main-image');
+            const thumbnails = document.querySelectorAll('.thumbnail');
+            let currentImageIndex = 0;
+
+            if (mainImage && thumbnails.length > 0) {
+                thumbnails.forEach((thumb, index) => {
+                    thumb.addEventListener('click', () => {
+                        mainImage.src = thumb.dataset.src;
+                        thumbnails.forEach(t => t.classList.remove('active'));
+                        thumb.classList.add('active');
+                        currentImageIndex = index;
+                    });
+                });
+
+                // Swipe functionality
+                let touchStartX = 0;
+                let touchEndX = 0;
+
+                mainImage.addEventListener('touchstart', e => {
+                    touchStartX = e.changedTouches[0].screenX;
+                });
+
+                mainImage.addEventListener('touchend', e => {
+                    touchEndX = e.changedTouches[0].screenX;
+                    handleSwipe();
+                });
+
+                function handleSwipe() {
+                    const swipeThreshold = 50;
+                    const diff = touchEndX - touchStartX;
+
+                    if (Math.abs(diff) < swipeThreshold) return;
+
+                    if (diff > 0 && currentImageIndex > 0) {
+                        // Swipe right
+                        currentImageIndex--;
+                    } else if (diff < 0 && currentImageIndex < thumbnails.length - 1) {
+                        // Swipe left
+                        currentImageIndex++;
+                    }
+
+                    thumbnails[currentImageIndex].click();
+                }
+            }
+        }
+
+        function initAccordion() {
+            const accordionHeaders = document.querySelectorAll('.accordion-header');
+
+            accordionHeaders.forEach(header => {
+                header.addEventListener('click', () => {
+                    const item = header.parentElement;
+                    item.classList.toggle('collapsed');
+                });
+            });
+        }
+    </script>
 @endpush

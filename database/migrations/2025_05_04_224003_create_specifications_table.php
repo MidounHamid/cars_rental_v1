@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');         // e.g., Child Seat, GPS
             $table->decimal('price', 8, 2); // e.g., 10.00
+            $table->string('icon')->nullable(); // Font Awesome icon name
             $table->timestamps();
         });
     }

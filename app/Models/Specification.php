@@ -16,13 +16,44 @@ class Specification extends Model
     protected $fillable = [
         'name',
         'price',
+        'icon',
     ];
 
 
     public function bookings()
     {
         return $this->belongsToMany(Booking::class, 'booking_specifications')
-                    ->withPivot('quantity', 'price')
-                    ->withTimestamps();
+            ->withPivot('quantity', 'price')
+            ->withTimestamps();
+    }
+
+    // Get the icon based on the name if not set
+    public function getIconAttribute($value)
+    {
+        if (!empty($value)) {
+            return $value;
+        }
+
+        // Default icons based on common specification names
+        $icons = [
+            'gps' => 'map-marker-alt',
+            'navigation' => 'compass',
+            'child' => 'baby',
+            'seat' => 'chair',
+            'wifi' => 'wifi',
+            'hotspot' => 'wifi',
+            'driver' => 'user-tie',
+            'service' => 'concierge-bell'
+        ];
+
+        // Try to find a matching icon based on the name
+        foreach ($icons as $keyword => $icon) {
+            if (stripos($this->name, $keyword) !== false) {
+                return $icon;
+            }
+        }
+
+        // Default icon
+        return 'cog';
     }
 }
