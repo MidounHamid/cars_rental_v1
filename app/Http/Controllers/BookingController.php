@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\Car;
 use App\Models\Promotion;
 use App\Models\Booking;
+use App\Models\Specification;
 use App\Http\Requests\StoreBookingRequest;
 use App\Http\Requests\UpdateBookingRequest;
 use Carbon\Carbon;
@@ -17,7 +18,7 @@ class BookingController extends Controller
      */
     public function index()
     {
-        $bookings = Booking::with(['user', 'car', 'promotion'])->paginate(10);
+        $bookings = Booking::with(['user', 'car', 'car.brand', 'promotion'])->paginate(10);
         return view('admin.bookings.index', compact('bookings'));
     }
 
@@ -27,12 +28,13 @@ class BookingController extends Controller
     public function create()
     {
         $users = User::all();
-        $cars = Car::all();
+        $cars = Car::where('is_available', true)->get();
         $promotions = Promotion::where('expires_at', '>', now())
             ->where('starts_at', '<=', now())
             ->get();
+        $specifications = Specification::all();
 
-        return view('admin.bookings.create', compact('users', 'cars', 'promotions'));
+        return view('admin.bookings.create', compact('users', 'cars', 'promotions', 'specifications'));
     }
 
     /**
@@ -42,26 +44,43 @@ class BookingController extends Controller
     {
         $formFields = $request->validated();
 
-        // Handle empty promotion
-        if (empty($formFields['promotion_id'])) {
-            $formFields['promotion_id'] = null;
+        // Ensure start_time and end_time are included
+        if (!isset($formFields['start_time']) || empty($formFields['start_time'])) {
+            return redirect()->back()->withErrors(['start_time' => 'Start time is required'])->withInput();
         }
 
-        // Calculate final price if promotion exists
-        if ($formFields['promotion_id']) {
-            $promotion = Promotion::find($formFields['promotion_id']);
-            $formFields['total_price'] = $formFields['total_price'] * (1 - ($promotion->discount_percent / 100));
+        if (!isset($formFields['end_time']) || empty($formFields['end_time'])) {
+            return redirect()->back()->withErrors(['end_time' => 'End time is required'])->withInput();
+        }
+
+        // Handle empty promotion
+        if (empty($formFields['promotion_id']) || $formFields['promotion_id'] === "null") {
+            $formFields['promotion_id'] = null;
         }
 
         // Create the booking
         $booking = Booking::create($formFields);
 
+        // Handle specifications if present
+        if (isset($formFields['specifications'])) {
+            foreach ($formFields['specifications'] as $specId => $spec) {
+                if (isset($spec['selected'])) {
+                    $booking->specifications()->attach($specId, [
+                        'quantity' => $spec['quantity'] ?? 1,
+                        'price' => $spec['price'] ?? 0
+                    ]);
+                }
+            }
+        }
+
         // Set the car as unavailable
         $car = Car::find($formFields['car_id']);
-        $car->is_available = false;
-        $car->save();
+        if ($car) {
+            $car->is_available = false;
+            $car->save();
+        }
 
-        return redirect()->route('bookings.index')->with('success', 'La réservation a été créée avec succès.');
+        return redirect()->route('bookings.index')->with('success', 'Booking created successfully.');
     }
 
     /**
@@ -69,6 +88,7 @@ class BookingController extends Controller
      */
     public function show(Booking $booking)
     {
+        $booking->load(['user', 'car', 'car.brand', 'promotion', 'specifications']);
         return view('admin.bookings.show', compact('booking'));
     }
 
@@ -77,14 +97,16 @@ class BookingController extends Controller
      */
     public function edit($id)
     {
-        $booking = Booking::with('promotion')->findOrFail($id);
+        $booking = Booking::with(['promotion', 'specifications'])->findOrFail($id);
         $users = User::all();
-        $cars = Car::all();
+        // Include the current car in the selection, even if not available
+        $availableCars = Car::where('is_available', true)->orWhere('id', $booking->car_id)->get();
         $promotions = Promotion::where('expires_at', '>', now())
             ->where('starts_at', '<=', now())
             ->get();
+        $specifications = Specification::all();
 
-        return view('admin.bookings.edit', compact('booking', 'users', 'cars', 'promotions'));
+        return view('admin.bookings.edit', compact('booking', 'users', 'availableCars', 'promotions', 'specifications'));
     }
 
     /**
@@ -94,26 +116,61 @@ class BookingController extends Controller
     {
         $formFields = $request->validated();
 
+        // Ensure start_time and end_time are included
+        if (!isset($formFields['start_time']) || empty($formFields['start_time'])) {
+            return redirect()->back()->withErrors(['start_time' => 'Start time is required'])->withInput();
+        }
+
+        if (!isset($formFields['end_time']) || empty($formFields['end_time'])) {
+            return redirect()->back()->withErrors(['end_time' => 'End time is required'])->withInput();
+        }
+
         // Handle empty promotion
-        if (empty($formFields['promotion_id'])) {
+        if (empty($formFields['promotion_id']) || $formFields['promotion_id'] === "null") {
             $formFields['promotion_id'] = null;
         }
 
-        // Recalculate price if promotion changed
-        if ($formFields['promotion_id'] != $booking->promotion_id) {
-            if ($formFields['promotion_id']) {
-                $promotion = Promotion::find($formFields['promotion_id']);
-                $formFields['total_price'] = $formFields['total_price'] * (1 - ($promotion->discount_percent / 100));
-            } else {
-                // Revert to original price if promotion removed
-                $formFields['total_price'] = $booking->car->price * Carbon::parse($formFields['end_date'])
-                    ->diffInDays(Carbon::parse($formFields['start_date']));
+        // Check if car has changed
+        $carChanged = $booking->car_id != $formFields['car_id'];
+        $oldCarId = $booking->car_id;
+
+        // Update the booking
+        $booking->update($formFields);
+
+        // Handle specifications
+        if (isset($formFields['specifications'])) {
+            // Detach existing specifications
+            $booking->specifications()->detach();
+
+            // Attach new specifications
+            foreach ($formFields['specifications'] as $specId => $spec) {
+                if (isset($spec['selected'])) {
+                    $booking->specifications()->attach($specId, [
+                        'quantity' => $spec['quantity'] ?? 1,
+                        'price' => $spec['price'] ?? 0
+                    ]);
+                }
             }
         }
 
-        $booking->update($formFields);
+        // Update car availability if car has changed
+        if ($carChanged) {
+            // Set old car as available
+            $oldCar = Car::find($oldCarId);
+            if ($oldCar) {
+                $oldCar->is_available = true;
+                $oldCar->save();
+            }
 
-        return redirect()->route('bookings.index')->with('success', 'La réservation a été mise à jour avec succès.');
+            // Set new car as unavailable
+            $newCar = Car::find($formFields['car_id']);
+            if ($newCar) {
+                $newCar->is_available = false;
+                $newCar->save();
+            }
+        }
+
+        return redirect()->route('bookings.index')->with('success', 'Booking updated successfully.');
     }
 
     /**
@@ -123,10 +180,15 @@ class BookingController extends Controller
     {
         // Set the car as available again
         $car = Car::find($booking->car_id);
-        $car->is_available = true;
-        $car->save();
+        if ($car) {
+            $car->is_available = true;
+            $car->save();
+        }
+
+        // Detach specifications
+        $booking->specifications()->detach();
 
         $booking->delete();
-        return redirect()->route('bookings.index')->with('success', 'La réservation a été supprimée avec succès.');
+        return redirect()->route('bookings.index')->with('success', 'Booking deleted successfully.');
     }
 }

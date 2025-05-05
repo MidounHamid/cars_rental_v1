@@ -333,43 +333,46 @@
                 </div>
             </div>
 
-            <!-- Car Features -->
-            <div class="filter-widget">
-                <h2 class="filter-widget-title">Car Features</h2>
-                <div class="filter-widget-content">
-                    <div class="search-box">
-                        <input type="text" placeholder="Search features" class="sidebar-search-input">
-                    </div>
-                    <div class="checkbox-group">
-                        @foreach ($features as $feature)
-                            {{-- <label class="checkbox-label">
-                            <input type="checkbox" wire:model.live="specifications_checked"
-                            value="{{ $specification->id }}" class="hidden-checkbox">
-                        <span class="checkbox-custom">
-                            <svg viewBox="0 0 64 64" height="100%" width="100%">
-                                <path
-                                    d="M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16"
-                                    class="path"></path>
-                            </svg>
-                        </span> --}}
+<!-- Car Features -->
+<div class="filter-widget">
+    <h2 class="filter-widget-title">Car Features</h2>
 
+    <!-- Features Search Input -->
+    <div class="feature-search-container mb-3">
+        <input
+            type="text"
+            wire:model.live="feature_search"
+            placeholder="Search features"
+            class="sidebar-search-input form-control"
+        >
+    </div>
 
-
-                        <label class="container-checkbox">
-                            <input type="checkbox" wire:model.live="features_checked" value="{{ $feature->id }}" />
-                            <svg viewBox="0 0 64 64" height="2em" width="2em">
-                              <path
-                                d="M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16"
-                                pathLength="575.0541381835938"
-                                class="path"
-                              ></path>
-                            </svg>
-                            <span class="label-text">{{ $feature->feature }}</span>
-                          </label>
-                        @endforeach
-                    </div>
-                </div>
+    <!-- Features Checkboxes -->
+    <div class="features-list">
+        @forelse ($features as $feature)
+            <label class="container-checkbox">
+                <input
+                    type="checkbox"
+                    wire:model.live="features_checked"
+                    value="{{ $feature->id }}"
+                />
+                <svg viewBox="0 0 64 64" height="2em" width="2em">
+                    <path
+                        d="M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16"
+                        pathLength="575.0541381835938"
+                        class="path"
+                    >
+                    </path>
+                </svg>
+                <span class="label-text">{{ $feature->feature }}</span>
+            </label>
+        @empty
+            <div class="no-results-message">
+                <p>No features match "{{ $feature_search }}"</p>
             </div>
+        @endforelse
+    </div>
+</div>
         </form>
     </div>
 

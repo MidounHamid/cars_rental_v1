@@ -4,7 +4,7 @@ namespace App\Livewire;
 
 use App\Models\Car;
 use App\Models\Location;
-use App\Models\Feature;  // Changed from Specification to Feature
+use App\Models\Feature;
 use App\Models\CarType;
 use App\Models\FuelType;
 use App\Models\Brand;
@@ -19,7 +19,8 @@ class CarFilter extends Component
     public $locations;
     public $fuelTypes;
     public $typeCars;
-    public $features; // Changed from specifications to features
+    public $features;
+    public $allFeatures; // Store all features
 
     public $start_date;
     public $end_date;
@@ -30,7 +31,8 @@ class CarFilter extends Component
     public $car_model;
     public $car_type;
     public $fuel_type = null;
-    public $features_checked = []; // Changed from specifications_checked to features_checked
+    public $features_checked = [];
+    public $feature_search = ''; // Property for feature search
 
     public $pickup_location_search = '';
     public $car_type_search = '';
@@ -59,7 +61,8 @@ class CarFilter extends Component
         $this->locations = Location::orderBy('name')->get();
         $this->fuelTypes = FuelType::select('id', 'fuel_type')->distinct()->orderBy('fuel_type')->get();
         $this->typeCars = CarType::select('id', 'name')->distinct()->orderBy('name')->get();
-        $this->features = Feature::orderBy('feature')->get();  // Changed from Specification to Feature
+        $this->allFeatures = Feature::orderBy('feature')->get();
+        $this->features = $this->allFeatures; // Initialize features with all features
 
         // Get search parameters from URL
         $pickup_location = request('pickup_location');
@@ -85,7 +88,21 @@ class CarFilter extends Component
 
     public function updated($propertyName)
     {
+        if ($propertyName === 'feature_search') {
+            $this->updateFilteredFeatures();
+        }
         $this->resetPage();
+    }
+
+    public function updateFilteredFeatures()
+    {
+        if (empty($this->feature_search)) {
+            $this->features = $this->allFeatures;
+        } else {
+            $this->features = $this->allFeatures->filter(function ($feature) {
+                return stripos($feature->feature, $this->feature_search) !== false;
+            });
+        }
     }
 
     public function clearDates()
@@ -150,9 +167,9 @@ class CarFilter extends Component
             });
         }
 
-        if (!empty($this->features_checked)) {  // Changed from specifications_checked to features_checked
-            $query->whereHas('features', function ($q) {  // Changed from specifications to features
-                $q->whereIn('features.id', $this->features_checked);  // Changed from specifications to features
+        if (!empty($this->features_checked)) {
+            $query->whereHas('features', function ($q) {
+                $q->whereIn('features.id', $this->features_checked);
             });
         }
 
@@ -181,7 +198,8 @@ class CarFilter extends Component
             'car_type',
             'car_type_name',
             'fuel_type',
-            'features_checked',  // Changed from specifications_checked to features_checked
+            'features_checked',
+            'feature_search',
             'start_date',
             'end_date',
             'daterange',
@@ -190,6 +208,7 @@ class CarFilter extends Component
             'car_model_search'
         ]);
 
+        $this->features = $this->allFeatures; // Reset features to show all
         $this->resetPage();
     }
 
@@ -227,7 +246,7 @@ class CarFilter extends Component
             'locations' => $filteredLocations,
             'fuelTypes' => $this->fuelTypes,
             'typeCars' => $filteredCarTypes,
-            'features' => $this->features,  // Changed from specifications to features
+            'features' => $this->features, // Passing filtered features
         ]);
     }
 }

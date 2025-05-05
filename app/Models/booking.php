@@ -1,6 +1,8 @@
 <?php
 
 namespace App\Models;
+
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -9,7 +11,7 @@ class Booking extends Model
     use HasFactory;
     protected $fillable = [
         'user_id', 'car_id', 'start_date', 'end_date',
-        'status', 'payment_id', 'promotion_id',    'start_time', 
+        'status', 'payment_id', 'promotion_id',    'start_time',
         'end_time',
     ];
 
@@ -45,23 +47,37 @@ class Booking extends Model
 
 
     public function getTotalPriceAttribute()
-{
-    $carPricePerDay = $this->car->price ?? 0;
-    $days = $this->start_date->diffInDays($this->end_date) + 1;
+    {
+        $this->loadMissing(['car', 'specifications']);
 
-    $base = $carPricePerDay * $days;
+        $car = $this->car;
+        $carPricePerDay = $car ? $car->price_per_day : 0;
 
-    $specTotal = $this->specifications->sum(function ($spec) {
-        return $spec->pivot->price * $spec->pivot->quantity;
-    });
+        $startDate = $this->start_date->format('Y-m-d');
+        $endDate = $this->end_date->format('Y-m-d');
 
-    $total = $base + $specTotal;
+        $startDateTime = Carbon::createFromFormat('Y-m-d H:i:s', "$startDate {$this->start_time}");
+        $endDateTime = Carbon::createFromFormat('Y-m-d H:i:s', "$endDate {$this->end_time}");
 
-    if ($this->promotion) {
-        $total -= $total * ($this->promotion->discount_percent / 100);
+        if ($endDateTime <= $startDateTime) return 0;
+
+        $hours = $startDateTime->diffInHours($endDateTime);
+        $days = max(1, ceil($hours / 24));
+
+        $basePrice = $carPricePerDay * $days;
+        $specTotal = $this->specifications->sum(fn($spec) =>
+            $spec->pivot->price * $spec->pivot->quantity
+        );
+
+        $total = $basePrice + $specTotal;
+
+        if ($this->promotion) {
+            $total *= (1 - $this->promotion->discount_percent / 100);
+        }
+
+        return round($total, 2);
     }
 
-    return round($total, 2);
-}
+
 
 }

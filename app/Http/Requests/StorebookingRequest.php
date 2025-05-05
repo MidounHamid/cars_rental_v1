@@ -25,11 +25,15 @@ class StorebookingRequest extends FormRequest
             'user_id' => 'required|exists:users,id',
             'car_id' => 'required|exists:cars,id',
             'start_date' => 'required|date|after_or_equal:today',
-            'end_date' => 'required|date|after:start_date',
-            'total_price' => 'numeric|min:0',
-            'status' => 'nullable|in:pending,confirmed,cancelled',
-            'payment_id' => 'nullable|exists:payments,id',
-            'promotion_id' => 'nullable|exists:promotions,id'
+            'end_date' => 'required|date|after_or_equal:start_date',
+            'start_time' => 'required|date_format:H:i',
+            'end_time' => 'required|date_format:H:i',
+            'status' => 'required|in:pending,confirmed,cancelled,completed',
+            'promotion_id' => 'nullable|exists:promotions,id',
+            'specifications' => 'nullable|array',
+            'specifications.*.selected' => 'nullable',
+            'specifications.*.quantity' => 'nullable|integer|min:1',
+            'specifications.*.price' => 'nullable|numeric|min:0',
         ];
     }
 }
