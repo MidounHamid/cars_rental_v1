@@ -17,17 +17,24 @@
                     <div class="form-group">
                         <label>PICKUP LOCATION</label>
                         <div class="location-input-wrapper">
-                            <input type="text" class="location-input" name="from" id="from-location"
+                            <input type="text" class="location-input" name="pickup_location_display" id="from-location"
                                    placeholder="Choose Location" autocomplete="off">
+
+                            <!-- Hidden input to store selected location ID -->
+                            <input type="hidden" name="pickup_location" id="from-location-id">
+
                             <div class="location-dropdown">
                                 @foreach ($locations as $location)
-                                    <div class="location-option" data-value="{{ $location->id }}" data-name="{{ $location->name }}">
+                                    <div class="location-option"
+                                         data-value="{{ $location->id }}"
+                                         data-name="{{ $location->name }} - {{ ucfirst(str_replace('_', ' ', $location->type)) }}">
                                         {{ $location->name }} - {{ ucfirst(str_replace('_', ' ', $location->type)) }}
                                     </div>
                                 @endforeach
                             </div>
                         </div>
                     </div>
+
                     <div class="form-group">
                         <label>CHOOSE DATES</label>
                         <div class="dates-input-wrapper">
@@ -391,6 +398,22 @@
                 // Redirect to the listing page with the parameters
                 window.location.href = `${baseUrl}?${params.toString()}`;
             });
+
+
+
+
+
+
+    document.querySelectorAll('.location-option').forEach(option => {
+        option.addEventListener('click', function () {
+            const name = this.dataset.name;
+            const id = this.dataset.value;
+
+            document.getElementById('from-location').value = name; // show name
+            document.getElementById('from-location-id').value = id; // send ID to backend
+        });
+    });
+
         });
     </script>
 </x-app-layout>

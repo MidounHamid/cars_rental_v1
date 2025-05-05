@@ -34,4 +34,10 @@ class Booking extends Model
     public function payment() {
         return $this->hasOne(Payment::class);
     }
+    public function specifications()
+    {
+        return $this->belongsToMany(Specification::class, 'booking_specifications')
+                    ->withPivot('quantity', 'price')
+                    ->withTimestamps();
+    }
 }

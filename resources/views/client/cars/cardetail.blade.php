@@ -118,8 +118,8 @@
                         </div>
                         <div class="accordion-content">
                             <ul style="list-style-type: none; padding-left: 10px;">
-                                @foreach($car->specifications as $spec)
-                                    <li>• {{ $spec->specification }}</li>
+                                @foreach($car->features as $feature)
+                                    <li>• {{ $feature->name }}</li>
                                 @endforeach
                             </ul>
                         </div>

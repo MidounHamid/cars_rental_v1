@@ -16,7 +16,7 @@
             @forelse ($carDeliveries as $carDeliverie)
                 <tr>
                     <td>{{ $carDeliverie->car->model }}</td> <!-- Assuming `Car` model has a `name` attribute -->
-                    <td>{{ $carDeliverie->location->name }}</td> <!-- Assuming `Location` model has a `name` attribute -->
+                    <td>{{ $carDeliverie->location->name }}-{{ $carDeliverie->location->type }}</td> <!-- Assuming `Location` model has a `name` attribute -->
                     <td>
                         <a href="{{ route('car_delivery_locations.edit', $carDeliverie->id) }}" class="btn btn-primary">Edit</a>
                         <form action="{{ route('car_delivery_locations.destroy', $carDeliverie->id) }}" method="POST" style="display: inline;">

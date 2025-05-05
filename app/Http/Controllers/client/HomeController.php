@@ -49,9 +49,11 @@ class HomeController extends Controller
         // Filter by delivery location
         if ($pickup_location) {
             $query->whereHas('deliveryLocations', function ($q) use ($pickup_location) {
-                $q->where('name', 'like', '%' . $pickup_location . '%');
+                $q->where('locations.id', $pickup_location); // ← Explicit table name
             });
         }
+
+
 
         // Filter by availability based on dates
         if ($start_date && $end_date) {

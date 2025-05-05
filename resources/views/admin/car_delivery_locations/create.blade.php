@@ -28,7 +28,7 @@
                 <select name="location_id" id="location_id" class="form-input" required>
                     @foreach($locations as $location)
                         <option value="{{ $location->id }}" {{ old('location_id') == $location->id ? 'selected' : '' }}>
-                            {{ $location->name }}
+                            {{ $location->name }}-{{ $location->type }}
                         </option>
                     @endforeach
                 </select>

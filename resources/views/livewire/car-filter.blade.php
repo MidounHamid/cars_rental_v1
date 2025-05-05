@@ -333,7 +333,7 @@
                 </div>
             </div>
 
-            <!-- Car Specifications -->
+            <!-- Car Features -->
             <div class="filter-widget">
                 <h2 class="filter-widget-title">Car Features</h2>
                 <div class="filter-widget-content">
