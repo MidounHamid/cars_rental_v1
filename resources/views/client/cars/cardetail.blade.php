@@ -97,6 +97,8 @@
                     <p>Day based pricing :
                     </p>
                     <span>{{$car->price_per_day}}/ days</span>
+                    <livewire:car-booking :car="$car" />
+
                 </div>
 
                 <!-- Accordion Sections -->

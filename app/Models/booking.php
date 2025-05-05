@@ -8,7 +8,7 @@ class Booking extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'user_id', 'car_id', 'start_date', 'end_date', 'total_price',
+        'user_id', 'car_id', 'start_date', 'end_date', 
         'status', 'payment_id', 'promotion_id'
     ];
 
@@ -40,4 +40,27 @@ class Booking extends Model
                     ->withPivot('quantity', 'price')
                     ->withTimestamps();
     }
+
+
+
+    public function getTotalPriceAttribute()
+{
+    $carPricePerDay = $this->car->price ?? 0;
+    $days = $this->start_date->diffInDays($this->end_date) + 1;
+
+    $base = $carPricePerDay * $days;
+
+    $specTotal = $this->specifications->sum(function ($spec) {
+        return $spec->pivot->price * $spec->pivot->quantity;
+    });
+
+    $total = $base + $specTotal;
+
+    if ($this->promotion) {
+        $total -= $total * ($this->promotion->discount_percent / 100);
+    }
+
+    return round($total, 2);
+}
+
 }
