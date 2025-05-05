@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateSpecificationRequest extends FormRequest
 {
@@ -22,7 +23,13 @@ class UpdateSpecificationRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|unique:specifications,name|max:255',
-            'price' => 'required|numeric|min:0',         ];
+            'name' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('specifications', 'name')->ignore($this->specification),
+            ],
+            'price' => 'required|numeric|min:0',
+        ];
     }
 }

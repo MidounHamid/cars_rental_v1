@@ -22,6 +22,7 @@ use App\Http\Controllers\CarFeatureController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\client\HomeController;
 use App\Http\Controllers\FeatureController;
+use App\Models\BookingSpecification;
 use App\Models\CarFeature;
 
 // ======= Client Routes =======
@@ -69,6 +70,8 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::resource('reviews', ReviewController::class);
     Route::resource('features', FeatureController::class);
     Route::resource('locations',LocationController::class);
+    route::resource('specifications', SpecificationController::class);
+    // Route::resource('booking_specifications', BookingSpecification::class);
     Route::resource('car_delivery_locations',CarDeliveryLocationController::class);
 
 

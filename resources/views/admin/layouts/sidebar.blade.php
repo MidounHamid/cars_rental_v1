@@ -212,6 +212,12 @@
                         <span class="nav-label">Car delivery locations</span>
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a href="{{route('specifications.index')}}" class="nav-link">
+                        <span class="nav-icon material-symbols-rounded">list_alt</span>
+                        <span class="nav-label">specifications</span>
+                    </a>
+                </li>
             </ul>
 
             {{-- <ul class="nav-list secondary-nav">
