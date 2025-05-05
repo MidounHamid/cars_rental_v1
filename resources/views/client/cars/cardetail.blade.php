@@ -83,97 +83,51 @@
                 </div>
 
                 <!-- Specifications Table -->
-                <div class="specifications-section">
-                    <h3 class="section-title">
-                        <svg class="section-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
-                        </svg>
-                        Specifications Table
-                    </h3>
+                <div class="form-section">
+                    <label class="form-label">Specifications Table</label>
                     <div class="specifications-table">
                         <div class="spec-row">
-                            <div class="spec-name">
-                                <svg class="spec-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <circle cx="12" cy="12" r="10"/><path d="M12 2v10l4.5 4.5"/>
-                                </svg>
-                                GPS Navigation
-                            </div>
+                            <div class="spec-name">GPS Navigation</div>
                             <div class="spec-quantity">
                                 <button class="quantity-btn minus">-</button>
                                 <span class="quantity-value" data-price="50">0</span>
                                 <button class="quantity-btn plus">+</button>
-                                <button class="reset-btn">
-                                    <svg class="reset-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-                                    </svg>
-                                </button>
+                                <button class="reset-btn">×</button>
                             </div>
                         </div>
                         <div class="spec-row">
-                            <div class="spec-name">
-                                <svg class="spec-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
-                                </svg>
-                                Child Seat
-                            </div>
+                            <div class="spec-name">Child Seat</div>
                             <div class="spec-quantity">
                                 <button class="quantity-btn minus">-</button>
                                 <span class="quantity-value" data-price="30">0</span>
                                 <button class="quantity-btn plus">+</button>
-                                <button class="reset-btn">
-                                    <svg class="reset-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-                                    </svg>
-                                </button>
+                                <button class="reset-btn">×</button>
                             </div>
                         </div>
                         <div class="spec-row">
-                            <div class="spec-name">
-                                <svg class="spec-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12" y2="20"/>
-                                </svg>
-                                Wi-Fi Hotspot
-                            </div>
+                            <div class="spec-name">Wi-Fi Hotspot</div>
                             <div class="spec-quantity">
                                 <button class="quantity-btn minus">-</button>
                                 <span class="quantity-value" data-price="25">0</span>
                                 <button class="quantity-btn plus">+</button>
-                                <button class="reset-btn">
-                                    <svg class="reset-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-                                    </svg>
-                                </button>
+                                <button class="reset-btn">×</button>
                             </div>
                         </div>
                         <div class="spec-row">
-                            <div class="spec-name">
-                                <svg class="spec-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-                                </svg>
-                                Driver Service
-                            </div>
+                            <div class="spec-name">Driver Service</div>
                             <div class="spec-quantity">
                                 <button class="quantity-btn minus">-</button>
                                 <span class="quantity-value" data-price="200">0</span>
                                 <button class="quantity-btn plus">+</button>
-                                <button class="reset-btn">
-                                    <svg class="reset-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-                                    </svg>
-                                </button>
+                                <button class="reset-btn">×</button>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Pricing Info -->
-                <div class="pricing-info">
-                    <h3 class="section-title">
-                        <svg class="section-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
-                        </svg>
-                        Pricing Info
-                    </h3>
+                <div class="form-section">
+                    <label class="form-label">Pricing Info</label>
                     <div class="price-details">
                         <div class="price-row">
                             <span>Base Rate (per day)</span>

@@ -300,6 +300,8 @@ body {
 
 .specifications-table {
     background: white;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
 }
 
 .spec-row {
@@ -315,9 +317,6 @@ body {
 }
 
 .spec-name {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
     font-size: 14px;
     color: #495057;
 }
@@ -347,6 +346,7 @@ body {
     cursor: pointer;
     transition: all 0.2s;
     color: #495057;
+    font-size: 14px;
 }
 
 .quantity-btn:hover, .reset-btn:hover {
@@ -378,7 +378,9 @@ body {
 }
 
 .price-details {
-    padding: 0;
+    background: white;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
 }
 
 .price-row {
