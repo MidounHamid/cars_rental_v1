@@ -61,6 +61,7 @@ class StripePaymentController extends Controller
                     'start_time' => $bookingData['pickup_time'] ?? '10:00',
                     'end_time' => $bookingData['return_time'] ?? '10:00',
                     'status' => 'pending',
+                    'total_price' => $bookingData['total_price'],
                 ]);
 
                 // Update session with booking_id
@@ -74,23 +75,25 @@ class StripePaymentController extends Controller
 
             $paymentMethod = Mode_payment::where('mode_payment', 'stripe')->firstOrFail();
 
+            // Process direct payment with Stripe
             Stripe::setApiKey(config('services.stripe.secret'));
 
-            $session = \Stripe\Checkout\Session::create([
+            // Get payment method ID from the request
+            $paymentMethodId = $request->input('payment_method_id');
+
+            if (!$paymentMethodId) {
+                return response()->json(['error' => 'Payment method ID is required'], 400);
+            }
+
+            // Create a payment intent
+            $paymentIntent = \Stripe\PaymentIntent::create([
+                'amount' => (int)($bookingData['total_price'] * 100), // Convert to cents
+                'currency' => 'usd',
+                'payment_method' => $paymentMethodId,
                 'payment_method_types' => ['card'],
-                'line_items' => [[
-                    'price_data' => [
-                        'currency' => 'usd',
-                        'product_data' => [
-                            'name' => ($bookingData['car']['brand'] ?? 'Car') . ' ' . ($bookingData['car']['model'] ?? 'Rental'),
-                        ],
-                        'unit_amount' => $bookingData['total_price'] * 100,
-                    ],
-                    'quantity' => 1,
-                ]],
-                'mode' => 'payment',
-                'success_url' => route('stripe.success') . '?session_id={CHECKOUT_SESSION_ID}',
-                'cancel_url' => route('stripe.cancel'),
+                'confirmation_method' => 'manual',
+                'confirm' => true,
+                'description' => ($bookingData['car']['brand'] ?? 'Car') . ' ' . ($bookingData['car']['model'] ?? 'Rental'),
                 'metadata' => [
                     'booking_id' => $booking->id,
                     'user_id' => $user->id,
@@ -98,17 +101,42 @@ class StripePaymentController extends Controller
                 ],
             ]);
 
+            // Create payment record in database
             Payment::create([
                 'booking_id' => $booking->id,
                 'amount' => $booking->total_price ?? $bookingData['total_price'],
                 'mode_payment_id' => $paymentMethod->id,
-                'transaction_id' => $session->id,
-                'status' => 'pending',
-                'stripe_payment_id' => $session->id,
-                'stripe_response' => json_encode($session)
+                'transaction_id' => $paymentIntent->id,
+                'status' => $paymentIntent->status === 'succeeded' ? 'successful' : 'pending',
+                'stripe_payment_id' => $paymentIntent->id,
+                'stripe_response' => json_encode($paymentIntent)
             ]);
 
-            return response()->json(['sessionId' => $session->id]);
+            // If payment succeeded, update booking status
+            if ($paymentIntent->status === 'succeeded') {
+                $booking->update(['status' => 'confirmed']);
+                return response()->json([
+                    'success' => true,
+                    'redirect' => route('stripe.success') . '?payment_intent=' . $paymentIntent->id
+                ]);
+            }
+
+            // If payment requires additional action (3D Secure, etc.)
+            if (
+                $paymentIntent->status === 'requires_action' &&
+                $paymentIntent->next_action &&
+                $paymentIntent->next_action->type === 'use_stripe_sdk'
+            ) {
+                return response()->json([
+                    'requires_action' => true,
+                    'payment_intent_client_secret' => $paymentIntent->client_secret
+                ]);
+            }
+
+            return response()->json([
+                'success' => true,
+                'payment_intent' => $paymentIntent->id
+            ]);
         } catch (\Exception $e) {
             report($e);
             return response()->json(['error' => $e->getMessage()], 500);
@@ -118,16 +146,16 @@ class StripePaymentController extends Controller
     public function success(Request $request)
     {
         try {
-            $sessionId = $request->get('session_id');
+            $paymentIntentId = $request->get('payment_intent');
 
-            if (!$sessionId) {
-                return redirect()->route('home')->with('error', 'No session information found.');
+            if (!$paymentIntentId) {
+                return redirect()->route('home')->with('error', 'No payment information found.');
             }
 
             Stripe::setApiKey(config('services.stripe.secret'));
-            $session = \Stripe\Checkout\Session::retrieve($sessionId);
+            $paymentIntent = \Stripe\PaymentIntent::retrieve($paymentIntentId);
 
-            $payment = Payment::where('transaction_id', $sessionId)->firstOrFail();
+            $payment = Payment::where('transaction_id', $paymentIntentId)->firstOrFail();
             $booking = Booking::findOrFail($payment->booking_id);
 
             $payment->update(['status' => 'successful']);
@@ -141,12 +169,53 @@ class StripePaymentController extends Controller
             ]);
         } catch (\Exception $e) {
             report($e);
-            return redirect()->route('home')->with('error', 'Failed to process payment confirmation.');
+            return redirect()->route('dashboard')->with('error', 'Failed to process payment confirmation.');
         }
     }
 
     public function cancel()
     {
         return redirect()->route('dashboard')->with('error', 'Payment was cancelled.');
+    }
+
+    public function confirmPayment(Request $request)
+    {
+        try {
+            $paymentIntentId = $request->input('payment_intent_id');
+
+            if (!$paymentIntentId) {
+                return response()->json(['error' => 'Payment intent ID is required'], 400);
+            }
+
+            Stripe::setApiKey(config('services.stripe.secret'));
+            $paymentIntent = \Stripe\PaymentIntent::retrieve($paymentIntentId);
+
+            // If payment is successful, update records
+            if ($paymentIntent->status === 'succeeded') {
+                $payment = Payment::where('stripe_payment_id', $paymentIntentId)->first();
+
+                if ($payment) {
+                    $payment->update(['status' => 'successful']);
+
+                    $booking = Booking::find($payment->booking_id);
+                    if ($booking) {
+                        $booking->update(['status' => 'confirmed']);
+                    }
+                }
+
+                return response()->json([
+                    'success' => true,
+                    'redirect' => route('stripe.success') . '?payment_intent=' . $paymentIntentId
+                ]);
+            }
+
+            return response()->json([
+                'success' => false,
+                'error' => 'Payment was not successful'
+            ], 400);
+        } catch (\Exception $e) {
+            report($e);
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
     }
 }

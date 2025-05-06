@@ -50,8 +50,8 @@ class Booking extends Model
     public function specifications()
     {
         return $this->belongsToMany(Specification::class, 'booking_specifications')
-            ->withPivot('quantity', 'price')
-            ->withTimestamps();
+                    ->withPivot('quantity', 'price')
+                    ->withTimestamps();
     }
 
 
