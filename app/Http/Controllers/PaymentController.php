@@ -53,7 +53,9 @@ class PaymentController extends Controller
      */
     public function edit(Payment $payment)
     {
-        return view('admin.payments.edit', compact('payment'));
+        $bookings = Booking::all();
+        $modePayments = Mode_payment::all(); // Fetch all payment modes
+        return view('admin.payments.edit', compact('payment', 'modePayments', 'bookings'));
     }
 
     /**

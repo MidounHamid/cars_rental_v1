@@ -8,7 +8,8 @@ class Payment extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'booking_id', 'amount', 'method', 'transaction_id', 'status', 'mode_payment_id'
+        'booking_id', 'amount', 'transaction_id', 'status', 'mode_payment_id', 'stripe_payment_id'
+
     ];
 
     public function booking() {

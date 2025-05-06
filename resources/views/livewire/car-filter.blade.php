@@ -422,7 +422,7 @@
                                 </div>
                                 <div class="car-spec-item">
                                     <i class="fas fa-shield-alt"></i>
-                                    <span>{{ $car->insurance_type ?? 'Standard Insurance' }}</span>
+                                    <span>{{ $car->insurance->name }}</span>
                                 </div>
                                 <div class="car-spec-item">
                                     <i class="fas fa-users"></i>
