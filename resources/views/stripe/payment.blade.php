@@ -168,6 +168,8 @@
             </div>
             <form action="{{ route('stripe.checkout') }}" method="POST" enctype="multipart/form-data" id="payment-form">
                 @csrf
+
+
                 <div class="payment-details-container">
                     <!-- Driver Information Section -->
                     <div class="payment-details">
@@ -768,76 +770,176 @@
     </style>
 <script src="https://js.stripe.com/v3/"></script>
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const timeElement = document.querySelector('.time');
-        const checkoutButton = document.getElementById("checkout-button");
-        const form = document.getElementById('payment-form');  // Make sure the form exists
+document.addEventListener('DOMContentLoaded', function () {
+    const timeElement = document.querySelector('.time');
+    const checkoutButton = document.getElementById("checkout-button");
+    const form = document.getElementById('payment-form');
 
-        if (timeElement) {
-            let countdownTime = 15 * 60; // 15 minutes in seconds
+    if (timeElement) {
+        // Timer code remains the same
+        let countdownTime = 15 * 60; // 15 minutes in seconds
 
-            const updateTimer = () => {
-                const minutes = Math.floor(countdownTime / 60);
-                const seconds = countdownTime % 60;
-                timeElement.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-            };
+        const updateTimer = () => {
+            const minutes = Math.floor(countdownTime / 60);
+            const seconds = countdownTime % 60;
+            timeElement.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        };
 
-            const handleExpiry = () => {
-                alert('Your booking session has expired. Please restart your booking.');
-                window.location.href = "{{ route('dashboard') }}"; // Change to your desired route
-            };
+        const handleExpiry = () => {
+            alert('Your booking session has expired. Please restart your booking.');
+            window.location.href = "{{ route('dashboard') }}";
+        };
 
-            const interval = setInterval(() => {
-                if (countdownTime <= 0) {
-                    clearInterval(interval);
-                    handleExpiry();
-                    return;
-                }
-                countdownTime--;
-                updateTimer();
-            }, 1000);
+        const interval = setInterval(() => {
+            if (countdownTime <= 0) {
+                clearInterval(interval);
+                handleExpiry();
+                return;
+            }
+            countdownTime--;
+            updateTimer();
+        }, 1000);
 
-            updateTimer(); // Initial display
-        } else {
-            console.warn('Timer or form element not found.');
-        }
+        updateTimer(); // Initial display
+    }
 
-        const stripe = Stripe("{{ env('STRIPE_KEY') }}");
+    // Initialize Stripe
+    const stripe = Stripe("{{ env('STRIPE_KEY') }}");
 
+    // Handle checkout button click
+    if (checkoutButton && form) {
         checkoutButton.addEventListener("click", function (e) {
             e.preventDefault();
 
-            // Ensure the form exists
-            if (!form) {
-                console.error("Payment form not found");
-                alert('Payment form not found.');
+            // Basic form validation
+            const requiredFields = form.querySelectorAll('[required]');
+            let formIsValid = true;
+
+            requiredFields.forEach(field => {
+                if (!field.value) {
+                    formIsValid = false;
+                    field.style.borderColor = 'red';
+                } else {
+                    field.style.borderColor = '';
+                }
+            });
+
+            if (!formIsValid) {
+                alert('Please fill in all required fields');
                 return;
             }
 
-            const formData = new FormData(form); // Create FormData from the actual form
+            // Disable button to prevent multiple submissions
+            checkoutButton.disabled = true;
+            checkoutButton.textContent = "Processing...";
 
+            // Create a FormData object for file uploads
+            const formData = new FormData();
+
+            // Get form data for user info but don't include card data
+            // Those will be handled by Stripe directly
+            const formElements = form.elements;
+            for (let i = 0; i < formElements.length; i++) {
+                const field = formElements[i];
+                if (field.name && field.name !== 'card_number' &&
+                    field.name !== 'card_name' && field.name !== 'expiry_month' &&
+                    field.name !== 'expiry_year' && field.name !== 'cvv') {
+
+                    if (field.type === 'file' && field.files.length > 0) {
+                        formData.append(field.name, field.files[0]);
+                    } else if (field.type !== 'file') {
+                        formData.append(field.name, field.value);
+                    }
+                }
+            }
+
+            // Log form data for debugging (remove in production)
+            console.log("Form data being submitted:");
+            for (let pair of formData.entries()) {
+                // Don't log file contents, just their presence
+                if (pair[1] instanceof File) {
+                    console.log(pair[0] + ': File uploaded - ' + pair[1].name);
+                } else {
+                    console.log(pair[0] + ': ' + pair[1]);
+                }
+            }
+
+            // Send form data to create Checkout Session
             fetch("{{ route('stripe.checkout') }}", {
                 method: "POST",
                 headers: {
-                    "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                    "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                    "Accept": "application/json"
                 },
-                body: formData // Send form data to the backend
+                body: formData
             })
-            .then(res => res.json())
+            .then(response => {
+                console.log("Response status:", response.status);
+
+                if (!response.ok) {
+                    return response.json().then(err => {
+                        throw err;
+                    });
+                }
+                return response.json();
+            })
             .then(data => {
+                console.log("Success response:", data);
+
                 if (data.sessionId) {
-                    stripe.redirectToCheckout({ sessionId: data.sessionId });
+                    console.log("Redirecting to Stripe checkout with session ID:", data.sessionId);
+                    return stripe.redirectToCheckout({ sessionId: data.sessionId });
                 } else {
-                    alert('Stripe session creation failed. Please try again.');
+                    console.error("No session ID in response:", data);
+                    throw { error: 'Session ID not received from server' };
                 }
             })
-            .catch(err => {
-                console.error("Error:", err);
-                alert('Something went wrong. Please try again.');
+            .then(result => {
+                // Handle any errors from redirectToCheckout
+                if (result && result.error) {
+                    console.error("Stripe redirect error:", result.error);
+                    throw result.error;
+                }
+            })
+            .catch(error => {
+                console.error("Error details:", error);
+
+                let errorMessage = 'Payment processing failed. Please try again.';
+
+                // Extract error message from various formats
+                if (typeof error === 'string') {
+                    errorMessage = error;
+                } else if (error.message) {
+                    errorMessage = error.message;
+                } else if (error.error) {
+                    if (typeof error.error === 'string') {
+                        errorMessage = error.error;
+                    } else if (typeof error.error === 'object') {
+                        // Handle Laravel validation errors which come as nested objects
+                        const validationErrors = [];
+                        for (const field in error.error) {
+                            if (Array.isArray(error.error[field])) {
+                                validationErrors.push(error.error[field].join(', '));
+                            }
+                        }
+                        if (validationErrors.length > 0) {
+                            errorMessage = validationErrors.join('\n');
+                        }
+                    }
+                }
+
+                alert(errorMessage);
+                checkoutButton.disabled = false;
+                checkoutButton.textContent = "Pay Now - {{ number_format($totalPrice, 2) }}";
             });
         });
-    });
+    } else {
+        console.error("Checkout button or form not found");
+    }
+});
 </script>
+
+
 
 
 
