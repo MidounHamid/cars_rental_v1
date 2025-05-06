@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('mode_payments', function (Blueprint $table) {
             $table->id();
-            $table->string('mode_payment');
+            $table->string('mode_payment')->unique();
 
             $table->timestamps();
         });

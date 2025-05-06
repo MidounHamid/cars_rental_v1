@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\CarDeliveryLocationController;
 use App\Http\Controllers\CarFeatureController;
+use App\Http\Controllers\StripePaymentController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\client\HomeController;
 use App\Http\Controllers\FeatureController;
@@ -36,6 +37,19 @@ Route::get('/abouts', function () {
 
 Route::get('/car-listing', [HomeController::class, 'carListing'])->name('cars.listing');
 Route::get('/car-detail/{id}', [HomeController::class, 'carDetail'])->name('cars.detail');
+
+
+
+//this route is for the stripe payment
+Route::get('/payment', [StripePaymentController::class, 'index'])->name('stripe.payment');
+Route::post('/checkout', [StripePaymentController::class, 'checkout'])->name('stripe.checkout');
+Route::get('/stripe/success', [StripePaymentController::class, 'success'])->name('stripe.success');
+Route::get('/stripe/cancel', [StripePaymentController::class, 'cancel'])->name('stripe.cancel');
+
+
+
+
+
 
 // Add the route for fetching agency cities
 Route::get('/agencies/cities', [AgencieController::class, 'getCities'])->name('agencies.cities');

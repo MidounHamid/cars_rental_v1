@@ -15,9 +15,16 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('booking_id');
             $table->decimal('amount', 10, 2);
-            $table->enum('method', ['cash', 'card', 'paypal', 'bank_transfer']);
+            // $table->enum('method', ['cash', 'card', 'paypal', 'bank_transfer']);
             $table->enum('status', ['pending', 'successful', 'failed', 'refunded'])->default('pending');
             $table->unsignedBigInteger('mode_payment_id');
+            $table->string('transaction_id')->unique()->nullable();
+            $table->string('stripe_payment_id')->nullable(); // For Stripe reference
+
+                // Add Stripe-specific fields
+                $table->string('stripe_customer_id')->nullable();
+                $table->string('stripe_payment_method')->nullable();
+                $table->text('stripe_response')->nullable();
 
             // Foreign key constraints
             $table->foreign('mode_payment_id')->references('id')->on('mode_payments');

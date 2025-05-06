@@ -121,7 +121,8 @@
     </div>
 
     <!-- Book Now Button -->
-    <button class="btn-book">Book Now</button>
+    <button type="button" wire:click="bookNow" class="btn-book">Book Now</button>
+
 
     @push('scripts')
         <script>

@@ -30,6 +30,9 @@ class DatabaseSeeder extends Seeder
         \App\Models\Insurance::factory(10)->create();
         \App\Models\Agency::factory(1)->create();
 
+        \App\Models\Mode_payment::create(['mode_payment' => 'stripe']);
+        \App\Models\Mode_payment::create(['mode_payment' => 'cash']);
+
         // Now create cars using existing relationships
         \App\Models\Car::factory(20)->create();
 

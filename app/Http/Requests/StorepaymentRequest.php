@@ -24,9 +24,9 @@ class StorepaymentRequest extends FormRequest
         return [
             'booking_id' => 'required|exists:bookings,id',  // Ensures booking exists
             'amount' => 'required|numeric|min:0.01',  // Ensures a positive numeric value for the amount
-            'method' => 'required|in:cash,card,paypal,bank_transfer',  // Validates the payment method
             'status' => 'required|in:pending,successful,failed,refunded',  // Validates the payment status
             'mode_payment_id' => 'required|exists:mode_payments,id',  // Ensures the mode_payment_id exists in the mode_payments table
+            'transaction_id' => 'nullable|string|unique:payments,transaction_id'  // Optional transaction ID
         ];
     }
 }

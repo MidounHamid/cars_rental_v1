@@ -17,17 +17,16 @@
                     <div class="form-group">
                         <label>PICKUP LOCATION</label>
                         <div class="location-input-wrapper">
-                            <input type="text" class="location-input" name="pickup_location_display" id="from-location"
-                                   placeholder="Choose Location" autocomplete="off">
+                            <input type="text" class="location-input" name="pickup_location_display"
+                                id="from-location" placeholder="Choose Location" autocomplete="off">
 
                             <!-- Hidden input to store selected location ID -->
                             <input type="hidden" name="pickup_location" id="from-location-id">
 
                             <div class="location-dropdown">
                                 @foreach ($locations as $location)
-                                    <div class="location-option"
-                                         data-value="{{ $location->id }}"
-                                         data-name="{{ $location->name }} - {{ ucfirst(str_replace('_', ' ', $location->type)) }}">
+                                    <div class="location-option" data-value="{{ $location->id }}"
+                                        data-name="{{ $location->name }} - {{ ucfirst(str_replace('_', ' ', $location->type)) }}">
                                         {{ $location->name }} - {{ ucfirst(str_replace('_', ' ', $location->type)) }}
                                     </div>
                                 @endforeach
@@ -38,7 +37,8 @@
                     <div class="form-group">
                         <label>CHOOSE DATES</label>
                         <div class="dates-input-wrapper">
-                            <input type="text" class="dates-input" name="dates" placeholder="Select dates" readonly>
+                            <input type="text" class="dates-input" name="dates" placeholder="Select dates"
+                                readonly>
                             <input type="hidden" name="start_date" id="start_date">
                             <input type="hidden" name="end_date" id="end_date">
                         </div>
@@ -64,7 +64,8 @@
 
                             <div class="car-image-home">
                                 @if ($primaryImage)
-                                    <img src="{{ asset('storage/' . $primaryImage->image_path) }}" alt="{{ $car->model }}">
+                                    <img src="{{ asset('storage/' . $primaryImage->image_path) }}"
+                                        alt="{{ $car->model }}">
                                 @else
                                     <img src="{{ asset('images/defaultcarimage.png') }}" alt="Default Car Image">
                                 @endif
@@ -82,14 +83,18 @@
                                     <div class="spec-item"><i
                                             class="fas fa-gas-pump"></i><span>{{ $car->fuelType->fuel_type }}</span>
                                     </div>
-                                    <div class="spec-item"><i class="fas fa-cog"></i><span>{{ $car->transmission }}</span></div>
-                                    <div class="spec-item"><i class="fas fa-map-marker-alt"></i><span>{{ $car->city }}</span>
+                                    <div class="spec-item"><i
+                                            class="fas fa-cog"></i><span>{{ $car->transmission }}</span></div>
+                                    <div class="spec-item"><i
+                                            class="fas fa-map-marker-alt"></i><span>{{ $car->city }}</span>
                                     </div>
                                 </div>
 
                                 <div class="car-features">
-                                    <div class="feature insurance-feature"><i class="fas fa-shield-alt"></i><span>Full
-                                            Insurance</span></div>
+                                    <div class="feature insurance-feature"><i class="fas fa-shield-alt"></i>
+                                        <span>{{ $car->insurance->name }}
+                                        </span>
+                                    </div>
                                     <div class="car-description">
                                         <div class="description-header"><i
                                                 class="fas fa-info-circle"></i><span>Description</span></div>
@@ -102,19 +107,22 @@
                                         <span class="price">{{ $car->price_per_day }}</span>
                                         <span class="price-period">/Day</span>
                                     </div>
-                                    <button class="book-now" >                                <a href="{{ route('cars.detail', $car->id) }}" class="book-now">Book Now</a>
+                                    <button class="book-now"> <a href="{{ route('cars.detail', $car->id) }}"
+                                            class="book-now">Book Now</a>
                                     </button>
                                 </div>
 
                                 <div class="car-status">
                                     <span class="status-badge {{ $car->is_available ? 'available' : 'unavailable' }}">
-                                        <i class="fas fa-{{ $car->is_available ? 'check-circle' : 'times-circle' }}"></i>
+                                        <i
+                                            class="fas fa-{{ $car->is_available ? 'check-circle' : 'times-circle' }}"></i>
                                         {{ $car->is_available ? 'Available' : 'Unavailable' }}
                                     </span>
                                     <div class="reviews">
                                         <i class="fas fa-star"></i>
                                         <span>{{ number_format($car->average_rating, 1) }} ({{ $car->total_reviews }} reviews)</span>
                                     </div>
+                                    <div class="reviews"><i class="fas fa-star"></i><span>4.8 (120 reviews)</span></div>
                                 </div>
                             </div>
                         </div>
@@ -305,7 +313,7 @@
     </style>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             // Location input handling
             const locationInput = document.querySelector('.location-input');
             const locationDropdown = document.querySelector('.location-dropdown');
@@ -366,9 +374,10 @@
             });
 
             // When user applies the date range
-            $('.dates-input').on('apply.daterangepicker', function (ev, picker) {
+            $('.dates-input').on('apply.daterangepicker', function(ev, picker) {
                 // Update the display
-                $(this).val(picker.startDate.format('YYYY-MM-DD') + ' to ' + picker.endDate.format('YYYY-MM-DD'));
+                $(this).val(picker.startDate.format('YYYY-MM-DD') + ' to ' + picker.endDate.format(
+                    'YYYY-MM-DD'));
 
                 // Set hidden inputs with the correct format
                 $('#start_date').val(picker.startDate.format('YYYY-MM-DD'));
@@ -376,7 +385,7 @@
             });
 
             // Optional: clear date input on cancel
-            $('.dates-input').on('cancel.daterangepicker', function (ev, picker) {
+            $('.dates-input').on('cancel.daterangepicker', function(ev, picker) {
                 $(this).val('');
                 $('#start_date').val('');
                 $('#end_date').val('');
@@ -407,15 +416,15 @@
 
 
 
-    document.querySelectorAll('.location-option').forEach(option => {
-        option.addEventListener('click', function () {
-            const name = this.dataset.name;
-            const id = this.dataset.value;
+            document.querySelectorAll('.location-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    const name = this.dataset.name;
+                    const id = this.dataset.value;
 
-            document.getElementById('from-location').value = name; // show name
-            document.getElementById('from-location-id').value = id; // send ID to backend
-        });
-    });
+                    document.getElementById('from-location').value = name; // show name
+                    document.getElementById('from-location-id').value = id; // send ID to backend
+                });
+            });
 
         });
     </script>
