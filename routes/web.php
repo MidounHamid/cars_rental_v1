@@ -43,6 +43,7 @@ Route::get('/car-detail/{id}', [HomeController::class, 'carDetail'])->name('cars
 //this route is for the stripe payment
 Route::get('/payment', [StripePaymentController::class, 'index'])->name('stripe.payment');
 Route::post('/checkout', [StripePaymentController::class, 'checkout'])->name('stripe.checkout');
+Route::post('/confirm-payment', [StripePaymentController::class, 'confirmPayment'])->name('stripe.confirm');
 Route::get('/stripe/success', [StripePaymentController::class, 'success'])->name('stripe.success');
 Route::get('/stripe/cancel', [StripePaymentController::class, 'cancel'])->name('stripe.cancel');
 
@@ -83,15 +84,14 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::resource('promotions', PromotionController::class);
     Route::resource('reviews', ReviewController::class);
     Route::resource('features', FeatureController::class);
-    Route::resource('locations',LocationController::class);
+    Route::resource('locations', LocationController::class);
     route::resource('specifications', SpecificationController::class);
     // Route::resource('booking_specifications', BookingSpecification::class);
-    Route::resource('car_delivery_locations',CarDeliveryLocationController::class);
+    Route::resource('car_delivery_locations', CarDeliveryLocationController::class);
 
 
 
     Route::get('/car-images/by-car/{car}', [CarImageController::class, 'showByCar'])->name('car_images.by_car');
-
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

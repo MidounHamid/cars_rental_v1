@@ -6,6 +6,7 @@ use Livewire\Component;
 use Carbon\Carbon;
 use App\Models\Car;
 use App\Models\Specification;
+use Illuminate\Support\Facades\Auth;
 
 class CarRentalCalculator extends Component
 {
@@ -166,7 +167,7 @@ class CarRentalCalculator extends Component
         $durationDays = $this->rental_duration;
 
         // Insurance and service fees
-        $insuranceFee = $this->car->insurance->price_per_day?? 0;
+        $insuranceFee = $this->car->insurance->price_per_day ?? 0;
         $serviceFee = 15.00;
 
         // Calculate total with fees
@@ -181,8 +182,27 @@ class CarRentalCalculator extends Component
             $agency = \App\Models\Agency::find($this->car->agency_id);
         }
 
+        // First create the booking record in the database
+        if (!Auth::check()) {
+            // If user is not logged in, redirect to login page
+            return redirect()->route('login')->with('error', 'Please login to book a car.');
+        }
+
+        $booking = \App\Models\Booking::create([
+            'user_id' => Auth::id(),
+            'car_id' => $this->car->id,
+            'start_date' => $this->pickup_date,
+            'end_date' => $this->return_date,
+            'start_time' => $this->pickup_time,
+            'end_time' => $this->return_time,
+            'status' => 'pending',
+            'total_price' => $totalWithFees,  // Add total price to booking
+            // No payment_id yet as payment hasn't been made
+        ]);
+
         // Prepare all booking data with complete car information based on actual schema
         $bookingData = [
+            'booking_id' => $booking->id, // Include the booking ID from the newly created record
             'pickup_date' => $this->pickup_date,
             'pickup_time' => $this->pickup_time,
             'return_date' => $this->return_date,
@@ -197,7 +217,9 @@ class CarRentalCalculator extends Component
             'service_fee' => $serviceFee,
             'total_price' => $totalWithFees,
             'rating' => 4.8, // Default or get from reviews if implemented
-            'delivery_locations' => $this->car->deliveryLocations->map(function ($loc) {return $loc->name . ' ' . ucfirst($loc->type);})->toArray(),
+            'delivery_locations' => $this->car->deliveryLocations->map(function ($loc) {
+                return $loc->name . ' ' . ucfirst($loc->type);
+            })->toArray(),
             'car' => [
                 'id' => $this->car->id,
                 'model' => $this->car->model,
@@ -206,13 +228,13 @@ class CarRentalCalculator extends Component
                 'transmission' => $this->car->transmission,
                 'is_available' => $this->car->is_available,
                 'city' => $this->car->city,
-                'brand' => $brand ? $brand->name : null,
+                'brand' => $brand ? $brand->brand : 'Unknown Brand',
                 'brand_id' => $this->car->brand_id,
                 'type' => $carType ? $carType->name : 'Standard',
                 'car_type_id' => $this->car->car_type_id,
                 'fuel' => $fuelType ? $fuelType->fuel_type : 'N/A', // Corrected line
                 'fuel_types_id' => $this->car->fuel_types_id,
-                'insurance' => $insurance->name,
+                'insurance' => $insurance ? $insurance->name : 'Standard Insurance',
                 'insurance_id' => $this->car->insurance_id,
                 'agency' => $agency ? $agency->name : null,
                 'agency_id' => $this->car->agency_id,

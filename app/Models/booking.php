@@ -10,8 +10,14 @@ class Booking extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'user_id', 'car_id', 'start_date', 'end_date',
-        'status', 'payment_id', 'promotion_id',    'start_time',
+        'user_id',
+        'car_id',
+        'start_date',
+        'end_date',
+        'status',
+        'payment_id',
+        'promotion_id',
+        'start_time',
         'end_time',
     ];
 
@@ -22,19 +28,23 @@ class Booking extends Model
         // other casts...
     ];
 
-    public function user() {
+    public function user()
+    {
         return $this->belongsTo(User::class);
     }
 
-    public function car() {
+    public function car()
+    {
         return $this->belongsTo(Car::class);
     }
 
-    public function promotion() {
+    public function promotion()
+    {
         return $this->belongsTo(Promotion::class);
     }
 
-    public function payment() {
+    public function payment()
+    {
         return $this->hasOne(Payment::class);
     }
     public function specifications()
@@ -65,7 +75,8 @@ class Booking extends Model
         $days = max(1, ceil($hours / 24));
 
         $basePrice = $carPricePerDay * $days;
-        $specTotal = $this->specifications->sum(fn($spec) =>
+        $specTotal = $this->specifications->sum(
+            fn($spec) =>
             $spec->pivot->price * $spec->pivot->quantity
         );
 
@@ -77,7 +88,4 @@ class Booking extends Model
 
         return round($total, 2);
     }
-
-
-
 }
