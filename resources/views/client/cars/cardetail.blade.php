@@ -1,7 +1,6 @@
 <x-app-layout>
     @push('header')
         <link rel="stylesheet" href="{{ asset('css/cardetails.css') }}">
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
         <style>
             /* Additional styles to match screenshot */
@@ -94,22 +93,11 @@
                 margin-top: 20px;
             }
 
-            /* Flatpickr custom styling */
-            .flatpickr-calendar {
-                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-                border-radius: 8px;
-            }
-
-            .flatpickr-day.selected {
-                background: #3c82f6;
-                border-color: #3c82f6;
-            }
-
             .spec-circle {
                 display: inline-block;
                 width: 12px;
                 height: 12px;
-                background-color: #3c82f6;
+                background-color:rgb(8, 8, 8);
                 border-radius: 50%;
                 margin-right: 8px;
             }
@@ -121,7 +109,6 @@
                 document.write('<script src="https://code.jquery.com/jquery-3.6.0.min.js"><\/script>');
             }
         </script>
-        <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     @endpush
 
     <header class="header">

@@ -430,7 +430,7 @@
                                 </div>
                                 <div class="car-spec-item">
                                     <i class="fas fa-star" style="color: #ffc107;"></i>
-                                    <span>({{ $car->rating ?? '4.8' }} reviews)</span>
+                                    <span>{{ number_format($car->average_rating, 1) }} ({{ $car->total_reviews }} reviews)</span>
                                 </div>
                             </div>
                             <div class="car-description">

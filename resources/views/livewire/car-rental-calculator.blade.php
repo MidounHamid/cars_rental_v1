@@ -125,52 +125,97 @@
 
 
     @push('scripts')
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+        <script src="https://cdn.jsdelivr.net/npm/moment@2.29.1/moment.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+        <style>
+            .daterangepicker {
+                border: none;
+                border-radius: 8px;
+                box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+                font-family: inherit;
+            }
+            .daterangepicker .calendar-table {
+                border: none;
+                background: white;
+            }
+            .daterangepicker td.active {
+                background-color: #080808 !important;
+                color: white !important;
+            }
+            .daterangepicker td.in-range {
+                background-color: #e2e8f0;
+                color: #2d3748;
+            }
+            .daterangepicker td.available:hover {
+                background-color: #f7fafc;
+            }
+            .daterangepicker .calendar-table th,
+            .daterangepicker .calendar-table td {
+                width: 36px;
+                height: 36px;
+            }
+            .daterangepicker .drp-buttons {
+                border-top: 1px solid #e2e8f0;
+                padding: 1rem;
+            }
+            .daterangepicker .drp-selected {
+                font-size: 14px;
+                color: #4a5568;
+            }
+            .daterangepicker .applyBtn,
+            .daterangepicker .cancelBtn {
+                padding: 8px 16px;
+                border-radius: 4px;
+                font-size: 14px;
+            }
+            .daterangepicker .applyBtn {
+                background-color: #080808;
+                border-color: transparent;
+                color: #fff;
+            }
+            .daterangepicker .cancelBtn {
+                color: #4a5568;
+                border-color: #e2e8f0;
+                background: white;
+            }
+        </style>
         <script>
             document.addEventListener('livewire:initialized', function() {
-                if (typeof flatpickr === 'undefined') {
-                    console.error('Flatpickr not loaded!');
-                    return;
+                // Initialize DateRangePicker for pickup and return date
+                function initDatePickers() {
+                    if ($('#pickup-date').data('daterangepicker')) {
+                        $('#pickup-date').data('daterangepicker').remove();
+                    }
+                    if ($('#return-date').data('daterangepicker')) {
+                        $('#return-date').data('daterangepicker').remove();
+                    }
+                    $('#pickup-date').daterangepicker({
+                        singleDatePicker: true,
+                        showDropdowns: true,
+                        minDate: moment(),
+                        locale: {
+                            format: 'YYYY-MM-DD',
+                            firstDay: 1
+                        }
+                    }, function(start) {
+                        @this.set('pickup_date', start.format('YYYY-MM-DD'));
+                    });
+                    $('#return-date').daterangepicker({
+                        singleDatePicker: true,
+                        showDropdowns: true,
+                        minDate: moment(),
+                        locale: {
+                            format: 'YYYY-MM-DD',
+                            firstDay: 1
+                        }
+                    }, function(start) {
+                        @this.set('return_date', start.format('YYYY-MM-DD'));
+                    });
                 }
-
-                // Initialize date pickers
-                flatpickr("#pickup-date", {
-                    enableTime: false,
-                    dateFormat: "Y-m-d",
-                    minDate: "today",
-                    onChange: function(selectedDates, dateStr) {
-                        @this.set('pickup_date', dateStr);
-                    }
-                });
-
-                flatpickr("#return-date", {
-                    enableTime: false,
-                    dateFormat: "Y-m-d",
-                    minDate: "today",
-                    onChange: function(selectedDates, dateStr) {
-                        @this.set('return_date', dateStr);
-                    }
-                });
-
-                flatpickr("#pickup-time", {
-                    enableTime: true,
-                    noCalendar: true,
-                    dateFormat: "H:i",
-                    time_24hr: true,
-                    defaultDate: "10:00",
-                    onChange: function(selectedDates, dateStr) {
-                        @this.set('pickup_time', dateStr);
-                    }
-                });
-
-                flatpickr("#return-time", {
-                    enableTime: true,
-                    noCalendar: true,
-                    dateFormat: "H:i",
-                    time_24hr: true,
-                    defaultDate: "10:00",
-                    onChange: function(selectedDates, dateStr) {
-                        @this.set('return_time', dateStr);
-                    }
+                initDatePickers();
+                Livewire.hook('morph.updated', () => {
+                    initDatePickers();
                 });
             });
         </script>
