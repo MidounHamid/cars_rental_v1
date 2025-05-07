@@ -1,163 +1,66 @@
 <x-app-layout>
-    <div class="container">
-        <div class="payment-success">
-            <div class="success-icon">
-                <i class="fas fa-check-circle"></i>
-            </div>
-            <h1>Payment Successful!</h1>
-            <p>Your booking has been confirmed.</p>
-
-            <div class="booking-details">
-                <h2>Booking Details</h2>
-                <div class="detail-row">
-                    <div class="detail-label">Transaction ID:</div>
-                    <div class="detail-value">{{ $payment->transaction_id }}</div>
-                </div>
-                <div class="detail-row">
-                    <div class="detail-label">Amount Paid:</div>
-                    <div class="detail-value">${{ number_format($payment->amount, 2) }}</div>
-                </div>
-                <div class="detail-row">
-                    <div class="detail-label">Booking Status:</div>
-                    <div class="detail-value">{{ ucfirst($booking->status) }}</div>
-                </div>
-                <div class="detail-row">
-                    <div class="detail-label">Start Date:</div>
-                    <div class="detail-value">
-                        {{ \Carbon\Carbon::parse($booking->start_date)->format('d M Y') }} at
-                        {{ \Carbon\Carbon::parse($booking->start_time)->format('h:i A') }}
-                    </div>
-                </div>
-                <div class="detail-row">
-                    <div class="detail-label">End Date:</div>
-                    <div class="detail-value">
-                        {{ \Carbon\Carbon::parse($booking->end_date)->format('d M Y') }} at
-                        {{ \Carbon\Carbon::parse($booking->end_time)->format('h:i A') }}
-                    </div>
-                </div>
+    <div class="container mx-auto px-4 py-8">
+        <div class="max-w-2xl mx-auto bg-white rounded-lg shadow-md p-6">
+            <div class="text-center mb-8">
+                <i class="fas fa-check-circle text-green-500 text-5xl mb-4"></i>
+                <h1 class="text-2xl font-bold text-gray-800 mb-2">Payment Successful!</h1>
+                <p class="text-gray-600">Your booking has been confirmed.</p>
             </div>
 
-            <div class="actions">
-                <a href="{{ route('dashboard') }}" class="btn-primary">Go to Dashboard</a>
-                <a href="{{ route('dashboard') }}" class="btn-secondary">View My Bookings</a>
+            <div class="space-y-6">
+                <div class="border-t border-gray-200 pt-6">
+                    <h2 class="text-lg font-semibold text-gray-800 mb-4">Booking Details</h2>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <p class="text-sm text-gray-600">Booking Reference</p>
+                            <p class="font-medium">#{{ $booking->id }}</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-600">Car</p>
+                            <p class="font-medium">{{ $booking->car->brand->brand }} {{ $booking->car->model }}</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-600">Pickup Date</p>
+                            <p class="font-medium">{{ \Carbon\Carbon::parse($booking->start_date)->format('d M Y') }} at
+                                {{ $booking->start_time }}</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-600">Return Date</p>
+                            <p class="font-medium">{{ \Carbon\Carbon::parse($booking->end_date)->format('d M Y') }} at
+                                {{ $booking->end_time }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="border-t border-gray-200 pt-6">
+                    <h2 class="text-lg font-semibold text-gray-800 mb-4">Payment Information</h2>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <p class="text-sm text-gray-600">Transaction ID</p>
+                            <p class="font-medium">{{ $payment->transaction_id }}</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-600">Amount Paid</p>
+                            <p class="font-medium">${{ number_format($payment->amount, 2) }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="border-t border-gray-200 pt-6">
+                    <div class="flex justify-center space-x-4">
+                        <a href="{{ $pdfUrl }}" target="_blank"
+                            class="inline-flex items-center px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2">
+                            <i class="fas fa-download mr-2"></i>
+                            Download Receipt
+                        </a>
+                        <a href="{{ route('dashboard') }}"
+                            class="inline-flex items-center px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2">
+                            <i class="fas fa-home mr-2"></i>
+                            Back to Dashboard
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-
-    <style>
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 40px 20px;
-        }
-
-        .payment-success {
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-            padding: 40px;
-            text-align: center;
-        }
-
-        .success-icon {
-            font-size: 80px;
-            color: #2ecc71;
-            margin-bottom: 20px;
-        }
-
-        .payment-success h1 {
-            font-size: 28px;
-            font-weight: 600;
-            margin-bottom: 10px;
-            color: #333;
-        }
-
-        .payment-success p {
-            font-size: 18px;
-            color: #666;
-            margin-bottom: 30px;
-        }
-
-        .booking-details {
-            background-color: #f9f9f9;
-            border-radius: 8px;
-            padding: 20px;
-            margin: 30px 0;
-            text-align: left;
-        }
-
-        .booking-details h2 {
-            font-size: 20px;
-            font-weight: 600;
-            margin-bottom: 20px;
-            color: #333;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 10px;
-        }
-
-        .detail-row {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 12px;
-            font-size: 16px;
-        }
-
-        .detail-label {
-            font-weight: 500;
-            color: #666;
-        }
-
-        .detail-value {
-            font-weight: 600;
-            color: #333;
-        }
-
-        .actions {
-            margin-top: 30px;
-        }
-
-        .btn-primary {
-            display: inline-block;
-            background-color: #DC1E2D;
-            color: white;
-            padding: 12px 24px;
-            border-radius: 4px;
-            text-decoration: none;
-            font-weight: 600;
-            margin-right: 10px;
-            transition: background-color 0.3s;
-        }
-
-        .btn-primary:hover {
-            background-color: #B81726;
-        }
-
-        .btn-secondary {
-            display: inline-block;
-            background-color: #f5f5f5;
-            color: #333;
-            padding: 12px 24px;
-            border-radius: 4px;
-            text-decoration: none;
-            font-weight: 600;
-            transition: background-color 0.3s;
-        }
-
-        .btn-secondary:hover {
-            background-color: #e0e0e0;
-        }
-
-        @media (max-width: 600px) {
-            .actions {
-                display: flex;
-                flex-direction: column;
-                gap: 10px;
-            }
-
-            .btn-primary,
-            .btn-secondary {
-                margin-right: 0;
-            }
-        }
-    </style>
 </x-app-layout>

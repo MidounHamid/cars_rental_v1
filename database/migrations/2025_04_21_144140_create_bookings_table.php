@@ -17,11 +17,12 @@ return new class extends Migration
             $table->unsignedBigInteger('car_id');
             $table->date('start_date');
             $table->date('end_date');
-            $table->time('start_time');  
+            $table->time('start_time');
             $table->time('end_time');
             $table->enum('status', ['pending', 'confirmed', 'cancelled', 'completed'])->default('pending')->nullable();
             $table->bigInteger('payment_id')->nullable();
             $table->unsignedBigInteger('promotion_id')->nullable();
+            $table->decimal('total_price', 10, 2)->nullable();
 
             // Foreign keys
             $table->foreign('promotion_id')->references('id')->on('promotions');

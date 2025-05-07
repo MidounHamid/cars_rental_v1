@@ -6,23 +6,17 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
-    public function up(): void
+    public function up()
     {
         Schema::table('bookings', function (Blueprint $table) {
-            $table->decimal('total_price', 10, 2)->nullable()->after('status');
+            $table->string('receipt_path')->nullable()->after('status');
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
+    public function down()
     {
         Schema::table('bookings', function (Blueprint $table) {
-            $table->dropColumn('total_price');
+            $table->dropColumn('receipt_path');
         });
     }
 };

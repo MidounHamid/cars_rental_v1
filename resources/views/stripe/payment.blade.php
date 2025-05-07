@@ -787,250 +787,250 @@
     </style>
     <script src="https://js.stripe.com/v3/"></script>
     <script>
-       document.addEventListener('DOMContentLoaded', function() {
-    const timeElement = document.querySelector('.time');
-    const checkoutButton = document.getElementById("checkout-button");
-    const form = document.getElementById('payment-form');
-    let cardElement;
-    let stripe;
-    let elements;
+        document.addEventListener('DOMContentLoaded', function() {
+            const timeElement = document.querySelector('.time');
+            const checkoutButton = document.getElementById("checkout-button");
+            const form = document.getElementById('payment-form');
+            let cardElement;
+            let stripe;
+            let elements;
 
-    if (timeElement) {
-        // Timer code remains the same
-        let countdownTime = 15 * 60; // 15 minutes in seconds
+            if (timeElement) {
+                // Timer code remains the same
+                let countdownTime = 15 * 60; // 15 minutes in seconds
 
-        const updateTimer = () => {
-            const minutes = Math.floor(countdownTime / 60);
-            const seconds = countdownTime % 60;
-            timeElement.textContent =
-                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-        };
+                const updateTimer = () => {
+                    const minutes = Math.floor(countdownTime / 60);
+                    const seconds = countdownTime % 60;
+                    timeElement.textContent =
+                        `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                };
 
-        const handleExpiry = () => {
-            alert('Your booking session has expired. Please restart your booking.');
-            window.location.href = "{{ route('dashboard') }}";
-        };
+                const handleExpiry = () => {
+                    alert('Your booking session has expired. Please restart your booking.');
+                    window.location.href = "{{ route('dashboard') }}";
+                };
 
-        const interval = setInterval(() => {
-            if (countdownTime <= 0) {
-                clearInterval(interval);
-                handleExpiry();
-                return;
+                const interval = setInterval(() => {
+                    if (countdownTime <= 0) {
+                        clearInterval(interval);
+                        handleExpiry();
+                        return;
+                    }
+                    countdownTime--;
+                    updateTimer();
+                }, 1000);
+
+                updateTimer(); // Initial display
             }
-            countdownTime--;
-            updateTimer();
-        }, 1000);
 
-        updateTimer(); // Initial display
-    }
+            // Initialize Stripe Elements
+            stripe = Stripe("{{ env('STRIPE_KEY') }}");
+            elements = stripe.elements();
 
-    // Initialize Stripe Elements
-    stripe = Stripe("{{ env('STRIPE_KEY') }}");
-    elements = stripe.elements();
-
-    // Create and mount the Card Element
-    cardElement = elements.create('card', {
-        style: {
-            base: {
-                color: '#32325d',
-                fontFamily: '"Segoe UI", "Helvetica Neue", Helvetica, sans-serif',
-                fontSmoothing: 'antialiased',
-                fontSize: '16px',
-                '::placeholder': {
-                    color: '#aab7c4'
-                }
-            },
-            invalid: {
-                color: '#fa755a',
-                iconColor: '#fa755a'
-            }
-        }
-    });
-
-    cardElement.mount('#card-element');
-
-    // Handle real-time validation errors from the card Element
-    cardElement.on('change', function(event) {
-        var displayError = document.getElementById('card-errors');
-        if (event.error) {
-            displayError.textContent = event.error.message;
-        } else {
-            displayError.textContent = '';
-        }
-    });
-
-    // Handle checkout button click
-    if (checkoutButton && form) {
-        checkoutButton.addEventListener("click", async function(e) {
-            e.preventDefault();
-
-            // Basic form validation
-            const requiredFields = form.querySelectorAll('[required]');
-            let formIsValid = true;
-
-            requiredFields.forEach(field => {
-                if (!field.value) {
-                    formIsValid = false;
-                    field.style.borderColor = 'red';
-                } else {
-                    field.style.borderColor = '';
+            // Create and mount the Card Element
+            cardElement = elements.create('card', {
+                style: {
+                    base: {
+                        color: '#32325d',
+                        fontFamily: '"Segoe UI", "Helvetica Neue", Helvetica, sans-serif',
+                        fontSmoothing: 'antialiased',
+                        fontSize: '16px',
+                        '::placeholder': {
+                            color: '#aab7c4'
+                        }
+                    },
+                    invalid: {
+                        color: '#fa755a',
+                        iconColor: '#fa755a'
+                    }
                 }
             });
 
-            if (!formIsValid) {
-                alert('Please fill in all required fields');
-                return;
-            }
+            cardElement.mount('#card-element');
 
-            // Disable button to prevent multiple submissions
-            checkoutButton.disabled = true;
-            checkoutButton.textContent = "Processing Payment...";
+            // Handle real-time validation errors from the card Element
+            cardElement.on('change', function(event) {
+                var displayError = document.getElementById('card-errors');
+                if (event.error) {
+                    displayError.textContent = event.error.message;
+                } else {
+                    displayError.textContent = '';
+                }
+            });
 
-            try {
-                // Create payment method
-                const result = await stripe.createPaymentMethod({
-                    type: 'card',
-                    card: cardElement,
-                    billing_details: {
-                        name: document.getElementById('full-name').value,
-                        email: document.getElementById('email').value,
-                        address: {
-                            line1: document.getElementById('address').value
+            // Handle checkout button click
+            if (checkoutButton && form) {
+                checkoutButton.addEventListener("click", async function(e) {
+                    e.preventDefault();
+
+                    // Basic form validation
+                    const requiredFields = form.querySelectorAll('[required]');
+                    let formIsValid = true;
+
+                    requiredFields.forEach(field => {
+                        if (!field.value) {
+                            formIsValid = false;
+                            field.style.borderColor = 'red';
+                        } else {
+                            field.style.borderColor = '';
                         }
-                    },
-                });
+                    });
 
-                if (result.error) {
-                    // Show error to customer
-                    const errorElement = document.getElementById('card-errors');
-                    errorElement.textContent = result.error.message;
-                    checkoutButton.disabled = false;
-                    checkoutButton.textContent =
-                        "Pay Now - {{ number_format($totalPrice, 2) }}";
-                    return;
-                }
-
-                // Create FormData for file uploads
-                const formData = new FormData();
-
-                // Add payment method ID to form data
-                formData.append('payment_method_id', result.paymentMethod.id);
-
-                // IMPORTANT: Add a hidden input field with this value to make sure the current
-                // total price displayed on the form is the one being processed
-                formData.append('confirmed_total_price', "{{ $totalPrice }}");
-
-                // Get form data for user info
-                const formElements = form.elements;
-                for (let i = 0; i < formElements.length; i++) {
-                    const field = formElements[i];
-                    if (field.name && field.type === 'file' && field.files.length > 0) {
-                        formData.append(field.name, field.files[0]);
-                    } else if (field.name && field.type !== 'file' && field.type !== 'button' &&
-                        field.type !== 'submit') {
-                        formData.append(field.name, field.value);
+                    if (!formIsValid) {
+                        alert('Please fill in all required fields');
+                        return;
                     }
-                }
 
-                // Send payment data to server
-                const response = await fetch("{{ route('stripe.checkout') }}", {
-                    method: "POST",
-                    headers: {
-                        "X-CSRF-TOKEN": "{{ csrf_token() }}",
-                        "Accept": "application/json"
-                    },
-                    body: formData
-                });
+                    // Disable button to prevent multiple submissions
+                    checkoutButton.disabled = true;
+                    checkoutButton.textContent = "Processing Payment...";
 
-                const responseData = await response.json();
+                    try {
+                        // Create payment method
+                        const result = await stripe.createPaymentMethod({
+                            type: 'card',
+                            card: cardElement,
+                            billing_details: {
+                                name: document.getElementById('full-name').value,
+                                email: document.getElementById('email').value,
+                                address: {
+                                    line1: document.getElementById('address').value
+                                }
+                            },
+                        });
 
-                if (!response.ok) {
-                    throw responseData;
-                }
+                        if (result.error) {
+                            // Show error to customer
+                            const errorElement = document.getElementById('card-errors');
+                            errorElement.textContent = result.error.message;
+                            checkoutButton.disabled = false;
+                            checkoutButton.textContent =
+                                "Pay Now - {{ number_format($totalPrice, 2) }}";
+                            return;
+                        }
 
-                // Handle the response
-                if (responseData.requires_action) {
-                    // Use Stripe.js to handle required card action
-                    const {
-                        error,
-                        paymentIntent
-                    } = await stripe.handleCardAction(
-                        responseData.payment_intent_client_secret
-                    );
+                        // Create FormData for file uploads
+                        const formData = new FormData();
 
-                    if (error) {
-                        throw error;
-                    } else {
-                        // The card action has been handled
-                        // The PaymentIntent can be confirmed again on the server
-                        const confirmResponse = await fetch("{{ route('stripe.confirm') }}", {
+                        // Add payment method ID to form data
+                        formData.append('payment_method_id', result.paymentMethod.id);
+
+                        // IMPORTANT: Add a hidden input field with this value to make sure the current
+                        // total price displayed on the form is the one being processed
+                        formData.append('confirmed_total_price', "{{ $totalPrice }}");
+
+                        // Get form data for user info
+                        const formElements = form.elements;
+                        for (let i = 0; i < formElements.length; i++) {
+                            const field = formElements[i];
+                            if (field.name && field.type === 'file' && field.files.length > 0) {
+                                formData.append(field.name, field.files[0]);
+                            } else if (field.name && field.type !== 'file' && field.type !== 'button' &&
+                                field.type !== 'submit') {
+                                formData.append(field.name, field.value);
+                            }
+                        }
+
+                        // Send payment data to server
+                        const response = await fetch("{{ route('stripe.checkout') }}", {
                             method: "POST",
                             headers: {
-                                "Content-Type": "application/json",
                                 "X-CSRF-TOKEN": "{{ csrf_token() }}",
                                 "Accept": "application/json"
                             },
-                            body: JSON.stringify({
-                                payment_intent_id: paymentIntent.id
-                            })
+                            body: formData
                         });
 
-                        const confirmData = await confirmResponse.json();
+                        const responseData = await response.json();
 
-                        if (confirmData.success) {
-                            window.location.href = confirmData.redirect;
-                        } else {
-                            throw confirmData;
+                        if (!response.ok) {
+                            throw responseData;
                         }
-                    }
-                } else if (responseData.success) {
-                    // Success, redirect to success page
-                    if (responseData.redirect) {
-                        window.location.href = responseData.redirect;
-                    } else {
-                        window.location.href =
-                            "{{ route('stripe.success') }}?payment_intent=" + responseData
-                            .payment_intent;
-                    }
-                } else {
-                    throw responseData;
-                }
-            } catch (error) {
-                console.error("Error details:", error);
 
-                let errorMessage = 'Payment processing failed. Please try again.';
+                        // Handle the response
+                        if (responseData.requires_action) {
+                            // Use Stripe.js to handle required card action
+                            const {
+                                error,
+                                paymentIntent
+                            } = await stripe.handleCardAction(
+                                responseData.payment_intent_client_secret
+                            );
 
-                // Extract error message from various formats
-                if (typeof error === 'string') {
-                    errorMessage = error;
-                } else if (error.message) {
-                    errorMessage = error.message;
-                } else if (error.error) {
-                    if (typeof error.error === 'string') {
-                        errorMessage = error.error;
-                    } else if (typeof error.error === 'object') {
-                        // Handle Laravel validation errors which come as nested objects
-                        const validationErrors = [];
-                        for (const field in error.error) {
-                            if (Array.isArray(error.error[field])) {
-                                validationErrors.push(error.error[field].join(', '));
+                            if (error) {
+                                throw error;
+                            } else {
+                                // The card action has been handled
+                                // The PaymentIntent can be confirmed again on the server
+                                const confirmResponse = await fetch("{{ route('stripe.confirm') }}", {
+                                    method: "POST",
+                                    headers: {
+                                        "Content-Type": "application/json",
+                                        "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                                        "Accept": "application/json"
+                                    },
+                                    body: JSON.stringify({
+                                        payment_intent_id: paymentIntent.id
+                                    })
+                                });
+
+                                const confirmData = await confirmResponse.json();
+
+                                if (confirmData.success) {
+                                    window.location.href = confirmData.redirect;
+                                } else {
+                                    throw confirmData;
+                                }
+                            }
+                        } else if (responseData.success) {
+                            // Success, redirect to success page
+                            if (responseData.redirect) {
+                                window.location.href = responseData.redirect;
+                            } else {
+                                window.location.href =
+                                    "{{ route('stripe.success') }}?payment_intent=" + responseData
+                                    .payment_intent;
+                            }
+                        } else {
+                            throw responseData;
+                        }
+                    } catch (error) {
+                        console.error("Error details:", error);
+
+                        let errorMessage = 'Payment processing failed. Please try again.';
+
+                        // Extract error message from various formats
+                        if (typeof error === 'string') {
+                            errorMessage = error;
+                        } else if (error.message) {
+                            errorMessage = error.message;
+                        } else if (error.error) {
+                            if (typeof error.error === 'string') {
+                                errorMessage = error.error;
+                            } else if (typeof error.error === 'object') {
+                                // Handle Laravel validation errors which come as nested objects
+                                const validationErrors = [];
+                                for (const field in error.error) {
+                                    if (Array.isArray(error.error[field])) {
+                                        validationErrors.push(error.error[field].join(', '));
+                                    }
+                                }
+                                if (validationErrors.length > 0) {
+                                    errorMessage = validationErrors.join('\n');
+                                }
                             }
                         }
-                        if (validationErrors.length > 0) {
-                            errorMessage = validationErrors.join('\n');
-                        }
-                    }
-                }
 
-                alert(errorMessage);
-                checkoutButton.disabled = false;
-                checkoutButton.textContent = "Pay Now - {{ number_format($totalPrice, 2) }}";
+                        alert(errorMessage);
+                        checkoutButton.disabled = false;
+                        checkoutButton.textContent = "Pay Now - {{ number_format($totalPrice, 2) }}";
+                    }
+                });
+            } else {
+                console.error("Checkout button or form not found");
             }
         });
-    } else {
-        console.error("Checkout button or form not found");
-    }
-});
     </script>
 
 
