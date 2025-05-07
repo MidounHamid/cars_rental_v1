@@ -50,21 +50,16 @@
     </div>
 
     <!-- Specifications Table -->
-    <div class="specifications-section">
-        <h3 class="section-title">
-            <svg class="section-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2">
-                <path
-                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-            </svg>
-            SPECIFICATIONS TABLE
-        </h3>
+    <div class="specifications-section styled-box">
+        <label class="form-label">SPECIFICATIONS</label>
+        <div class="spec-table-header">
+            <span>Option</span>
+            <span>Quantity</span>
+        </div>
         <div class="specifications-table">
             @foreach ($specifications as $spec)
                 <div class="spec-row" id="spec-{{ $spec->id }}">
                     <div class="spec-name">
-                        {{-- <span class="spec-circle"
-                            style="display: inline-block; width: 12px; height: 12px; background-color: #3c82f6; border-radius: 50%; margin-right: 8px;"></span> --}}
                         {{ $spec->name }}
                     </div>
                     <div class="spec-quantity">
@@ -90,33 +85,23 @@
     </div>
 
     <!-- Pricing Info -->
-    <div class="pricing-info">
-        <h3 class="section-title">
-            <svg class="section-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2">
-                <line x1="12" y1="1" x2="12" y2="23" />
-                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-            </svg>
-            PRICING INFO
-        </h3>
-        <div class="price-details">
-            <div class="price-row">
-                <span>Base Rate (per day)</span>
-                <span class="base-rate" id="base-rate">{{ number_format($base_price, 2) }} MAD</span>
-            </div>
-            <div class="price-row">
-                <span>Rental Duration</span>
-                <span class="rental-duration" id="rental-duration">{{ $rental_duration }} days</span>
-            </div>
-            <div class="price-row">
-                <span>Additional Options</span>
-                <span class="additional-options" id="additional-options">{{ number_format($additional_options, 2) }}
-                    MAD</span>
-            </div>
-            <div class="price-row total">
-                <span>Total Price</span>
-                <span class="total-price" id="total-price">{{ number_format($total_price, 2) }} MAD</span>
-            </div>
+    <div class="price-info">
+        <h3>Pricing Info</h3>
+        <div class="price-line">
+            <span>Base Rate (per day)</span>
+            <span>{{ number_format($base_price, 2) }} MAD</span>
+        </div>
+        <div class="price-line">
+            <span>Rental Duration</span>
+            <span id="rental-days">{{ $rental_duration }} days</span>
+        </div>
+        <div class="price-line">
+            <span>Additional Options</span>
+            <span id="features-price">{{ number_format($additional_options, 2) }} MAD</span>
+        </div>
+        <div class="price-line">
+            <span>Total Price</span>
+            <span id="total-price">{{ number_format($total_price, 2) }} MAD</span>
         </div>
     </div>
 
@@ -129,95 +114,115 @@
         <script src="https://cdn.jsdelivr.net/npm/moment@2.29.1/moment.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
         <style>
-            .daterangepicker {
-                border: none;
-                border-radius: 8px;
-                box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-                font-family: inherit;
+            :root {
+                --light-color: #f8f9fa;
+                --border-radius: 5px;
             }
-            .daterangepicker .calendar-table {
-                border: none;
-                background: white;
+            .price-info {
+                background-color: var(--light-color);
+                padding: 20px;
+                border-radius: var(--border-radius);
+                margin-top: 20px;
             }
-            .daterangepicker td.active {
+            .price-info h3 {
+                margin-bottom: 15px;
+                font-size: 16px;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+            }
+            .price-line {
+                display: flex;
+                justify-content: space-between;
+                padding: 10px 0;
+                border-bottom: 1px solid #ddd;
+            }
+            .price-line:last-child {
+                border-bottom: none;
+                font-weight: bold;
+            }
+            /* DateRangePicker: remplacer le bleu par le noir, sans border-color */
+            .daterangepicker td.active, .daterangepicker td.active:hover {
                 background-color: #080808 !important;
-                color: white !important;
-            }
-            .daterangepicker td.in-range {
-                background-color: #e2e8f0;
-                color: #2d3748;
-            }
-            .daterangepicker td.available:hover {
-                background-color: #f7fafc;
-            }
-            .daterangepicker .calendar-table th,
-            .daterangepicker .calendar-table td {
-                width: 36px;
-                height: 36px;
-            }
-            .daterangepicker .drp-buttons {
-                border-top: 1px solid #e2e8f0;
-                padding: 1rem;
-            }
-            .daterangepicker .drp-selected {
-                font-size: 14px;
-                color: #4a5568;
-            }
-            .daterangepicker .applyBtn,
-            .daterangepicker .cancelBtn {
-                padding: 8px 16px;
-                border-radius: 4px;
-                font-size: 14px;
+                border-color: transparent !important;
+                color: #fff !important;
             }
             .daterangepicker .applyBtn {
-                background-color: #080808;
-                border-color: transparent;
-                color: #fff;
+                background-color: #080808 !important;
+                border-color: #080808 !important;
+                color: #fff !important;
             }
-            .daterangepicker .cancelBtn {
-                color: #4a5568;
-                border-color: #e2e8f0;
-                background: white;
+            .daterangepicker .applyBtn:hover {
+                background-color: #222 !important;
+                border-color: #222 !important;
+            }
+            
+            .styled-box {
+                background: #fafbfc;
+              
+                border-radius: 7px;
+                padding: 0 0 18px 0;
+                margin-bottom: 22px;
+                box-shadow: none;
+            }
+            .spec-table-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                background: #f5f6f7;
+                border-bottom: 1px solid #e2e8f0;
+                border-radius: 7px 7px 0 0;
+                font-size: 15px;
+                font-weight: 600;
+                color: #444;
+                padding: 12px 18px 12px 18px;
+                text-transform: capitalize;
+            }
+            .specifications-table {
+                padding: 0 18px;
+            }
+            .spec-row {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 16px 0;
+                border-bottom: 1px solid #eee;
+            }
+            .spec-row:last-child {
+                border-bottom: none;
+            }
+            .spec-name {
+                font-size: 15px;
+                color: #222;
+            }
+            .spec-quantity {
+                display: flex;
+                align-items: center;
+            }
+            .quantity-btn, .reset-btn {
+                margin: 0 2px;
             }
         </style>
         <script>
-            document.addEventListener('livewire:initialized', function() {
-                // Initialize DateRangePicker for pickup and return date
-                function initDatePickers() {
-                    if ($('#pickup-date').data('daterangepicker')) {
-                        $('#pickup-date').data('daterangepicker').remove();
-                    }
-                    if ($('#return-date').data('daterangepicker')) {
-                        $('#return-date').data('daterangepicker').remove();
-                    }
-                    $('#pickup-date').daterangepicker({
-                        singleDatePicker: true,
-                        showDropdowns: true,
-                        minDate: moment(),
-                        locale: {
-                            format: 'YYYY-MM-DD',
-                            firstDay: 1
-                        }
-                    }, function(start) {
-                        @this.set('pickup_date', start.format('YYYY-MM-DD'));
-                    });
-                    $('#return-date').daterangepicker({
-                        singleDatePicker: true,
-                        showDropdowns: true,
-                        minDate: moment(),
-                        locale: {
-                            format: 'YYYY-MM-DD',
-                            firstDay: 1
-                        }
-                    }, function(start) {
-                        @this.set('return_date', start.format('YYYY-MM-DD'));
-                    });
+        $(function() {
+            $('#pickup-date').daterangepicker({
+                singleDatePicker: true,
+                showDropdowns: true,
+                minDate: moment(),
+                locale: {
+                    format: 'YYYY-MM-DD',
+                    firstDay: 1
                 }
-                initDatePickers();
-                Livewire.hook('morph.updated', () => {
-                    initDatePickers();
-                });
             });
+            $('#return-date').daterangepicker({
+                singleDatePicker: true,
+                showDropdowns: true,
+                minDate: moment(),
+                locale: {
+                    format: 'YYYY-MM-DD',
+                    firstDay: 1
+                }
+            });
+        });
         </script>
     @endpush
 </div>
