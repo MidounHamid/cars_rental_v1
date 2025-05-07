@@ -122,7 +122,7 @@
                                         <i class="fas fa-star"></i>
                                         <span>{{ number_format($car->average_rating, 1) }} ({{ $car->total_reviews }} reviews)</span>
                                     </div>
-                                    <div class="reviews"><i class="fas fa-star"></i><span>4.8 (120 reviews)</span></div>
+                                   
                                 </div>
                             </div>
                         </div>
