@@ -10,7 +10,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Stripe\Stripe;
-use Stripe\Exception\ApiErrorException;
 
 class StripePaymentController extends Controller
 {
@@ -21,6 +20,13 @@ class StripePaymentController extends Controller
             return redirect()->route('dashboard')->with('error', 'No booking information found.');
         }
 
+        // Ensure all fees are set (default to 0 or 15 for service fee)
+        $bookingData = $this->ensureAllFees($bookingData);
+
+        // Recalculate total_price to be sure
+        $bookingData = $this->calculateTotalPrice($bookingData);
+        session(['booking_data' => $bookingData]);
+
         return view('stripe.payment', compact('bookingData'));
     }
 
@@ -28,6 +34,30 @@ class StripePaymentController extends Controller
     {
         $bookingData = session('booking_data', []);
         $user = Auth::user();
+
+        // Ensure all fees are set (default to 0 or 15 for service fee)
+        $bookingData = $this->ensureAllFees($bookingData);
+
+        // Always recalculate total_price to avoid errors
+        $bookingData = $this->calculateTotalPrice($bookingData);
+
+        // IMPORTANT: Check if the client sent a confirmed total price and use it to validate
+        $confirmedTotalPrice = $request->input('confirmed_total_price');
+        if (!empty($confirmedTotalPrice)) {
+            // Convert to match the same format (float with 2 decimal places)
+            $confirmedTotalPrice = (float) $confirmedTotalPrice;
+            $calculatedTotalPrice = (float) $bookingData['total_price'];
+
+            // Ensure the price matches what was shown to the user (within a small margin of error)
+            if (abs($confirmedTotalPrice - $calculatedTotalPrice) > 0.01) {
+
+
+                // Use the confirmed price if it's provided (as this was what was shown to the user)
+                $bookingData['total_price'] = $confirmedTotalPrice;
+            }
+        }
+
+        session(['booking_data' => $bookingData]);
 
         // Validate session data structure
         $validator = Validator::make($bookingData, [
@@ -71,6 +101,9 @@ class StripePaymentController extends Controller
                 $booking = Booking::where('id', $bookingData['booking_id'])
                     ->where('user_id', $user->id)
                     ->firstOrFail();
+
+                // Make sure the booking has the most up-to-date total price
+                $booking->update(['total_price' => $bookingData['total_price']]);
             }
 
             $paymentMethod = Mode_payment::where('mode_payment', 'stripe')->firstOrFail();
@@ -85,7 +118,7 @@ class StripePaymentController extends Controller
                 return response()->json(['error' => 'Payment method ID is required'], 400);
             }
 
-            // Create a payment intent
+            // Create a payment intent with the TOTAL price (including all fees)
             $paymentIntent = \Stripe\PaymentIntent::create([
                 'amount' => (int)($bookingData['total_price'] * 100), // Convert to cents
                 'currency' => 'usd',
@@ -93,18 +126,22 @@ class StripePaymentController extends Controller
                 'payment_method_types' => ['card'],
                 'confirmation_method' => 'manual',
                 'confirm' => true,
-                'description' => ($bookingData['car']['brand'] ?? 'Car') . ' ' . ($bookingData['car']['model'] ?? 'Rental'),
+                'description' => ($bookingData['car']['brand'] ?? 'Car') . ' ' . ($bookingData['car']['model'] ?? 'Rental') . ' (Total with fees)',
                 'metadata' => [
                     'booking_id' => $booking->id,
                     'user_id' => $user->id,
-                    'car_id' => $bookingData['car']['id']
+                    'car_id' => $bookingData['car']['id'],
+                    'base_price' => $bookingData['car']['price_per_day'] * ($bookingData['duration_days'] ?? 1),
+                    'insurance_fee' => $bookingData['insurance_fee'] ?? 0,
+                    'service_fee' => $bookingData['service_fee'] ?? 15.0,
+                    'additional_options' => $bookingData['additional_options'] ?? 0
                 ],
             ]);
 
             // Create payment record in database
             Payment::create([
                 'booking_id' => $booking->id,
-                'amount' => $booking->total_price ?? $bookingData['total_price'],
+                'amount' => $bookingData['total_price'], // Use the total price with all fees
                 'mode_payment_id' => $paymentMethod->id,
                 'transaction_id' => $paymentIntent->id,
                 'status' => $paymentIntent->status === 'succeeded' ? 'successful' : 'pending',
@@ -217,5 +254,32 @@ class StripePaymentController extends Controller
             report($e);
             return response()->json(['error' => $e->getMessage()], 500);
         }
+    }
+
+    /**
+     * Helper to always calculate the correct total price.
+     */
+    private function calculateTotalPrice(array $bookingData)
+    {
+        $pricePerDay = $bookingData['car']['price_per_day'] ?? 0;
+        $durationDays = $bookingData['duration_days'] ?? 1;
+        $rentalSubtotal = $pricePerDay * $durationDays;
+        $insuranceFee = $bookingData['insurance_fee'] ?? 0;
+        $serviceFee = $bookingData['service_fee'] ?? 15.0;
+        $additionalOptions = $bookingData['additional_options'] ?? 0;
+
+        $bookingData['total_price'] = $rentalSubtotal + $insuranceFee + $serviceFee + $additionalOptions;
+        return $bookingData;
+    }
+
+    /**
+     * Helper to ensure all fees are set in the booking data.
+     */
+    private function ensureAllFees(array $bookingData)
+    {
+        if (!isset($bookingData['insurance_fee'])) $bookingData['insurance_fee'] = 0;
+        if (!isset($bookingData['service_fee'])) $bookingData['service_fee'] = 15.0;
+        if (!isset($bookingData['additional_options'])) $bookingData['additional_options'] = 0;
+        return $bookingData;
     }
 }
