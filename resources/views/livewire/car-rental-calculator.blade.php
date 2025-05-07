@@ -212,6 +212,10 @@
                     format: 'YYYY-MM-DD',
                     firstDay: 1
                 }
+            }, function(start) {
+                if (window.Livewire) {
+                    Livewire.find($('.pickup-date').closest('[wire\\:id]').attr('wire:id')).set('pickup_date', start.format('YYYY-MM-DD'));
+                }
             });
             $('#return-date').daterangepicker({
                 singleDatePicker: true,
@@ -220,6 +224,10 @@
                 locale: {
                     format: 'YYYY-MM-DD',
                     firstDay: 1
+                }
+            }, function(start) {
+                if (window.Livewire) {
+                    Livewire.find($('.return-date').closest('[wire\\:id]').attr('wire:id')).set('return_date', start.format('YYYY-MM-DD'));
                 }
             });
         });
