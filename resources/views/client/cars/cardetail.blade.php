@@ -4,9 +4,9 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
         <style>
             /* Additional styles to match screenshot */
-            .specifications-table {
+            /* .specifications-table {
                 margin-top: 20px;
-            }
+            } */
 
             .spec-row {
                 display: flex;
@@ -101,6 +101,18 @@
                 border-radius: 50%;
                 margin-right: 8px;
             }
+
+            .form-label {
+                background: none !important;
+                border: none !important;
+                font-weight: normal;
+                font-size: 15px;
+                color: #444;
+                padding: 0;
+                margin-bottom: 8px;
+                display: block;
+                letter-spacing: 0.5px;
+            }
         </style>
         <script>
             // Check if jQuery is already loaded
@@ -124,26 +136,7 @@
     <main class="container">
         <div class="content-wrapper">
             <!-- Car Image Section with Gallery -->
-            <div class="car-image-section">
-                <div class="car-image-box">
-                    @if ($car->carImages->isNotEmpty())
-                        <img src="{{ asset('storage/' . $car->carImages->first()->image_path) }}"
-                            alt="{{ $car->brand->brand }} {{ $car->model }}" class="car-image" id="main-image">
-                    @else
-                        <img src="{{ asset('images/defaultcarimage.png') }}"
-                            alt="{{ $car->brand->brand }} {{ $car->model }}" class="car-image" id="main-image">
-                    @endif
-                    <div class="logo-badge">AZIDCAR</div>
-                </div>
-                <div class="thumbnail-gallery">
-                    @foreach ($car->carImages as $image)
-                        <img src="{{ asset('storage/' . $image->image_path) }}"
-                            alt="{{ $car->brand->brand }} {{ $car->model }}"
-                            class="thumbnail {{ $loop->first ? 'active' : '' }}"
-                            data-src="{{ asset('storage/' . $image->image_path) }}">
-                    @endforeach
-                </div>
-            </div>
+            @livewire('car-gallery', ['car' => $car])
 
             <!-- Car Details Section -->
             <div class="car-details">
@@ -159,31 +152,7 @@
                 </div>
 
                 <!-- Accordion Sections -->
-                <div class="accordion">
-                    <div class="accordion-item collapsed">
-                        <div class="accordion-header">
-                            <span class="accordion-title">DESCRIPTION</span>
-                            <span class="accordion-icon">▼</span>
-                        </div>
-                        <div class="accordion-content">
-                            <p>{{ $car->description ?? 'No description available.' }}</p>
-                        </div>
-                    </div>
-
-                    <div class="accordion-item collapsed">
-                        <div class="accordion-header">
-                            <span class="accordion-title">FEATURES</span>
-                            <span class="accordion-icon">▼</span>
-                        </div>
-                        <div class="accordion-content">
-                            <ul class="features-list">
-                                @foreach ($car->features as $feature)
-                                    <li>• {{ $feature->name }}</li>
-                                @endforeach
-                            </ul>
-                        </div>
-                    </div>
-                </div>
+                @livewire('car-accordion', ['car' => $car])
             </div>
         </div>
     </main>
@@ -229,73 +198,3 @@
         </div>
     </section>
 </x-app-layout>
-
-@push('scripts')
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Image carousel functionality
-            initImageCarousel();
-
-            // Accordion functionality
-            initAccordion();
-        });
-
-        function initImageCarousel() {
-            const mainImage = document.getElementById('main-image');
-            const thumbnails = document.querySelectorAll('.thumbnail');
-            let currentImageIndex = 0;
-
-            if (mainImage && thumbnails.length > 0) {
-                thumbnails.forEach((thumb, index) => {
-                    thumb.addEventListener('click', () => {
-                        mainImage.src = thumb.dataset.src;
-                        thumbnails.forEach(t => t.classList.remove('active'));
-                        thumb.classList.add('active');
-                        currentImageIndex = index;
-                    });
-                });
-
-                // Swipe functionality
-                let touchStartX = 0;
-                let touchEndX = 0;
-
-                mainImage.addEventListener('touchstart', e => {
-                    touchStartX = e.changedTouches[0].screenX;
-                });
-
-                mainImage.addEventListener('touchend', e => {
-                    touchEndX = e.changedTouches[0].screenX;
-                    handleSwipe();
-                });
-
-                function handleSwipe() {
-                    const swipeThreshold = 50;
-                    const diff = touchEndX - touchStartX;
-
-                    if (Math.abs(diff) < swipeThreshold) return;
-
-                    if (diff > 0 && currentImageIndex > 0) {
-                        // Swipe right
-                        currentImageIndex--;
-                    } else if (diff < 0 && currentImageIndex < thumbnails.length - 1) {
-                        // Swipe left
-                        currentImageIndex++;
-                    }
-
-                    thumbnails[currentImageIndex].click();
-                }
-            }
-        }
-
-        function initAccordion() {
-            const accordionHeaders = document.querySelectorAll('.accordion-header');
-
-            accordionHeaders.forEach(header => {
-                header.addEventListener('click', () => {
-                    const item = header.parentElement;
-                    item.classList.toggle('collapsed');
-                });
-            });
-        }
-    </script>
-@endpush
