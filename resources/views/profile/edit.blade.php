@@ -256,7 +256,8 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            transition: background-color 0.3s;
+            transition: 0.3s;
+
         }
 
         .edit-image-btn:hover {

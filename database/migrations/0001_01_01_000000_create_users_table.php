@@ -19,9 +19,12 @@ return new class extends Migration
             $table->string('password');
             $table->string('image')->nullable();
 
-            $table->string('phone')->nullable()->unique();
+            // Changed: Remove nullable() for required fields
+            $table->string('phone');
             $table->text('address')->nullable();
-            $table->string('driver_license')->nullable()->unique();;
+            $table->string('driver_license')->nullable()->unique(); // Not nullable
+            $table->string('cin')->nullable()->unique(); // Added for CIN file path
+            $table->unsignedInteger('age')->nullable(); // Added for age (not ideal but per form)
             $table->boolean('is_admin')->default(false);
             $table->rememberToken();
             $table->timestamps();

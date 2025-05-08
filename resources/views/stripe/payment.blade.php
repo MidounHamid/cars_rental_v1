@@ -179,40 +179,57 @@
 
                         <div class="form-group">
                             <label for="full-name"><i class="fas fa-user"></i>Full Name</label>
-                            <input type="text" id="full-name" name="full_name" class="form-control" required>
+                            <input type="text" id="full-name" name="full_name" class="form-control"
+                                value="{{ auth()->user()->name }}" required>
                         </div>
 
                         <div class="form-group">
                             <label for="phone"><i class="fas fa-phone"></i>Phone</label>
-                            <input type="tel" id="phone" name="phone" class="form-control" required>
+                            <input type="tel" id="phone" name="phone" class="form-control"
+                                value="{{ auth()->user()->phone }}" required>
                         </div>
 
                         <div class="form-group">
                             <label for="email"><i class="fas fa-envelope"></i>Email</label>
-                            <input type="email" id="email" name="email" class="form-control" required>
+                            <input type="email" id="email" name="email" class="form-control"
+                                value="{{ auth()->user()->email }}" required>
                         </div>
 
                         <div class="form-group">
                             <label for="cin"><i class="fas fa-id-card"></i>CIN</label>
+                            @if (auth()->user()->cin)
+                                <div class="current-file">
+                                    <p>Current CIN: {{ basename(auth()->user()->cin) }}</p>
+                                    <input type="hidden" name="existing_cin" value="{{ auth()->user()->cin }}">
+                                </div>
+                            @endif
                             <input type="file" id="cin" name="cin" class="form-control"
-                                accept=".jpg,.jpeg,.png,.pdf" required>
+                                accept=".jpg,.jpeg,.png,.pdf" {{ !auth()->user()->cin ? 'required' : '' }}>
                         </div>
 
                         <div class="form-group">
                             <label for="driver-license"><i class="fas fa-id-badge"></i>Driver License</label>
+                            @if (auth()->user()->driver_license)
+                                <div class="current-file">
+                                    <p>Current License: {{ basename(auth()->user()->driver_license) }}</p>
+                                    <input type="hidden" name="existing_driver_license"
+                                        value="{{ auth()->user()->driver_license }}">
+                                </div>
+                            @endif
                             <input type="file" id="driver-license" name="driver_license" class="form-control"
-                                accept=".jpg,.jpeg,.png,.pdf" required>
+                                accept=".jpg,.jpeg,.png,.pdf" {{ !auth()->user()->driver_license ? 'required' : '' }}>
                         </div>
 
                         <div class="form-group">
                             <label for="address"><i class="fas fa-map-marker-alt"></i>Address</label>
-                            <input type="text" id="address" name="address" class="form-control" required>
+                            <input type="text" id="address" name="address" class="form-control"
+                                value="{{ auth()->user()->address }}" required>
                         </div>
 
                         <div class="form-group">
                             <label for="age"><i class="fas fa-calendar-alt"></i>Age</label>
                             <input type="number" id="age" name="age" class="form-control" min="18"
-                                required>
+                                value="{{ auth()->user()->age }}" required>
                         </div>
 
                         <div class="checkbox-group">
@@ -747,6 +764,21 @@
             color: var(--success-green);
             font-weight: 500;
             margin-top: 10px;
+        }
+
+        /* Current File Styles */
+        .current-file {
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            padding: 8px 12px;
+            margin-bottom: 8px;
+        }
+
+        .current-file p {
+            margin: 0;
+            color: var(--dark-gray);
+            font-size: 14px;
         }
 
         /* Responsive */

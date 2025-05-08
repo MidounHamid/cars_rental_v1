@@ -27,7 +27,9 @@ class User extends Authenticatable
         'address',
         'driver_license',
         'is_admin',
-        'image'
+        'image',
+        'age',
+        'cin'
     ];
 
     /**
@@ -54,11 +56,13 @@ class User extends Authenticatable
 
         ];
     }
-    public function bookings() {
+    public function bookings()
+    {
         return $this->hasMany(Booking::class);
     }
 
-    public function reviews() {
+    public function reviews()
+    {
         return $this->hasMany(Review::class);
     }
 }

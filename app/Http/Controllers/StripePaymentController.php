@@ -211,9 +211,9 @@ class StripePaymentController extends Controller
             // Calculate receipt components
             $durationDays = $booking->duration_days ?? \Carbon\Carbon::parse($booking->start_date)->diffInDays($booking->end_date);
             $basePrice = $booking->car->price_per_day * $durationDays;
-            $insuranceFee = $booking->insurance_fee;
-            $serviceFee = $booking->service_fee;
-            $additionalOptions = $booking->additional_options;
+            $insuranceFee = $booking->insurance_fee ?? 0;
+            $serviceFee = $booking->service_fee ?? 0;
+            $additionalOptions = $booking->additional_options ?? 0;
 
             // Generate PDF
             $pdf = Pdf::loadView('pdf.booking-receipt', [
@@ -232,7 +232,7 @@ class StripePaymentController extends Controller
 
             session()->forget('booking_data');
 
-            return view('payment.success', [
+            return view('stripe.success', [
                 'payment' => $payment,
                 'booking' => $booking,
                 'pdfUrl' => Storage::url($pdfPath)
