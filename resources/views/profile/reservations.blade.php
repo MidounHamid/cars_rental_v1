@@ -3,10 +3,8 @@
     $profileImage = Auth::user()?->image && trim(Auth::user()?->image) !== ''
         ? asset('storage/' . Auth::user()->image)
         : asset('images/default.png');
-@endphp
+    @endphp
 
-
-    <!-- Ajout du lien vers Material Symbols -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" />
 
     <style>
@@ -134,7 +132,7 @@
             padding: 20px;
         }
 
-        .profile-content-header {
+        .reservations-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -143,133 +141,124 @@
             border-bottom: 1px solid #eee;
         }
 
-        .profile-title {
+        .reservations-title {
             font-size: 24px;
             font-weight: 600;
             color: #333;
         }
 
-        .edit-button {
-            display: flex;
-            align-items: center;
-            padding: 8px 16px;
-            background-color: #e94f4f;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: background-color 0.3s ease;
-            text-decoration: none;
-        }
-
-        .edit-button:hover {
-            background-color: #d43e3e;
-        }
-
-        .edit-button .material-symbols-rounded {
-            margin-right: 8px;
-            font-size: 20px;
-        }
-
-        .profile-section {
+        .reservation-card {
             background: #fff;
-            border-radius: 10px;
-            padding: 25px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-            position: relative;
-        }
-
-        .section-title {
-            font-size: 18px;
-            color: #333;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .btn-edit {
-            display: inline-flex;
-            align-items: center;
-            padding: 6px 12px;
-            background-color: #e94f4f;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            font-size: 13px;
-            text-decoration: none;
-            transition: background-color 0.3s ease;
-        }
-
-        .btn-edit:hover {
-            background-color: #d43e3e;
-        }
-
-        .info-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-        }
-
-        .profile-info {
-            background-color: #f8f9fa;
-            padding: 15px;
-            border-radius: 6px;
-        }
-
-        .info-label {
-            font-size: 12px;
-            color: #666;
-            margin-bottom: 5px;
-            text-transform: uppercase;
-        }
-
-        .info-value {
-            font-size: 16px;
-            color: #333;
-            font-weight: 500;
-        }
-
-        .info-value.empty {
-            color: #999;
-            font-style: italic;
-        }
-
-        .profile-image {
-            width: 120px;
-            height: 120px;
+            border: 1px solid #eee;
             border-radius: 8px;
-            object-fit: cover;
+            padding: 20px;
             margin-bottom: 20px;
+            transition: all 0.3s ease;
         }
 
-        .info-group {
-            margin-bottom: 20px;
+        .reservation-card:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            transform: translateY(-2px);
         }
 
-        .info-group label {
-            font-size: 14px;
-            color: #666;
-            margin-bottom: 5px;
+        .reservation-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
         }
 
-        .info-group p {
-            font-size: 16px;
+        .reservation-id {
+            font-weight: 600;
             color: #333;
+        }
+
+        .reservation-status {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
             font-weight: 500;
         }
 
-        .profile-actions {
-            margin-top: 20px;
+        .status-active {
+            background-color: #e3f2fd;
+            color: #2196f3;
+        }
+
+        .status-completed {
+            background-color: #e8f5e9;
+            color: #4caf50;
+        }
+
+        .status-cancelled {
+            background-color: #ffebee;
+            color: #f44336;
+        }
+
+        .reservation-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 15px;
+        }
+
+        .detail-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .detail-label {
+            font-size: 12px;
+            color: #888;
+            margin-bottom: 4px;
+        }
+
+        .detail-value {
+            font-weight: 500;
+            color: #333;
+        }
+
+        .reservation-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        .action-button {
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+        }
+
+        .view-button {
+            background-color: #f5f5f5;
+            color: #333;
+        }
+
+        .view-button:hover {
+            background-color: #e0e0e0;
+        }
+
+        .cancel-button {
+            background-color: #ffebee;
+            color: #f44336;
+        }
+
+        .cancel-button:hover {
+            background-color: #ffcdd2;
         }
     </style>
 
     <div class="container">
+        <!-- Sidebar -->
         <div class="sidebar">
             <div class="profile-header">
                 <div class="profile-avatar">
-                    <img src="{{ $profileImage }}" alt="Profile Image" style="width: 120px; height: 120px; border-radius: 8px; object-fit: cover;">
+                    <img src="{{ $profileImage }}" alt="Profile Image">
                 </div>
                 <div class="profile-info">
                     <div class="profile-name">{{ auth()->user()->name }}</div>
@@ -285,7 +274,7 @@
                             <span class="menu-icon">
                                 <span class="material-symbols-rounded">calendar_month</span>
                             </span>
-                            My Reservations
+                            My bookings
                         </a>
                     </li>
                 </ul>
@@ -328,45 +317,51 @@
 
         <!-- Main Content -->
         <div class="main-content">
-            <h1 class="profile-title">My Profile</h1>
+            <div class="reservations-header">
+                <h1 class="reservations-title">My bookings</h1>
+            </div>
 
-            <div class="profile-section">
-                <h2 class="section-title">
-                    Basic Information
-                    <a href="{{ route('profile.edit') }}" class="btn-edit">Edit Profile</a>
-                </h2>
-
-                <div class="info-grid">
-                    <div class="info-group">
-                        <label>Full Name</label>
-                        <p>{{ auth()->user()->name }}</p>
-                    </div>
-
-                    <div class="info-group">
-                        <label>Email</label>
-                        <p>{{ auth()->user()->email }}</p>
-                    </div>
-
-                    <div class="info-group">
-                        <label>Phone Number</label>
-                        <p>{{ auth()->user()->phone }}</p>
-                    </div>
-
-                    <div class="info-group">
-                        <label>Address</label>
-                        <p>{{ auth()->user()->address }}</p>
-                    </div>
-
-                    <div class="info-group">
-                        <label>Driver's License</label>
-                        @if(auth()->user()->driver_license)
-                            <p>{{ basename(auth()->user()->driver_license) }}</p>
-                        @else
-                            <p>Not provided</p>
-                        @endif
+            @forelse($reservations as $reservation)
+                <div class="reservation-card" style="display: flex; flex-direction: column; gap: 20px;">
+                    <div style="display: flex; flex-direction: row; gap: 24px; align-items: flex-start; flex-wrap;">
+                        <!-- Car Image -->
+                        <div style="min-width: 180px; max-width: 220px; flex: 1; display: flex; align-items: center; justify-content: center; background: #f8f9fa; border-radius: 8px; height: 140px; overflow: hidden;">
+                            @if(isset($reservation->car->image) && $reservation->car->image)
+                                <img src="{{ asset('storage/' . $reservation->car->image) }}" alt="Car Image" style="width: 100%; height: 100%; object-fit: cover;">
+                            @else
+                                <span style="color: #bbb; font-size: 1.1em;">No Image</span>
+                            @endif
+                        </div>
+                        <!-- Car Info & Reservation Details -->
+                        <div style="flex: 3; display: flex; flex-direction: column; gap: 8px;">
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                {{-- <span style="font-size: 1.2em; font-weight: 600; text-transform: uppercase;">{{ strtoupper($reservation->car->brand ?? '') }} {{ strtoupper($reservation->car->model ?? '') }}</span>
+                                @if(isset($reservation->car->status) && $reservation->car->status === 'available')
+                                    <span style="background: #e8f5e9; color: #43a047; font-size: 0.85em; border-radius: 12px; padding: 2px 10px; font-weight: 500;">AVAILABLE</span>
+                                @endif --}}
+                            </div>
+                            <div style="display: flex; flex-wrap: wrap; gap: 18px; font-size: 0.98em; color: #555;">
+                                <span><b>Type:</b> {{ $reservation->car->model ?? '-' }}</span>
+                                <span><b>Seats:</b> {{ $reservation->car->seats ?? '-' }}</span>
+                                <span><b>Transmission:</b> {{ $reservation->car->transmission ?? '-' }}</span>
+                                <span><b>Fuel:</b> {{ $reservation->car->fuelType->fuel_type ?? '-' }}</span>
+                            </div>
+                            <div style="display: flex; flex-wrap: wrap; gap: 18px; font-size: 0.98em; color: #555;">
+                                <span><b>Pickup:</b> {{ $reservation->start_date ? $reservation->start_date->format('d M Y, H:i') : '-' }}</span>
+                                <span><b>Return:</b> {{ $reservation->end_date ? $reservation->end_date->format('d M Y, H:i') : '-' }}</span>
+                                <span><b>Status:</b> <span class="reservation-status status-{{ strtolower($reservation->status) }}">{{ ucfirst($reservation->status) }}</span></span>
+                            </div>
+                            <div style="margin-top: 8px; font-size: 1.1em; color: #222; font-weight: 500;">
+                                <span>Total: ${{ number_format($reservation->total_price, 2) }}</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
+            @empty
+                <div class="text-center py-8">
+                    <p class="text-gray-500">You haven't made any reservations yet.</p>
+                </div>
+            @endforelse
         </div>
     </div>
-</x-app-layout>
+</x-app-layout> 

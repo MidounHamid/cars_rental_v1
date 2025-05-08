@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
+use App\Models\Booking;
 
 class ProfileController extends Controller
 {
@@ -28,6 +29,21 @@ class ProfileController extends Controller
     {
         return view('profile.edit', [
             'user' => $request->user(),
+        ]);
+    }
+
+    /**
+     * Display the user's reservations.
+     */
+    public function reservations(Request $request): View
+    {
+        $reservations = Booking::where('user_id', $request->user()->id)
+            ->with('car')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('profile.reservations', [
+            'reservations' => $reservations,
         ]);
     }
 

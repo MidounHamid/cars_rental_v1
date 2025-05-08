@@ -371,12 +371,26 @@
         <div class="sidebar">
             <div class="profile-header">
                 <div class="profile-avatar">
-                    <img  src="{{ $profileImage }}" alt="Profile Image" style="width: 120px; height: 120px; border-radius: 8px; object-fit: cover;">
+                    <img src="{{ $profileImage }}" alt="Profile Image">
                 </div>
                 <div class="profile-info">
                     <div class="profile-name">{{ auth()->user()->name }}</div>
                     <div class="profile-status">Member since {{ auth()->user()->created_at->format('d M Y') }}</div>
                 </div>
+            </div>
+
+            <div class="menu-section">
+                <div class="menu-title">Main</div>
+                <ul class="menu-list">
+                    <li class="menu-item {{ request()->routeIs('profile.reservations') ? 'active' : '' }}">
+                        <a href="{{ route('profile.reservations') }}" class="menu-link">
+                            <span class="menu-icon">
+                                <span class="material-symbols-rounded">calendar_month</span>
+                            </span>
+                            My Reservations
+                        </a>
+                    </li>
+                </ul>
             </div>
 
             <div class="menu-section">
