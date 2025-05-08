@@ -13,10 +13,10 @@
         </div>
     </div>
     <div class="nav-right">
-        <button class="nav-btn">
+        <a href="{{ route('admin.notifications.index') }}" class="nav-btn">
             <span class="material-symbols-rounded">notifications</span>
-            <span class="badge">3</span>
-        </button>
+            <span class="badge">0</span>
+        </a>
 
         <div class="profile-menu">
             <button class="profile-trigger">
@@ -59,3 +59,22 @@
         </div>
     </div>
 </nav>
+
+@push('scripts')
+<script>
+    // Update notification count on page load
+    fetch('/admin/notifications/unread-count')
+        .then(response => response.json())
+        .then(data => {
+            const badge = document.querySelector('.nav-btn .badge');
+            if (badge) {
+                badge.textContent = data.count;
+                if (data.count === 0) {
+                    badge.style.display = 'none';
+                } else {
+                    badge.style.display = 'flex';
+                }
+            }
+        });
+</script>
+@endpush

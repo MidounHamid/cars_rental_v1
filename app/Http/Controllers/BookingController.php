@@ -7,12 +7,20 @@ use App\Models\Car;
 use App\Models\Promotion;
 use App\Models\Booking;
 use App\Models\Specification;
+use App\Services\NotificationService;
 use App\Http\Requests\StoreBookingRequest;
 use App\Http\Requests\UpdateBookingRequest;
 use Carbon\Carbon;
 
 class BookingController extends Controller
 {
+    protected $notificationService;
+
+    public function __construct(NotificationService $notificationService)
+    {
+        $this->notificationService = $notificationService;
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -134,6 +142,9 @@ class BookingController extends Controller
         $carChanged = $booking->car_id != $formFields['car_id'];
         $oldCarId = $booking->car_id;
 
+        // Check if status has changed
+        $statusChanged = $booking->status != $formFields['status'];
+
         // Update the booking
         $booking->update($formFields);
 
@@ -170,6 +181,11 @@ class BookingController extends Controller
             }
         }
 
+        // Create notification if status has changed
+        if ($statusChanged) {
+            $this->notificationService->createBookingNotification($booking, 'booking_' . $formFields['status']);
+        }
+
         return redirect()->route('bookings.index')->with('success', 'Booking updated successfully.');
     }
 
@@ -184,6 +200,9 @@ class BookingController extends Controller
             $car->is_available = true;
             $car->save();
         }
+
+        // Create notification for cancellation
+        $this->notificationService->createBookingNotification($booking, 'booking_cancellation');
 
         // Detach specifications
         $booking->specifications()->detach();

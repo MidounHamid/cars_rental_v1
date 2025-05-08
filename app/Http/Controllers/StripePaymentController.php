@@ -6,6 +6,7 @@ use App\Models\Car;
 use App\Models\Payment;
 use App\Models\Booking;
 use App\Models\Mode_payment;
+use App\Services\NotificationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -15,6 +16,13 @@ use Illuminate\Support\Facades\Storage;
 
 class StripePaymentController extends Controller
 {
+    protected $notificationService;
+
+    public function __construct(NotificationService $notificationService)
+    {
+        $this->notificationService = $notificationService;
+    }
+
     public function index()
     {
         $bookingData = session('booking_data', []);
@@ -197,12 +205,15 @@ class StripePaymentController extends Controller
             $payment->update(['status' => 'successful']);
             $booking->update(['status' => 'confirmed']);
 
+            // Create notification for booking confirmation
+            $this->notificationService->createBookingNotification($booking, 'booking_confirmation');
+
             // Calculate receipt components
             $durationDays = $booking->duration_days ?? \Carbon\Carbon::parse($booking->start_date)->diffInDays($booking->end_date);
             $basePrice = $booking->car->price_per_day * $durationDays;
             $insuranceFee = $booking->insurance_fee;
             $serviceFee = $booking->service_fee;
-            $additionalOptions = $booking->additional_options; // Use stored value
+            $additionalOptions = $booking->additional_options;
 
             // Generate PDF
             $pdf = Pdf::loadView('pdf.booking-receipt', [
