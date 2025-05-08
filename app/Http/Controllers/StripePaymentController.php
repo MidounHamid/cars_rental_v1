@@ -199,7 +199,7 @@ class StripePaymentController extends Controller
             Stripe::setApiKey(config('services.stripe.secret'));
             $paymentIntent = \Stripe\PaymentIntent::retrieve($paymentIntentId);
             $payment = Payment::where('transaction_id', $paymentIntentId)->firstOrFail();
-            $booking = Booking::with(['car.brand', 'user', 'specifications'])->findOrFail($payment->booking_id);
+            $booking = Booking::with(['car.brand', 'user', 'specifications'])->where('id', $payment->booking_id)->firstOrFail();
 
             // Update payment and booking status
             $payment->update(['status' => 'successful']);
