@@ -28,6 +28,7 @@ class ProfileUpdateRequest extends FormRequest
             'phone' => ['required', 'string', 'max:20'],
             'address' => ['required', 'string', 'max:255'],
             'driver_license' => ['nullable', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:2048'],
+            'cin' => ['nullable', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:2048'],
             'image' => ['nullable', 'file', 'mimes:jpg,jpeg,png', 'max:2048'],
         ];
     }
