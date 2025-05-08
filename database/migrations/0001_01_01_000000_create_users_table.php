@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('image')->nullable();
 
             // Changed: Remove nullable() for required fields
-            $table->string('phone');
+            $table->string('phone')->nullable(); // Not nullable
             $table->text('address')->nullable();
             $table->string('driver_license')->nullable()->unique(); // Not nullable
             $table->string('cin')->nullable()->unique(); // Added for CIN file path

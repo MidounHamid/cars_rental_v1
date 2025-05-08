@@ -171,7 +171,7 @@ class CarRentalCalculator extends Component
         $serviceFee = 15.00;
 
         // Calculate total with fees
-        $totalWithFees = ($this->rental_duration * $this->base_price) + $this->additional_options + $insuranceFee + $serviceFee;
+        $totalPricewithoutFees = ($this->rental_duration * $this->base_price) + $this->additional_options + $insuranceFee + $serviceFee;
 
         // Get insurance information
         $insurance = \App\Models\Insurance::find($this->car->insurance_id);
@@ -196,7 +196,7 @@ class CarRentalCalculator extends Component
             'start_time' => $this->pickup_time,
             'end_time' => $this->return_time,
             'status' => 'pending',
-            'total_price' => $totalWithFees,  // Add total price to booking
+            'total_price' => $totalPricewithoutFees,  // Add total price to booking
             // No payment_id yet as payment hasn't been made
         ]);
 
@@ -215,7 +215,7 @@ class CarRentalCalculator extends Component
             'additional_options' => $this->additional_options,
             'insurance_fee' => $insuranceFee,
             'service_fee' => $serviceFee,
-            'total_price' => $totalWithFees,
+            'total_price' => $totalPricewithoutFees,
             'rating' => 4.8, // Default or get from reviews if implemented
             'delivery_locations' => $this->car->deliveryLocations->map(function ($loc) {
                 return $loc->name . ' ' . ucfirst($loc->type);

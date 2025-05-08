@@ -43,9 +43,8 @@ class StripePaymentController extends Controller
         $bookingData = session('booking_data', []);
         $user = Auth::user();
 
-        // Validate and calculate fees
+        // Only ensure fees are set, total price is already calculated
         $bookingData = $this->ensureAllFees($bookingData);
-        $bookingData = $this->calculateTotalPrice($bookingData);
 
         // Handle client-side total price confirmation
         $confirmedTotalPrice = $request->input('confirmed_total_price');
@@ -71,6 +70,7 @@ class StripePaymentController extends Controller
             return response()->json(['error' => $validator->errors()], 422);
         }
 
+        // In your checkout method, after calculating the total price:
         try {
             // Fetch car brand if missing
             if (empty($bookingData['car']['brand']) && !empty($bookingData['car']['id'])) {
@@ -96,6 +96,8 @@ class StripePaymentController extends Controller
                     'insurance_fee' => $bookingData['insurance_fee'],
                     'service_fee' => $bookingData['service_fee'],
                     'additional_options' => $bookingData['additional_options'],
+                    'promotion_id' => $bookingData['promotion_id'] ?? null, // Add this line
+                    'promotion_discount' => $promotionDiscount ?? 0 // Add this line
                 ]);
 
                 // Attach specifications
@@ -116,6 +118,8 @@ class StripePaymentController extends Controller
                     'insurance_fee' => $bookingData['insurance_fee'],
                     'service_fee' => $bookingData['service_fee'],
                     'additional_options' => $bookingData['additional_options'],
+                    'promotion_id' => $bookingData['promotion_id'] ?? null, // Add this line
+                    'promotion_discount' => $promotionDiscount ?? 0 // Add this line
                 ]);
 
                 // Sync specifications
@@ -162,6 +166,8 @@ class StripePaymentController extends Controller
                 'status' => $paymentIntent->status === 'succeeded' ? 'successful' : 'pending',
                 'stripe_payment_id' => $paymentIntent->id,
                 'stripe_response' => json_encode($paymentIntent)
+
+
             ]);
 
             // Handle payment success
@@ -245,16 +251,10 @@ class StripePaymentController extends Controller
 
     // Other methods (cancel, confirmPayment) remain unchanged
 
-    private function calculateTotalPrice(array $bookingData)
+    protected function calculateTotalPrice($bookingData)
     {
-        $pricePerDay = $bookingData['car']['price_per_day'] ?? 0;
-        $durationDays = $bookingData['duration_days'] ?? 1;
-        $rentalSubtotal = $pricePerDay * $durationDays;
-        $insuranceFee = $bookingData['insurance_fee'] ?? 0;
-        $serviceFee = $bookingData['service_fee'] ?? 15.0;
-        $additionalOptions = $bookingData['additional_options'] ?? 0;
-
-        $bookingData['total_price'] = $rentalSubtotal + $insuranceFee + $serviceFee + $additionalOptions;
+        // Use the total price directly from the booking data
+        // since it's already calculated in CarRentalCalculator
         return $bookingData;
     }
 
