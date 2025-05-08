@@ -218,6 +218,13 @@
                         <span class="nav-label">specifications</span>
                     </a>
                 </li>
+                {{-- <li class="nav-item">
+                    <a href="{{ route('admin.notifications.index') }}" class="nav-link {{ request()->routeIs('admin.notifications.*') ? 'active' : '' }}">
+                        <span class="nav-icon material-symbols-rounded">notifications</span>
+                        <span>Notifications</span>
+                        <span class="badge">0</span>
+                    </a>
+                </li> --}}
             </ul>
 
             {{-- <ul class="nav-list secondary-nav">

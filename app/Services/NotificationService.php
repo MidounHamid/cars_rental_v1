@@ -26,19 +26,19 @@ class NotificationService
 
     private function generateNotificationMessage(Booking $booking, string $type): string
     {
+        $userName = $booking->user->name;
         $carInfo = "{$booking->car->brand->name} {$booking->car->model}";
-        $userInfo = "{$booking->user->name} ({$booking->user->email})";
         $dates = "from " . $booking->start_date->format('M d, Y') . " to " . $booking->end_date->format('M d, Y');
 
         switch ($type) {
             case 'booking_confirmation':
-                return "New booking confirmed for {$carInfo} by {$userInfo} {$dates}";
+                return "User {$userName} has confirmed a booking for {$carInfo} {$dates}";
             case 'booking_cancellation':
-                return "Booking cancelled for {$carInfo} by {$userInfo} {$dates}";
+                return "User {$userName} has cancelled a booking for {$carInfo} {$dates}";
             case 'booking_completion':
-                return "Booking completed for {$carInfo} by {$userInfo} {$dates}";
+                return "User {$userName} has completed a booking for {$carInfo} {$dates}";
             default:
-                return "Booking status updated for {$carInfo} by {$userInfo} {$dates}";
+                return "Booking status updated for {$carInfo} by {$userName} {$dates}";
         }
     }
 } 

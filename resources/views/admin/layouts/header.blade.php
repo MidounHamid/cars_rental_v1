@@ -13,10 +13,7 @@
         </div>
     </div>
     <div class="nav-right">
-        <a href="{{ route('admin.notifications.index') }}" class="nav-btn">
-            <span class="material-symbols-rounded">notifications</span>
-            <span class="badge">0</span>
-        </a>
+        <livewire:admin.notification-dropdown />
 
         <div class="profile-menu">
             <button class="profile-trigger">
@@ -60,21 +57,148 @@
     </div>
 </nav>
 
-@push('scripts')
-<script>
-    // Update notification count on page load
-    fetch('/admin/notifications/unread-count')
-        .then(response => response.json())
-        .then(data => {
-            const badge = document.querySelector('.nav-btn .badge');
-            if (badge) {
-                badge.textContent = data.count;
-                if (data.count === 0) {
-                    badge.style.display = 'none';
-                } else {
-                    badge.style.display = 'flex';
-                }
-            }
-        });
-</script>
+@push('styles')
+<style>
+    .navbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem;
+        background: #fff;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .nav-left {
+        flex: 1;
+        max-width: 400px;
+    }
+
+    .search-box {
+        display: flex;
+        align-items: center;
+        background: #f5f5f5;
+        border-radius: 8px;
+        padding: 0.5rem 1rem;
+    }
+
+    .search-box input {
+        border: none;
+        background: none;
+        margin-left: 0.5rem;
+        width: 100%;
+        outline: none;
+    }
+
+    .nav-right {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .profile-menu {
+        position: relative;
+    }
+
+    .profile-trigger {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: none;
+        border: none;
+        padding: 0.5rem;
+        cursor: pointer;
+        border-radius: 8px;
+        transition: background-color 0.3s ease;
+    }
+
+    .profile-trigger:hover {
+        background-color: #f5f5f5;
+    }
+
+    .profile-img {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+    .profile-dropdown {
+        position: absolute;
+        top: 100%;
+        right: 0;
+        width: 280px;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        margin-top: 8px;
+        display: none;
+        z-index: 1000;
+    }
+
+    .profile-menu:hover .profile-dropdown {
+        display: block;
+    }
+
+    .dropdown-header {
+        padding: 1rem;
+        border-bottom: 1px solid #eee;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .profile-img-large {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+    .profile-info h4 {
+        margin: 0;
+        font-size: 1rem;
+        color: #333;
+    }
+
+    .profile-info p {
+        margin: 0.25rem 0 0;
+        font-size: 0.875rem;
+        color: #666;
+    }
+
+    .dropdown-body {
+        padding: 0.5rem 0;
+    }
+
+    .dropdown-item {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.75rem 1rem;
+        color: #333;
+        text-decoration: none;
+        transition: background-color 0.3s ease;
+    }
+
+    .dropdown-item:hover {
+        background-color: #f5f5f5;
+    }
+
+    .dropdown-item.text-danger {
+        color: #dc3545;
+    }
+
+    .dropdown-footer {
+        padding: 0.5rem 0;
+        border-top: 1px solid #eee;
+    }
+
+    .dropdown-footer .dropdown-item {
+        width: 100%;
+        text-align: left;
+        background: none;
+        border: none;
+        cursor: pointer;
+    }
+</style>
 @endpush

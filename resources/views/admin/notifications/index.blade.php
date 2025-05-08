@@ -12,19 +12,29 @@
             <div class="notification-item {{ $notification->is_read ? 'read' : 'unread' }}" data-id="{{ $notification->id }}">
                 <div class="notification-content">
                     <div class="notification-header">
-                        <span class="notification-type">{{ ucfirst($notification->type) }}</span>
+                        <span class="notification-type">{{ ucfirst(str_replace('_', ' ', $notification->type)) }}</span>
                         <span class="notification-time">{{ $notification->created_at->diffForHumans() }}</span>
                     </div>
                     <p class="notification-message">{{ $notification->message }}</p>
                     <div class="notification-details">
                         <div class="car-info">
                             <strong>Car:</strong> {{ $notification->booking->car->brand->name }} {{ $notification->booking->car->model }}
+                            <br>
+                            <strong>Price per day:</strong> ${{ number_format($notification->booking->car->price_per_day, 2) }}
                         </div>
                         <div class="user-info">
-                            <strong>User:</strong> {{ $notification->booking->user->name }} ({{ $notification->booking->user->email }})
+                            <strong>User:</strong> {{ $notification->booking->user->name }}
+                            <br>
+                            <strong>Email:</strong> {{ $notification->booking->user->email }}
+                            <br>
+                            <strong>Phone:</strong> {{ $notification->booking->user->phone ?? 'N/A' }}
                         </div>
                         <div class="booking-dates">
-                            <strong>Dates:</strong> {{ $notification->booking->start_date->format('M d, Y') }} - {{ $notification->booking->end_date->format('M d, Y') }}
+                            <strong>Booking Period:</strong>
+                            <br>
+                            From: {{ $notification->booking->start_date->format('M d, Y') }} at {{ $notification->booking->start_time }}
+                            <br>
+                            To: {{ $notification->booking->end_date->format('M d, Y') }} at {{ $notification->booking->end_time }}
                         </div>
                     </div>
                 </div>
@@ -74,6 +84,7 @@
 
     .notification-item.unread {
         border-left: 4px solid #2196f3;
+        background-color: #f8f9fa;
     }
 
     .notification-content {
@@ -99,13 +110,16 @@
     .notification-message {
         margin: 8px 0;
         color: #333;
+        font-size: 1.1em;
     }
 
     .notification-details {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 12px;
-        margin-top: 12px;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 16px;
+        margin-top: 16px;
+        padding-top: 16px;
+        border-top: 1px solid #eee;
         font-size: 0.9em;
         color: #666;
     }
@@ -128,6 +142,9 @@
         text-align: center;
         padding: 40px;
         color: #666;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
 </style>
 @endpush
