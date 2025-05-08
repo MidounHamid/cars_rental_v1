@@ -9,7 +9,7 @@
 
     <div class="notifications-list">
         @forelse ($notifications as $notification)
-            <div class="notification-item {{ $notification->is_read ? 'read' : 'unread' }}" data-id="{{ $notification->id }}">
+            <a href="{{ route('admin.notifications.show', $notification->id) }}" class="notification-item {{ $notification->is_read ? 'read' : 'unread' }}" data-id="{{ $notification->id }}">
                 <div class="notification-content">
                     <div class="notification-header">
                         <span class="notification-type">{{ ucfirst(str_replace('_', ' ', $notification->type)) }}</span>
@@ -18,7 +18,7 @@
                     <p class="notification-message">{{ $notification->message }}</p>
                     <div class="notification-details">
                         <div class="car-info">
-                            <strong>Car:</strong> {{ $notification->booking->car->brand->name }} {{ $notification->booking->car->model }}
+                            <strong>Car:</strong> {{ $notification->booking->car->brand->brand }} {{ $notification->booking->car->model }}
                             <br>
                             <strong>Price per day:</strong> ${{ number_format($notification->booking->car->price_per_day, 2) }}
                         </div>
@@ -39,11 +39,11 @@
                     </div>
                 </div>
                 @if (!$notification->is_read)
-                    <button class="mark-as-read-btn" onclick="markAsRead({{ $notification->id }})">
+                    <button class="mark-as-read-btn" onclick="event.preventDefault(); markAsRead({{ $notification->id }})">
                         <span class="material-symbols-rounded">check</span>
                     </button>
                 @endif
-            </div>
+            </a>
         @empty
             <div class="no-notifications">
                 <p>No notifications found.</p>
@@ -80,6 +80,14 @@
         align-items: flex-start;
         box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         transition: all 0.3s ease;
+        text-decoration: none;
+        color: inherit;
+        cursor: pointer;
+    }
+
+    .notification-item:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
     }
 
     .notification-item.unread {
@@ -132,6 +140,7 @@
         padding: 8px;
         border-radius: 50%;
         transition: background-color 0.3s ease;
+        z-index: 2;
     }
 
     .mark-as-read-btn:hover {
