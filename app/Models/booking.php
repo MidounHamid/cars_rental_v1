@@ -5,6 +5,7 @@ namespace App\Models;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Services\PromotionService;
 
 class Booking extends Model
 {
@@ -97,24 +98,16 @@ class Booking extends Model
         // Service fee
         $serviceFee = 15.0;
 
-        // Calculate promotion discount with exact logic
+        // Calculate promotion discount with exact logic using PromotionService
         $promotionDiscount = 0;
         if ($this->promotion) {
-            // Get promotion period
-            $promoStartDate = Carbon::parse($this->promotion->start_date)->startOfDay();
-            $promoEndDate = Carbon::parse($this->promotion->end_date)->endOfDay();
-
-            // Calculate days that fall within promotion period
-            $promoDays = $rentalDays->filter(function ($day) use ($promoStartDate, $promoEndDate) {
-                $dayDate = Carbon::parse($day)->startOfDay();
-                return $dayDate->between($promoStartDate, $promoEndDate);
-            })->count();
-
-            // Calculate discount only for days within promotion period
-            if ($promoDays > 0) {
-                $promoPricePerDay = $carPricePerDay * ($this->promotion->discount_percent / 100);
-                $promotionDiscount = $promoPricePerDay * $promoDays;
-            }
+            $promotionService = app(PromotionService::class);
+            list($promotionDiscount, $discountedDays, $discountPercent) = $promotionService->calculateBookingDiscount(
+                $carPricePerDay,
+                $startDateTime,
+                $endDateTime,
+                $this->promotion
+            );
         }
 
         // Calculate final total

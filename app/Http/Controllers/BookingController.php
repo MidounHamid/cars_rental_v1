@@ -11,14 +11,17 @@ use App\Services\NotificationService;
 use App\Http\Requests\StoreBookingRequest;
 use App\Http\Requests\UpdateBookingRequest;
 use Carbon\Carbon;
+use App\Services\PromotionService;
 
 class BookingController extends Controller
 {
     protected $notificationService;
+    protected $promotionService;
 
-    public function __construct(NotificationService $notificationService)
+    public function __construct(NotificationService $notificationService, PromotionService $promotionService)
     {
         $this->notificationService = $notificationService;
+        $this->promotionService = $promotionService;
     }
 
     /**

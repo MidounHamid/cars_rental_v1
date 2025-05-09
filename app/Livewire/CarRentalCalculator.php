@@ -7,6 +7,7 @@ use Carbon\Carbon;
 use App\Models\Car;
 use App\Models\Specification;
 use Illuminate\Support\Facades\Auth;
+use App\Services\PromotionService;
 
 class CarRentalCalculator extends Component
 {
@@ -19,6 +20,9 @@ class CarRentalCalculator extends Component
     public $total_price = 0;
     public $base_price = 0;
     public $additional_options = 0;
+    public $promotion_discount = 0;
+    public $promotion_days = 0;
+    public $promotion_percent = 0;
 
     // Specifications from database
     public $specifications = [];
@@ -129,11 +133,24 @@ class CarRentalCalculator extends Component
         // Service fee
         $serviceFee = 15.0;
 
-        // Get promotion discount
+        // Get promotion discount using PromotionService
         $promotion = \App\Models\Promotion::first();
         $promotionDiscount = 0;
-        if ($promotion) {
-            $promotionDiscount = ($rentalSubtotal * $promotion->discount_percent) / 100;
+        if ($promotion && $this->pickup_date && $this->return_date) {
+            $promotionService = app(PromotionService::class);
+            $pickup = Carbon::parse($this->pickup_date . ' ' . ($this->pickup_time ?: '10:00'));
+            $return = Carbon::parse($this->return_date . ' ' . ($this->return_time ?: '10:00'));
+            
+            list($promotionDiscount, $discountedDays, $discountPercent) = $promotionService->calculateBookingDiscount(
+                $this->base_price,
+                $pickup,
+                $return,
+                $promotion
+            );
+            
+            $this->promotion_discount = $promotionDiscount;
+            $this->promotion_days = $discountedDays;
+            $this->promotion_percent = $discountPercent;
         }
 
         // Calculate final total price with all components
@@ -203,7 +220,10 @@ class CarRentalCalculator extends Component
             'base_price' => $this->base_price,
             'additional_options' => $this->additional_options,
             'total_price' => $this->total_price,
-            'specifications' => $specDetails
+            'specifications' => $specDetails,
+            'promotion_discount' => $this->promotion_discount,
+            'promotion_days' => $this->promotion_days,
+            'promotion_percent' => $this->promotion_percent
         ];
 
         // Store booking data in session

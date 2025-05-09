@@ -149,14 +149,26 @@
                             </div>
                             @endif
 
+                            @if(isset($bookingData['promotion_discount']) && $bookingData['promotion_discount'] > 0)
                             <div class="summary-row promotion">
-                                <div>Promotion Discount ({{ $promotionPercent }}% OFF)</div>
-                                <div>-${{ number_format($promotionDiscount, 2) }}</div>
+                                <div>
+                                    Promotion Discount ({{ $bookingData['promotion_percent'] }}% OFF)
+                                    <br>
+                                    <small class="text-muted">
+                                        Applied to {{ $bookingData['promotion_days'] }} day(s) during promotion period
+                                    </small>
+                                </div>
+                                <div>-${{ number_format($bookingData['promotion_discount'], 2) }}</div>
                             </div>
                             <div class="summary-row promotion-calculation">
-                                <div><small>Calculation: ${{ number_format($rentalSubtotal, 2) }} × {{ $promotionPercent }}%</small></div>
-                                <div><small>-${{ number_format($promotionDiscount, 2) }}</small></div>
+                                <div>
+                                    <small>Base price per day: ${{ number_format($bookingData['car']['price_per_day'], 2) }}</small><br>
+                                    <small>Discounted days: {{ $bookingData['promotion_days'] }}</small><br>
+                                    <small>Discount per day: ${{ number_format($bookingData['car']['price_per_day'] * $bookingData['promotion_percent'] / 100, 2) }}</small>
+                                </div>
+                                <div><small>-${{ number_format($bookingData['promotion_discount'], 2) }}</small></div>
                             </div>
+                            @endif
 
                             <div class="summary-row">
                                 <div>Insurance Fee</div>

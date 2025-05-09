@@ -15,14 +15,17 @@ use Stripe\Stripe;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Storage;
 use Carbon\Carbon;
+use App\Services\PromotionService;
 
 class StripePaymentController extends Controller
 {
     protected $notificationService;
+    protected $promotionService;
 
-    public function __construct(NotificationService $notificationService)
+    public function __construct(NotificationService $notificationService, PromotionService $promotionService)
     {
         $this->notificationService = $notificationService;
+        $this->promotionService = $promotionService;
     }
 
     public function index()
@@ -37,7 +40,8 @@ class StripePaymentController extends Controller
         $bookingData = $this->calculateTotalPrice($bookingData);
         session(['booking_data' => $bookingData]);
 
-        return view('stripe.payment', compact('bookingData'));
+        $totalPrice = $bookingData['total_price'];
+        return view('stripe.payment', compact('bookingData', 'totalPrice'));
     }
 
     public function checkout(Request $request)
@@ -49,9 +53,11 @@ class StripePaymentController extends Controller
         $confirmedTotalPrice = $request->input('confirmed_total_price');
 
         try {
-            // Recalculate total price to ensure consistency
-            $bookingData = $this->calculateTotalPrice($bookingData);
-            $totalPrice = $bookingData['total_price'];
+            // Use the confirmed total price from the form
+            if (!$confirmedTotalPrice) {
+                return response()->json(['error' => 'Total price confirmation required'], 400);
+            }
+            $totalPrice = $confirmedTotalPrice;
 
             // Create or update booking with the calculated total price
             if (empty($bookingData['booking_id'])) {
@@ -112,16 +118,8 @@ class StripePaymentController extends Controller
                     $bookingData['insurance_fee'] = $insuranceFee;
                 }
 
-                // Calculate promotion discount if any
-                $promotionDiscount = 0;
-                if (isset($bookingData['promotion_id'])) {
-                    $promotion = \App\Models\Promotion::find($bookingData['promotion_id']);
-                    if ($promotion) {
-                        $basePrice = $car->price_per_day * $durationDays;
-                        $promotionDiscount = ($basePrice * $promotion->discount_percent) / 100;
-                        $bookingData['promotion_discount'] = $promotionDiscount;
-                    }
-                }
+                // Get promotion discount from bookingData
+                $promotionDiscount = $bookingData['promotion_discount'] ?? 0;
 
                 // Create or update booking
                 if (empty($bookingData['booking_id'])) {
@@ -329,29 +327,21 @@ class StripePaymentController extends Controller
         // Service fee
         $serviceFee = 15.0;
 
-        // Calculate promotion discount with exact logic
+        // Calculate promotion discount using PromotionService
         $promotionDiscount = 0;
         $promotion = \App\Models\Promotion::first();
         if ($promotion) {
-            // Get promotion period
-            $promoStartDate = Carbon::parse($promotion->start_date)->startOfDay();
-            $promoEndDate = Carbon::parse($promotion->end_date)->endOfDay();
-
-            // Calculate days that fall within promotion period
-            $promoDays = $rentalDays->filter(function ($day) use ($promoStartDate, $promoEndDate) {
-                $dayDate = Carbon::parse($day)->startOfDay();
-                return $dayDate->between($promoStartDate, $promoEndDate);
-            })->count();
-
-            // Calculate discount only for days within promotion period
-            if ($promoDays > 0) {
-                $promoPricePerDay = $car->price_per_day * ($promotion->discount_percent / 100);
-                $promotionDiscount = $promoPricePerDay * $promoDays;
-            }
+            list($promotionDiscount, $discountedDays, $discountPercent) = $this->promotionService->calculateBookingDiscount(
+                $car->price_per_day,
+                $startDate,
+                $endDate,
+                $promotion
+            );
 
             // Store promotion info in booking data
             $bookingData['promotion_id'] = $promotion->id;
-            $bookingData['promotion_days'] = $promoDays;
+            $bookingData['promotion_days'] = $discountedDays;
+            $bookingData['promotion_percent'] = $discountPercent;
         }
 
         // Calculate total price using the same formula everywhere
