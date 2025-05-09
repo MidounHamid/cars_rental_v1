@@ -26,12 +26,13 @@ class CarController extends Controller
             'fuelType',
             'insurance',
             'carImages',
+            'carType',
+            'agency',
+            'deliveryLocations',
             'reviews.user'
         ])->paginate(12);
 
-        $locations = Location::all();
-
-        return view('client.home.home', compact('cars', 'locations'));
+        return view('admin.cars.index', compact('cars'));
     }
 
     /**

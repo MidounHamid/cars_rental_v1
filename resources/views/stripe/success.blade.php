@@ -42,7 +42,7 @@
             <a href="{{ $pdfUrl }}" class="success-link" download="receipt-{{ $booking->id }}.pdf">
                 Download Receipt
             </a>
-            <button onclick="openReviewPopup('{{ $booking->car->id }}', '{{ $booking->id }}')" class="review-button">
+            <button onclick="openReviewPopup('{{ $booking->car->id }}')" class="review-button">
                 Rate Your Experience
             </button>
             <a href="{{ route('dashboard') }}" class="success-link secondary">
@@ -217,9 +217,16 @@
 
 @push('scripts')
     <script>
-        // Auto open review popup after 2 seconds
-        setTimeout(function() {
-            openReviewPopup('{{ $booking->car->id }}', '{{ $booking->id }}');
-        }, 2000);
+        $(document).ready(function() {
+            // Check if URL contains payment_intent
+            const urlParams = new URLSearchParams(window.location.search);
+            const paymentIntent = urlParams.get('payment_intent');
+
+            if (paymentIntent) {
+                // Clean the URL first
+                const newUrl = window.location.pathname;
+                window.history.replaceState({}, document.title, newUrl);
+            }
+        });
     </script>
 @endpush

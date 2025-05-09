@@ -42,38 +42,52 @@ class ReviewController extends Controller
         $validator = Validator::make($request->all(), [
             'car_id' => 'required|exists:cars,id',
             'rating' => 'required|integer|min:1|max:5',
-            'comment' => 'required|string|min:10|max:1000',
+            'comment' => 'nullable|string|max:1000',
         ], [
             'rating.required' => 'Please select a rating',
             'rating.min' => 'Please select a rating',
-            'comment.required' => 'Please write a review',
-            'comment.min' => 'Your review should be at least 10 characters long'
+            'comment.max' => 'Your review cannot be longer than 1000 characters'
         ]);
 
         if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'errors' => $validator->errors()
-            ], 422);
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'errors' => $validator->errors()
+                ], 422);
+            }
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
         }
 
         try {
-            $review = new Review();
-            $review->user_id = Auth::id();
-            $review->car_id = $request->car_id;
-            $review->rating = $request->rating;
-            $review->comment = $request->comment;
-            $review->save();
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Thank you for your review!'
+            $review = Review::create([
+                'user_id' => Auth::id(), // Get the current user's ID
+                'car_id' => $request->car_id,
+                'rating' => $request->rating,
+                'comment' => $request->comment ?? ''
             ]);
+
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Thank you for your review!'
+                ]);
+            }
+            return redirect()->route('reviews.index')
+                ->with('success', 'Review created successfully!');
         } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'An error occurred while saving your review.'
-            ], 500);
+            // \Log::error('Review creation error: ' . $e->getMessage());
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'An error occurred while saving your review.'
+                ], 500);
+            }
+            return redirect()->back()
+                ->with('error', 'An error occurred while saving your review.')
+                ->withInput();
         }
     }
 

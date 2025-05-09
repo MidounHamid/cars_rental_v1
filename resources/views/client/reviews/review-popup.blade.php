@@ -192,7 +192,6 @@
         <form id="reviewForm">
             @csrf
             <input type="hidden" name="car_id" id="carId">
-            <input type="hidden" name="booking_id" id="bookingId">
 
             <div class="star-rating">
                 <input type="radio" id="star5" name="rating" value="5">
@@ -226,13 +225,27 @@
 @push('scripts')
     <script>
         $(document).ready(function() {
+            // Only initialize review functionality if we're on the correct page
+            if ($('#reviewPopup').length === 0) return;
+
             const form = $('#reviewForm');
             const successMessage = $('#successMessage');
+            let isSubmitting = false;
 
             function showSuccess(message) {
                 successMessage.text(message).fadeIn();
                 setTimeout(() => {
                     successMessage.fadeOut(300);
+                }, 3000);
+            }
+
+            function showError(message) {
+                const errorDiv = $('<div>').addClass('error-message').text(message);
+                form.prepend(errorDiv);
+                setTimeout(() => {
+                    errorDiv.fadeOut(300, function() {
+                        $(this).remove();
+                    });
                 }, 3000);
             }
 
@@ -242,43 +255,93 @@
 
             form.on('submit', function(e) {
                 e.preventDefault();
+
+                // Prevent double submission
+                if (isSubmitting) return;
+                isSubmitting = true;
+
                 clearErrors();
 
+                // Get the form data
+                const rating = $('input[name="rating"]:checked').val();
+                const comment = $('#comment').val();
+                const carId = $('#carId').val();
+
+                // Validate required fields
+                if (!rating) {
+                    $('#ratingError').text('Please select a rating');
+                    isSubmitting = false;
+                    return;
+                }
+
+                // Create form data
+                const formData = new FormData();
+                formData.append('_token', '{{ csrf_token() }}');
+                formData.append('rating', rating);
+                formData.append('car_id', carId);
+                if (comment && comment.trim()) {
+                    formData.append('comment', comment.trim());
+                }
+
+                // Disable form elements during submission
+                const submitButton = form.find('button[type="submit"]');
+                const originalButtonText = submitButton.text();
+                submitButton.prop('disabled', true).text('Submitting...');
+
                 $.ajax({
-                    url: '{{ route('reviews.store') }}',
-                    method: 'POST',
-                    data: form.serialize(),
-                    success: function(response) {
+                        url: '{{ route('reviews.store') }}',
+                        method: 'POST',
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        }
+                    })
+                    .done(function(response) {
                         if (response.success) {
                             showSuccess(response.message);
                             closeReviewPopup();
-                            // Hide the review button
-                            $(`button[onclick="openReviewPopup('${$('#carId').val()}', '${$('#bookingId').val()}')"]`)
-                                .hide();
-                        }
-                    },
-                    error: function(xhr) {
-                        if (xhr.status === 422) {
-                            const errors = xhr.responseJSON.errors;
-                            if (errors.rating) {
-                                $('#ratingError').text(errors.rating[0]);
-                            }
-                            if (errors.comment) {
-                                $('#commentError').text(errors.comment[0]);
-                            }
+                            setTimeout(() => {
+                                location.reload();
+                            }, 1500);
                         } else {
-                            showSuccess('An error occurred. Please try again.');
+                            showError(response.message || 'An error occurred while saving the review.');
                         }
-                    }
-                });
+                    })
+                    .fail(function(xhr) {
+                        console.error('Review submission error:', xhr);
+                        if (xhr.status === 422 && xhr.responseJSON && xhr.responseJSON.errors) {
+                            const errors = xhr.responseJSON.errors;
+                            Object.keys(errors).forEach(key => {
+                                $(`#${key}Error`).text(errors[key][0]);
+                            });
+                        } else {
+                            showError('An error occurred. Please try again.');
+                        }
+                    })
+                    .always(function() {
+                        isSubmitting = false;
+                        submitButton.prop('disabled', false).text(originalButtonText);
+                    });
             });
         });
 
-        function openReviewPopup(carId, bookingId) {
-            $('#carId').val(carId);
-            $('#bookingId').val(bookingId);
-            $('#reviewPopup').addClass('active');
+        function openReviewPopup(carId) {
+            if (!carId) {
+                console.error('No car ID provided');
+                return;
+            }
+
+            // Clear any existing data
             clearErrors();
+            $('#reviewForm')[0].reset();
+
+            // Set new data
+            $('#carId').val(carId);
+
+            // Show popup
+            $('#reviewPopup').addClass('active');
         }
 
         function closeReviewPopup() {
@@ -292,8 +355,9 @@
         }
 
         // Close popup when clicking outside
-        $(document).on('click', '#reviewPopup', function(e) {
-            if (e.target === this) {
+        $(document).mouseup(function(e) {
+            const popup = $('#reviewPopup .review-popup-content');
+            if (popup.length && !popup.is(e.target) && popup.has(e.target).length === 0) {
                 closeReviewPopup();
             }
         });

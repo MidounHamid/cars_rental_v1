@@ -55,16 +55,6 @@
                 </div>
             </div>
 
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="file">File Upload (optional)</label>
-                    <input type="file" name="file" id="file" class="form-input">
-                    @error('file')
-                        <span class="error-message">{{ $message }}</span>
-                    @enderror
-                </div>
-            </div>
-
             <div class="form-footer">
                 <button type="submit" class="add-btn">Create Review</button>
                 <a href="{{ route('reviews.index') }}" class="cancel-btn">Cancel</a>
