@@ -119,10 +119,33 @@
                                         {{ $car->is_available ? 'Available' : 'Unavailable' }}
                                     </span>
                                     <div class="reviews">
-                                        <i class="fas fa-star"></i>
-                                        <span>{{ number_format($car->average_rating, 1) }} ({{ $car->total_reviews }} reviews)</span>
+                                        <div class="rating-stars">
+                                            @php
+                                                $rating = $car->average_rating;
+                                                $fullStars = floor($rating);
+                                                $halfStar = $rating - $fullStars >= 0.5;
+                                                $emptyStars = 5 - $fullStars - ($halfStar ? 1 : 0);
+                                            @endphp
+
+                                            @for ($i = 0; $i < $fullStars; $i++)
+                                                <i class="fas fa-star filled"></i>
+                                            @endfor
+
+                                            @if ($halfStar)
+                                                <i class="fas fa-star-half-alt filled"></i>
+                                            @endif
+
+                                            @for ($i = 0; $i < $emptyStars; $i++)
+                                                <i class="far fa-star"></i>
+                                            @endfor
+                                        </div>
+                                        <div class="rating-info">
+                                            <span
+                                                class="rating-number">{{ number_format($car->average_rating, 1) }}</span>
+                                            <span class="review-count">({{ $car->total_reviews }}
+                                                {{ Str::plural('review', $car->total_reviews) }})</span>
+                                        </div>
                                     </div>
-                                   
                                 </div>
                             </div>
                         </div>
@@ -309,6 +332,48 @@
             color: #4a5568;
             border-color: #e2e8f0;
             background: white;
+        }
+
+        .reviews {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 4px;
+            margin-top: 8px;
+        }
+
+        .rating-stars {
+            display: flex;
+            gap: 2px;
+        }
+
+        .rating-stars i {
+            color: #ffd700;
+            font-size: 14px;
+        }
+
+        .rating-stars i.filled {
+            color: #ffd700;
+        }
+
+        .rating-stars i:not(.filled) {
+            color: #e4e5e7;
+        }
+
+        .rating-info {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .rating-number {
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        .review-count {
+            color: #718096;
+            font-size: 0.9em;
         }
     </style>
 

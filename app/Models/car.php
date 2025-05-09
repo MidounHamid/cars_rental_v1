@@ -5,6 +5,8 @@ namespace App\Models;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Car extends Model
 {
@@ -39,8 +41,11 @@ class Car extends Model
         'seats' => 'integer',
     ];
 
+    protected $appends = ['average_rating', 'total_reviews'];
+
     // Returns all car images
     public function carImages()
+    
     {
         return $this->hasMany(CarImage::class);
     }
@@ -52,6 +57,7 @@ class Car extends Model
     }
 
     public function brand()
+
     {
         return $this->belongsTo(Brand::class);
     }
@@ -62,6 +68,7 @@ class Car extends Model
     }
 
     public function fuelType()
+
     {
         return $this->belongsTo(FuelType::class, 'fuel_types_id');
     }
@@ -72,6 +79,7 @@ class Car extends Model
     }
 
     public function insurance()
+
     {
         return $this->belongsTo(Insurance::class);
     }
@@ -91,17 +99,29 @@ class Car extends Model
         return $this->belongsToMany(Location::class, 'car_delivery_locations');
     }
 
-
-
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
+    }
 
     public function getIsAvailableAttribute()
-{
-    $today = Carbon::today();
+    {
+        $today = Carbon::today();
 
-    return !$this->bookings()
-        ->whereIn('status', ['pending', 'confirmed'])
-        ->whereDate('start_date', '<=', $today)
-        ->whereDate('end_date', '>=', $today)
-        ->exists();
-}
+        return !$this->bookings()
+            ->whereIn('status', ['pending', 'confirmed'])
+            ->whereDate('start_date', '<=', $today)
+            ->whereDate('end_date', '>=', $today)
+            ->exists();
+    }
+
+    public function getAverageRatingAttribute()
+    {
+        return $this->reviews()->avg('rating') ?? 0;
+    }
+
+    public function getTotalReviewsAttribute()
+    {
+        return $this->reviews()->count();
+    }
 }

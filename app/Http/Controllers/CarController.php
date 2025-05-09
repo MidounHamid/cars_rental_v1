@@ -21,8 +21,17 @@ class CarController extends Controller
      */
     public function index()
     {
-        $cars = Car::with(['carType', 'fuelType', 'agency', 'brand', 'insurance'])->paginate(10);
-        return view('admin.cars.index', compact('cars'));
+        $cars = Car::with([
+            'brand',
+            'fuelType',
+            'insurance',
+            'carImages',
+            'reviews.user'
+        ])->paginate(12);
+
+        $locations = Location::all();
+
+        return view('client.home.home', compact('cars', 'locations'));
     }
 
     /**
