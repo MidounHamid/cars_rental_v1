@@ -365,6 +365,57 @@
         .toggle-password .material-symbols-rounded {
             font-size: 20px;
         }
+
+        .form-input {
+            width: 100%;
+            padding: 10px 16px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 15px;
+            background: #f1f2f6;
+            margin-bottom: 8px;
+        }
+        .file-upload {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            width: 100%;
+        }
+        .file-input {
+            display: none;
+        }
+        .file-label {
+            display: block;
+            background: #f1f2f6;
+            color: #333;
+            border-radius: 8px;
+            padding: 12px 24px;
+            cursor: pointer;
+            font-weight: 500;
+            margin-bottom: 8px;
+            transition: background 0.2s;
+            border: none;
+            text-align: center;
+            width: 100%;
+        }
+        .file-label:hover {
+            background: #e2e6ea;
+        }
+        .logo-preview img {
+            max-width: 100%;
+            max-height: 150px;
+            border-radius: 10px;
+            border: 2px solid #ccc;
+            margin-top: 10px;
+        }
+        .logo-preview span {
+            display: block;
+            color: #222;
+            font-weight: 500;
+            text-align: center;
+            margin-top: 10px;
+        }
     </style>
 
     <div class="container">
@@ -476,12 +527,43 @@
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label">Driver's License</label>
-                        <input type="file" name="driver_license" class="form-control" accept=".pdf,.jpg,.jpeg,.png">
+                        <label class="form-label" for="age">Age</label>
+                        <input type="number" name="age" id="age" value="{{ old('age', auth()->user()->age) }}" class="form-input" min="18" required>
+                        <x-input-error class="mt-2" :messages="$errors->get('age')" />
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="cin">CIN Document</label>
+                        <div class="file-upload">
+                            <input type="file" name="cin" id="cin" class="file-input" accept=".pdf,.jpg,.jpeg,.png">
+                            <label for="cin" class="file-label">Upload CIN</label>
+                        </div>
+                        <x-input-error class="mt-2" :messages="$errors->get('cin')" />
+                        <div class="logo-preview mt-2" style="text-align: center;">
+                            @if(auth()->user()->cin)
+                                <img id="cin-preview" src="{{ asset('storage/' . auth()->user()->cin) }}" style="max-height: 150px; border-radius: 10px; border: 2px solid #ccc; margin-top: 10px;" alt="CIN Preview">
+                            @else
+                                <img id="cin-preview" style="display: none; max-height: 150px; border-radius: 10px; border: 2px solid #ccc; margin-top: 10px;" alt="CIN Preview">
+                                <span id="no-cin-text">No CIN image</span>
+                            @endif
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="driver_license">Driver License</label>
+                        <div class="file-upload">
+                            <input type="file" name="driver_license" id="driver_license" class="file-input" accept=".pdf,.jpg,.jpeg,.png">
+                            <label for="driver_license" class="file-label">Upload License</label>
+                        </div>
                         <x-input-error class="mt-2" :messages="$errors->get('driver_license')" />
-                        @if(auth()->user()->driver_license)
-                            <p class="mt-2 text-sm text-gray-600">Current file: {{ basename(auth()->user()->driver_license) }}</p>
-                        @endif
+                        <div class="logo-preview mt-2" style="text-align: center;">
+                            @if(auth()->user()->driver_license)
+                                <img id="driver-license-preview" src="{{ asset('storage/' . auth()->user()->driver_license) }}" style="max-height: 150px; border-radius: 10px; border: 2px solid #ccc; margin-top: 10px;" alt="Driver License Preview">
+                            @else
+                                <img id="driver-license-preview" style="display: none; max-height: 150px; border-radius: 10px; border: 2px solid #ccc; margin-top: 10px;" alt="Driver License Preview">
+                                <span id="no-driver-license-text">No License image</span>
+                            @endif
+                        </div>
                     </div>
                 </div>
 
@@ -556,4 +638,56 @@
             reader.readAsDataURL(input.files[0]);
         }
     }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        // CIN document preview
+        const cinInput = document.getElementById('cin');
+        const cinPreview = document.getElementById('cin-preview');
+        const noCinText = document.getElementById('no-cin-text');
+
+        if (cinInput) {
+            cinInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (!file) return;
+                if (file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        cinPreview.src = event.target.result;
+                        cinPreview.style.display = 'block';
+                        if (noCinText) noCinText.style.display = 'none';
+                    };
+                    reader.readAsDataURL(file);
+                } else if (file.type === 'application/pdf') {
+                    cinPreview.src = '/images/pdf-icon.png'; // Remplacez par le chemin de votre icône PDF
+                    cinPreview.style.display = 'block';
+                    if (noCinText) noCinText.style.display = 'none';
+                }
+            });
+        }
+
+        // Driver license preview
+        const driverLicenseInput = document.getElementById('driver_license');
+        const driverLicensePreview = document.getElementById('driver-license-preview');
+        const noDriverLicenseText = document.getElementById('no-driver-license-text');
+
+        if (driverLicenseInput) {
+            driverLicenseInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (!file) return;
+                if (file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        driverLicensePreview.src = event.target.result;
+                        driverLicensePreview.style.display = 'block';
+                        if (noDriverLicenseText) noDriverLicenseText.style.display = 'none';
+                    };
+                    reader.readAsDataURL(file);
+                } else if (file.type === 'application/pdf') {
+                    driverLicensePreview.src = '/images/pdf-icon.png'; // Remplacez par le chemin de votre icône PDF
+                    driverLicensePreview.style.display = 'block';
+                    if (noDriverLicenseText) noDriverLicenseText.style.display = 'none';
+                }
+            });
+        }
+    });
 </script>

@@ -358,6 +358,20 @@
                     </div>
 
                     <div class="info-group">
+                        <label>Age</label>
+                        <p>{{ auth()->user()->age ?? 'Not provided' }}</p>
+                    </div>
+
+                    <div class="info-group">
+                        <label>CIN</label>
+                        @if(auth()->user()->cin)
+                            <p>{{ basename(auth()->user()->cin) }}</p>
+                        @else
+                            <p>Not provided</p>
+                        @endif
+                    </div>
+
+                    <div class="info-group">
                         <label>Driver's License</label>
                         @if(auth()->user()->driver_license)
                             <p>{{ basename(auth()->user()->driver_license) }}</p>

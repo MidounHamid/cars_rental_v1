@@ -60,6 +60,12 @@ class ProfileController extends Controller
             $data['driver_license'] = $driverLicensePath;
         }
 
+        // Handle CIN upload
+        if ($request->hasFile('cin')) {
+            $cinPath = $request->file('cin')->store('cin', 'public');
+            $data['cin'] = $cinPath;
+        }
+
         // Handle profile image upload
         if ($request->hasFile('image')) {
             $imagePath = $request->file('image')->store('profile_images', 'public');
