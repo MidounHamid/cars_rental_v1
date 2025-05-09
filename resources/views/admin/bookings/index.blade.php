@@ -65,6 +65,9 @@
                             @if($booking->promotion)
                                 <div class="text-success small">
                                     <i class="fas fa-tag"></i> Saved {{ $booking->promotion->discount_percent }}%
+                                    @if(isset($booking->promotion_days))
+                                        ({{ $booking->promotion_days }} days)
+                                    @endif
                                 </div>
                             @endif
                         </td>

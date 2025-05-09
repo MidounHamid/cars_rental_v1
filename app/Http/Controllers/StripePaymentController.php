@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Validator;
 use Stripe\Stripe;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Storage;
+use Carbon\Carbon;
 
 class StripePaymentController extends Controller
 {
@@ -294,7 +295,15 @@ class StripePaymentController extends Controller
         // Calculate duration
         $startDate = \Carbon\Carbon::parse($bookingData['pickup_date']);
         $endDate = \Carbon\Carbon::parse($bookingData['return_date']);
-        $durationDays = $startDate->diffInDays($endDate);
+
+        // Calculate rental days (excluding return date)
+        $rentalDays = collect();
+        $currentDate = $startDate->copy();
+        while ($currentDate < $endDate) {
+            $rentalDays->push($currentDate->format('Y-m-d'));
+            $currentDate->addDay();
+        }
+        $durationDays = $rentalDays->count();
 
         // Get car and calculate base price
         $car = Car::with('insurance')->find($bookingData['car']['id']);
@@ -320,10 +329,30 @@ class StripePaymentController extends Controller
         // Service fee
         $serviceFee = 15.0;
 
-        // Get promotion from database
+        // Calculate promotion discount with exact logic
+        $promotionDiscount = 0;
         $promotion = \App\Models\Promotion::first();
-        $promotionPercent = $promotion ? $promotion->discount_percent : 0;
-        $promotionDiscount = ($basePrice * $promotionPercent) / 100;
+        if ($promotion) {
+            // Get promotion period
+            $promoStartDate = Carbon::parse($promotion->start_date)->startOfDay();
+            $promoEndDate = Carbon::parse($promotion->end_date)->endOfDay();
+
+            // Calculate days that fall within promotion period
+            $promoDays = $rentalDays->filter(function ($day) use ($promoStartDate, $promoEndDate) {
+                $dayDate = Carbon::parse($day)->startOfDay();
+                return $dayDate->between($promoStartDate, $promoEndDate);
+            })->count();
+
+            // Calculate discount only for days within promotion period
+            if ($promoDays > 0) {
+                $promoPricePerDay = $car->price_per_day * ($promotion->discount_percent / 100);
+                $promotionDiscount = $promoPricePerDay * $promoDays;
+            }
+
+            // Store promotion info in booking data
+            $bookingData['promotion_id'] = $promotion->id;
+            $bookingData['promotion_days'] = $promoDays;
+        }
 
         // Calculate total price using the same formula everywhere
         $totalPrice = round(

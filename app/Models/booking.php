@@ -71,8 +71,14 @@ class Booking extends Model
 
         if ($endDateTime <= $startDateTime) return 0;
 
-        $hours = $startDateTime->diffInHours($endDateTime);
-        $days = max(1, ceil($hours / 24));
+        // Calculate rental days (excluding return date)
+        $rentalDays = collect();
+        $currentDate = $startDateTime->copy();
+        while ($currentDate < $endDateTime) {
+            $rentalDays->push($currentDate->format('Y-m-d'));
+            $currentDate->addDay();
+        }
+        $days = $rentalDays->count();
 
         // Calculate base price
         $basePrice = $carPricePerDay * $days;
@@ -91,10 +97,24 @@ class Booking extends Model
         // Service fee
         $serviceFee = 15.0;
 
-        // Calculate promotion discount
+        // Calculate promotion discount with exact logic
         $promotionDiscount = 0;
         if ($this->promotion) {
-            $promotionDiscount = ($basePrice * $this->promotion->discount_percent) / 100;
+            // Get promotion period
+            $promoStartDate = Carbon::parse($this->promotion->start_date)->startOfDay();
+            $promoEndDate = Carbon::parse($this->promotion->end_date)->endOfDay();
+
+            // Calculate days that fall within promotion period
+            $promoDays = $rentalDays->filter(function ($day) use ($promoStartDate, $promoEndDate) {
+                $dayDate = Carbon::parse($day)->startOfDay();
+                return $dayDate->between($promoStartDate, $promoEndDate);
+            })->count();
+
+            // Calculate discount only for days within promotion period
+            if ($promoDays > 0) {
+                $promoPricePerDay = $carPricePerDay * ($this->promotion->discount_percent / 100);
+                $promotionDiscount = $promoPricePerDay * $promoDays;
+            }
         }
 
         // Calculate final total
