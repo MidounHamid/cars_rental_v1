@@ -117,7 +117,27 @@ class CarRentalCalculator extends Component
 
     public function calculateTotalPrice()
     {
-        $this->total_price = ($this->rental_duration * $this->base_price) + $this->additional_options;
+        // Calculate rental subtotal
+        $rentalSubtotal = $this->rental_duration * $this->base_price;
+
+        // Get insurance fee
+        $insuranceFee = 0;
+        if ($this->car->insurance) {
+            $insuranceFee = $this->car->insurance->price_per_day * $this->rental_duration;
+        }
+
+        // Service fee
+        $serviceFee = 15.0;
+
+        // Get promotion discount
+        $promotion = \App\Models\Promotion::first();
+        $promotionDiscount = 0;
+        if ($promotion) {
+            $promotionDiscount = ($rentalSubtotal * $promotion->discount_percent) / 100;
+        }
+
+        // Calculate final total price
+        $this->total_price = $rentalSubtotal - $promotionDiscount + $insuranceFee + $serviceFee + $this->additional_options;
     }
 
 
@@ -149,104 +169,44 @@ class CarRentalCalculator extends Component
         $specDetails = [];
         foreach ($this->selected_specifications as $specId => $quantity) {
             if ($quantity > 0) {
-                $spec = \App\Models\Specification::find($specId);
+                $spec = Specification::find($specId);
                 if ($spec) {
                     $selectedSpecs[$specId] = $quantity;
-                    $specDetails[$specId] = [
+                    $specDetails[] = [
+                        'id' => $spec->id,
                         'name' => $spec->name,
-                        'price' => $spec->price,
-                        'quantity' => $quantity
+                        'quantity' => $quantity,
+                        'price' => $spec->price
                     ];
                 }
             }
         }
 
-        // Calculate duration in days
-        $pickupDate = Carbon::parse($this->pickup_date . ' ' . $this->pickup_time);
-        $returnDate = Carbon::parse($this->return_date . ' ' . $this->return_time);
-        $durationDays = $this->rental_duration;
-
-        // Insurance and service fees
-        $insuranceFee = $this->car->insurance->price_per_day ?? 0;
-        $serviceFee = 15.00;
-
-        // Calculate total with fees
-        $totalPricewithoutFees = ($this->rental_duration * $this->base_price) + $this->additional_options + $insuranceFee + $serviceFee;
-
-        // Get insurance information
-        $insurance = \App\Models\Insurance::find($this->car->insurance_id);
-
-        // Get agency information if available
-        $agency = null;
-        if ($this->car->agency_id) {
-            $agency = \App\Models\Agency::find($this->car->agency_id);
-        }
-
-        // First create the booking record in the database
-        if (!Auth::check()) {
-            // If user is not logged in, redirect to login page
-            return redirect()->route('login')->with('error', 'Please login to book a car.');
-        }
-
-        $booking = \App\Models\Booking::create([
-            'user_id' => Auth::id(),
-            'car_id' => $this->car->id,
-            'start_date' => $this->pickup_date,
-            'end_date' => $this->return_date,
-            'start_time' => $this->pickup_time,
-            'end_time' => $this->return_time,
-            'status' => 'pending',
-            'total_price' => $totalPricewithoutFees,  // Add total price to booking
-            // No payment_id yet as payment hasn't been made
-        ]);
-
-        // Prepare all booking data with complete car information based on actual schema
+        // Prepare booking data for session
         $bookingData = [
-            'booking_id' => $booking->id, // Include the booking ID from the newly created record
+            'car' => [
+                'id' => $this->car->id,
+                'model' => $this->car->model,
+                'brand' => $this->car->brand->brand,
+                'price_per_day' => $this->base_price,
+                'type' => $this->car->carType->name,
+                'fuel' => $this->car->fuelType->name
+            ],
             'pickup_date' => $this->pickup_date,
             'pickup_time' => $this->pickup_time,
             'return_date' => $this->return_date,
             'return_time' => $this->return_time,
-            'selected_specifications' => $selectedSpecs,
-            'spec_details' => $specDetails,
-            'base_price' => $this->base_price,
             'rental_duration' => $this->rental_duration,
-            'duration_days' => $durationDays,
+            'base_price' => $this->base_price,
             'additional_options' => $this->additional_options,
-            'insurance_fee' => $insuranceFee,
-            'service_fee' => $serviceFee,
-            'total_price' => $totalPricewithoutFees,
-            'rating' => 4.8, // Default or get from reviews if implemented
-            'delivery_locations' => $this->car->deliveryLocations->map(function ($loc) {
-                return $loc->name . ' ' . ucfirst($loc->type);
-            })->toArray(),
-            'car' => [
-                'id' => $this->car->id,
-                'model' => $this->car->model,
-                'price_per_day' => $this->car->price_per_day,
-                'seats' => $this->car->seats,
-                'transmission' => $this->car->transmission,
-                'is_available' => $this->car->is_available,
-                'city' => $this->car->city,
-                'brand' => $brand ? $brand->brand : 'Unknown Brand',
-                'brand_id' => $this->car->brand_id,
-                'type' => $carType ? $carType->name : 'Standard',
-                'car_type_id' => $this->car->car_type_id,
-                'fuel' => $fuelType ? $fuelType->fuel_type : 'N/A', // Corrected line
-                'fuel_types_id' => $this->car->fuel_types_id,
-                'insurance' => $insurance ? $insurance->name : 'Standard Insurance',
-                'insurance_id' => $this->car->insurance_id,
-                'agency' => $agency ? $agency->name : null,
-                'agency_id' => $this->car->agency_id,
-                'gearbox' => $this->car->transmission,
-                'image' => $this->car->image
-            ],
+            'total_price' => $this->total_price,
+            'specifications' => $specDetails
         ];
 
-        // Store it in the session
+        // Store booking data in session
         session(['booking_data' => $bookingData]);
 
-        // Redirect properly in Livewire
+        // Redirect to stripe payment
         return redirect()->route('stripe.payment');
     }
 

@@ -6,6 +6,7 @@ use App\Models\Car;
 use App\Models\Payment;
 use App\Models\Booking;
 use App\Models\Mode_payment;
+use App\Models\Specification;
 use App\Services\NotificationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -43,46 +44,27 @@ class StripePaymentController extends Controller
         $bookingData = session('booking_data', []);
         $user = Auth::user();
 
-        // Only ensure fees are set, total price is already calculated
-        $bookingData = $this->ensureAllFees($bookingData);
-
-        // Handle client-side total price confirmation
+        // Get the confirmed total price from the form
         $confirmedTotalPrice = $request->input('confirmed_total_price');
-        if (!empty($confirmedTotalPrice)) {
-            $confirmedTotalPrice = (float) $confirmedTotalPrice;
-            $calculatedTotalPrice = (float) $bookingData['total_price'];
 
-            if (abs($confirmedTotalPrice - $calculatedTotalPrice) > 0.01) {
-                $bookingData['total_price'] = $confirmedTotalPrice;
-            }
-        }
-
-        session(['booking_data' => $bookingData]);
-
-        // Validate booking data
-        $validator = Validator::make($bookingData, [
-            'total_price' => 'required|numeric|min:0.01',
-            'car.id' => 'required|exists:cars,id',
-            'car.model' => 'required|string',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json(['error' => $validator->errors()], 422);
-        }
-
-        // In your checkout method, after calculating the total price:
         try {
-            // Fetch car brand if missing
-            if (empty($bookingData['car']['brand']) && !empty($bookingData['car']['id'])) {
-                $car = Car::find($bookingData['car']['id']);
-                if ($car->brand_id) {
-                    $brand = \App\Models\Brand::find($car->brand_id);
-                    $bookingData['car']['brand'] = $brand->brand ?? 'Unknown Brand';
-                    session(['booking_data' => $bookingData]);
-                }
-            }
+            // Calculate all the components as shown in the view
+            $pricePerDay = $bookingData['car']['price_per_day'] ?? ($bookingData['base_price'] ?? 0);
+            $durationDays = $bookingData['duration_days'] ?? ($bookingData['rental_duration'] ?? 0);
+            $rentalSubtotal = $pricePerDay * $durationDays;
+            $insuranceFee = $bookingData['insurance_fee'] ?? 0;
+            $serviceFee = 15.0;
+            $additionalOptions = $bookingData['additional_options'] ?? 0;
 
-            // Create or update booking
+            // Get promotion from database
+            $promotion = \App\Models\Promotion::first();
+            $promotionPercent = $promotion ? $promotion->discount_percent : 0;
+            $promotionDiscount = ($rentalSubtotal * $promotionPercent) / 100;
+
+            // Calculate total price
+            $totalPrice = $rentalSubtotal - $promotionDiscount + $insuranceFee + $serviceFee + $additionalOptions;
+
+            // Create or update booking with the calculated total price
             if (empty($bookingData['booking_id'])) {
                 $booking = Booking::create([
                     'user_id' => $user->id,
@@ -92,102 +74,178 @@ class StripePaymentController extends Controller
                     'start_time' => $bookingData['pickup_time'] ?? '10:00',
                     'end_time' => $bookingData['return_time'] ?? '10:00',
                     'status' => 'pending',
-                    'total_price' => $bookingData['total_price'],
-                    'insurance_fee' => $bookingData['insurance_fee'],
-                    'service_fee' => $bookingData['service_fee'],
-                    'additional_options' => $bookingData['additional_options'],
-                    'promotion_id' => $bookingData['promotion_id'] ?? null, // Add this line
-                    'promotion_discount' => $promotionDiscount ?? 0 // Add this line
+                    'total_price' => $totalPrice,
+                    'promotion_id' => $promotion ? $promotion->id : null
                 ]);
-
-                // Attach specifications
-                if (isset($bookingData['specifications'])) {
-                    $specIds = collect($bookingData['specifications'])->pluck('id')->toArray();
-                    $booking->specifications()->sync($specIds);
-                }
-
-                $bookingData['booking_id'] = $booking->id;
-                session(['booking_data' => $bookingData]);
             } else {
                 $booking = Booking::where('id', $bookingData['booking_id'])
                     ->where('user_id', $user->id)
                     ->firstOrFail();
 
                 $booking->update([
-                    'total_price' => $bookingData['total_price'],
-                    'insurance_fee' => $bookingData['insurance_fee'],
-                    'service_fee' => $bookingData['service_fee'],
-                    'additional_options' => $bookingData['additional_options'],
-                    'promotion_id' => $bookingData['promotion_id'] ?? null, // Add this line
-                    'promotion_discount' => $promotionDiscount ?? 0 // Add this line
+                    'total_price' => $totalPrice,
+                    'promotion_id' => $promotion ? $promotion->id : null
                 ]);
+            }
 
-                // Sync specifications
-                if (isset($bookingData['specifications'])) {
-                    $specIds = collect($bookingData['specifications'])->pluck('id')->toArray();
-                    $booking->specifications()->sync($specIds);
+            // Validate booking data
+            $validator = Validator::make($bookingData, [
+                'total_price' => 'required|numeric|min:0.01',
+                'car.id' => 'required|exists:cars,id',
+                'car.model' => 'required|string',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json(['error' => $validator->errors()], 422);
+            }
+
+            try {
+                // Fetch car brand if missing
+                if (empty($bookingData['car']['brand']) && !empty($bookingData['car']['id'])) {
+                    $car = Car::find($bookingData['car']['id']);
+                    if ($car->brand_id) {
+                        $brand = \App\Models\Brand::find($car->brand_id);
+                        $bookingData['car']['brand'] = $brand->brand ?? 'Unknown Brand';
+                        session(['booking_data' => $bookingData]);
+                    }
                 }
-            }
 
-            // Process Stripe payment
-            $paymentMethod = Mode_payment::where('mode_payment', 'stripe')->firstOrFail();
-            Stripe::setApiKey(config('services.stripe.secret'));
-            $paymentMethodId = $request->input('payment_method_id');
+                // Calculate insurance fee
+                $car = Car::with('insurance')->find($bookingData['car']['id']);
+                $startDate = \Carbon\Carbon::parse($bookingData['pickup_date']);
+                $endDate = \Carbon\Carbon::parse($bookingData['return_date']);
+                $durationDays = $startDate->diffInDays($endDate);
 
-            if (!$paymentMethodId) {
-                return response()->json(['error' => 'Payment method ID required'], 400);
-            }
+                // Get insurance fee from car's insurance
+                $insuranceFee = 0;
+                if ($car->insurance) {
+                    $insuranceFee = $car->insurance->price_per_day * $durationDays;
+                    $bookingData['insurance_fee'] = $insuranceFee;
+                }
 
-            $paymentIntent = \Stripe\PaymentIntent::create([
-                'amount' => (int)($bookingData['total_price'] * 100),
-                'currency' => 'usd',
-                'payment_method' => $paymentMethodId,
-                'payment_method_types' => ['card'],
-                'confirmation_method' => 'manual',
-                'confirm' => true,
-                'description' => ($bookingData['car']['brand'] ?? 'Car') . ' ' . ($bookingData['car']['model'] ?? 'Rental'),
-                'metadata' => [
+                // Calculate promotion discount if any
+                $promotionDiscount = 0;
+                if (isset($bookingData['promotion_id'])) {
+                    $promotion = \App\Models\Promotion::find($bookingData['promotion_id']);
+                    if ($promotion) {
+                        $basePrice = $car->price_per_day * $durationDays;
+                        $promotionDiscount = ($basePrice * $promotion->discount_percent) / 100;
+                        $bookingData['promotion_discount'] = $promotionDiscount;
+                    }
+                }
+
+
+
+                // Create or update booking
+                if (empty($bookingData['booking_id'])) {
+                    // Create new booking with total price
+                    $booking = Booking::create([
+                        'user_id' => $user->id,
+                        'car_id' => $bookingData['car']['id'],
+                        'start_date' => $bookingData['pickup_date'] ?? now()->format('Y-m-d'),
+                        'end_date' => $bookingData['return_date'] ?? now()->addDays(1)->format('Y-m-d'),
+                        'start_time' => $bookingData['pickup_time'] ?? '10:00',
+                        'end_time' => $bookingData['return_time'] ?? '10:00',
+                        'status' => 'pending',
+                        'total_price' => $totalPrice,
+                        'promotion_id' => $bookingData['promotion_id'] ?? null
+                    ]);
+
+                    // Attach specifications
+                    if (isset($bookingData['specifications'])) {
+                        foreach ($bookingData['specifications'] as $spec) {
+                            $booking->specifications()->attach($spec['id'], [
+                                'quantity' => $spec['quantity'] ?? 1,
+                                'price' => $spec['price'] ?? 0
+                            ]);
+                        }
+                    }
+
+                    $bookingData['booking_id'] = $booking->id;
+                    session(['booking_data' => $bookingData]);
+                } else {
+                    // Update existing booking
+                    $booking = Booking::where('id', $bookingData['booking_id'])
+                        ->where('user_id', $user->id)
+                        ->firstOrFail();
+
+                    // Update booking with total price
+                    $booking->update([
+                        'total_price' => $totalPrice,
+                        'promotion_id' => $bookingData['promotion_id'] ?? null
+                    ]);
+
+                    // Sync specifications
+                    if (isset($bookingData['specifications'])) {
+                        $specSync = [];
+                        foreach ($bookingData['specifications'] as $spec) {
+                            $specSync[$spec['id']] = [
+                                'quantity' => $spec['quantity'] ?? 1,
+                                'price' => $spec['price'] ?? 0
+                            ];
+                        }
+                        $booking->specifications()->sync($specSync);
+                    }
+                }
+
+                // Process Stripe payment
+                $paymentMethod = Mode_payment::where('mode_payment', 'stripe')->firstOrFail();
+                Stripe::setApiKey(config('services.stripe.secret'));
+                $paymentMethodId = $request->input('payment_method_id');
+
+                if (!$paymentMethodId) {
+                    return response()->json(['error' => 'Payment method ID required'], 400);
+                }
+
+                $paymentIntent = \Stripe\PaymentIntent::create([
+                    'amount' => (int)($totalPrice * 100), // Use the final total price
+                    'currency' => 'usd',
+                    'payment_method' => $paymentMethodId,
+                    'payment_method_types' => ['card'],
+                    'confirmation_method' => 'manual',
+                    'confirm' => true,
+                    'description' => ($bookingData['car']['brand'] ?? 'Car') . ' ' . ($bookingData['car']['model'] ?? 'Rental'),
+                    'metadata' => [
+                        'booking_id' => $booking->id,
+                        'user_id' => $user->id,
+                        'car_id' => $bookingData['car']['id'],
+                        'total_price' => $totalPrice
+                    ],
+                ]);
+
+                // Record payment
+                Payment::create([
                     'booking_id' => $booking->id,
-                    'user_id' => $user->id,
-                    'car_id' => $bookingData['car']['id'],
-                    'base_price' => $bookingData['car']['price_per_day'] * ($bookingData['duration_days'] ?? 1),
-                    'insurance_fee' => $bookingData['insurance_fee'],
-                    'service_fee' => $bookingData['service_fee'],
-                    'additional_options' => $bookingData['additional_options']
-                ],
-            ]);
-
-            // Record payment
-            Payment::create([
-                'booking_id' => $booking->id,
-                'amount' => $bookingData['total_price'],
-                'mode_payment_id' => $paymentMethod->id,
-                'transaction_id' => $paymentIntent->id,
-                'status' => $paymentIntent->status === 'succeeded' ? 'successful' : 'pending',
-                'stripe_payment_id' => $paymentIntent->id,
-                'stripe_response' => json_encode($paymentIntent)
-
-
-            ]);
-
-            // Handle payment success
-            if ($paymentIntent->status === 'succeeded') {
-                $booking->update(['status' => 'confirmed']);
-                return response()->json([
-                    'success' => true,
-                    'redirect' => route('stripe.success') . '?payment_intent=' . $paymentIntent->id
+                    'amount' => $totalPrice, // Use the final total price
+                    'mode_payment_id' => $paymentMethod->id,
+                    'transaction_id' => $paymentIntent->id,
+                    'status' => $paymentIntent->status === 'succeeded' ? 'successful' : 'pending',
+                    'stripe_payment_id' => $paymentIntent->id,
+                    'stripe_response' => json_encode($paymentIntent)
                 ]);
-            }
 
-            // Handle 3D Secure
-            if ($paymentIntent->status === 'requires_action') {
-                return response()->json([
-                    'requires_action' => true,
-                    'payment_intent_client_secret' => $paymentIntent->client_secret
-                ]);
-            }
+                // Handle payment success
+                if ($paymentIntent->status === 'succeeded') {
+                    $booking->update(['status' => 'confirmed']);
+                    return response()->json([
+                        'success' => true,
+                        'redirect' => route('stripe.success') . '?payment_intent=' . $paymentIntent->id
+                    ]);
+                }
 
-            return response()->json(['success' => true, 'payment_intent' => $paymentIntent->id]);
+                // Handle 3D Secure
+                if ($paymentIntent->status === 'requires_action') {
+                    return response()->json([
+                        'requires_action' => true,
+                        'payment_intent_client_secret' => $paymentIntent->client_secret
+                    ]);
+                }
+
+                return response()->json(['success' => true, 'payment_intent' => $paymentIntent->id]);
+            } catch (\Exception $e) {
+                report($e);
+                return response()->json(['error' => $e->getMessage()], 500);
+            }
         } catch (\Exception $e) {
             report($e);
             return response()->json(['error' => $e->getMessage()], 500);
@@ -207,6 +265,11 @@ class StripePaymentController extends Controller
             $payment = Payment::where('transaction_id', $paymentIntentId)->firstOrFail();
             $booking = Booking::with(['car.brand', 'user', 'specifications'])->where('id', $payment->booking_id)->firstOrFail();
 
+            // Ensure the booking has the payment amount as total_price
+            if ($booking->total_price != $payment->amount) {
+                $booking->update(['total_price' => $payment->amount]);
+            }
+
             // Update payment and booking status
             $payment->update(['status' => 'successful']);
             $booking->update(['status' => 'confirmed']);
@@ -214,20 +277,10 @@ class StripePaymentController extends Controller
             // Create notification for booking confirmation
             $this->notificationService->createBookingNotification($booking, 'booking_confirmation');
 
-            // Calculate receipt components
-            $durationDays = $booking->duration_days ?? \Carbon\Carbon::parse($booking->start_date)->diffInDays($booking->end_date);
-            $basePrice = $booking->car->price_per_day * $durationDays;
-            $insuranceFee = $booking->insurance_fee ?? 0;
-            $serviceFee = $booking->service_fee ?? 0;
-            $additionalOptions = $booking->additional_options ?? 0;
-
             // Generate PDF
             $pdf = Pdf::loadView('pdf.booking-receipt', [
                 'booking' => $booking,
-                'basePrice' => $basePrice,
-                'insuranceFee' => $insuranceFee,
-                'serviceFee' => $serviceFee,
-                'additionalOptions' => $additionalOptions,
+                'payment' => $payment,
                 'totalPrice' => $payment->amount
             ]);
 
@@ -249,12 +302,38 @@ class StripePaymentController extends Controller
         }
     }
 
-    // Other methods (cancel, confirmPayment) remain unchanged
-
+    // Helper method to calculate total price
     protected function calculateTotalPrice($bookingData)
     {
-        // Use the total price directly from the booking data
-        // since it's already calculated in CarRentalCalculator
+        // Calculate duration
+        $startDate = \Carbon\Carbon::parse($bookingData['pickup_date']);
+        $endDate = \Carbon\Carbon::parse($bookingData['return_date']);
+        $durationDays = $startDate->diffInDays($endDate);
+
+        // Get car and calculate base price
+        $car = Car::with('insurance')->find($bookingData['car']['id']);
+        $basePrice = $car->price_per_day * $durationDays;
+
+        // Calculate specifications total (additional options)
+        $additionalOptions = 0;
+        if (isset($bookingData['specifications'])) {
+            foreach ($bookingData['specifications'] as $spec) {
+                $specification = Specification::find($spec['id']);
+                if ($specification) {
+                    $additionalOptions += $specification->price * ($spec['quantity'] ?? 1);
+                }
+            }
+        }
+
+        // Calculate total price using the same formula as CarRentalCalculator
+        $totalPrice = ($durationDays * $basePrice) + $additionalOptions;
+
+        // Update bookingData with all calculated values
+        $bookingData['base_price'] = $basePrice;
+        $bookingData['additional_options'] = $additionalOptions;
+        $bookingData['total_price'] = $totalPrice;
+        $bookingData['duration_days'] = $durationDays;
+
         return $bookingData;
     }
 
@@ -262,7 +341,6 @@ class StripePaymentController extends Controller
     {
         if (!isset($bookingData['insurance_fee'])) $bookingData['insurance_fee'] = 0;
         if (!isset($bookingData['service_fee'])) $bookingData['service_fee'] = 15.0;
-        if (!isset($bookingData['additional_options'])) $bookingData['additional_options'] = 0;
         return $bookingData;
     }
 }

@@ -16,23 +16,18 @@ class SpecificationSeeder extends Seeder
         $specifications = [
             [
                 'name' => 'GPS Navigation',
-                'price' => 50.00,
-                'icon' => 'map-marker-alt'
-            ],
+                'price' => 50.00            ],
             [
                 'name' => 'Child Seat',
                 'price' => 30.00,
-                'icon' => 'baby'
             ],
             [
                 'name' => 'Wi-Fi Hotspot',
                 'price' => 25.00,
-                'icon' => 'wifi'
             ],
             [
                 'name' => 'Driver Service',
                 'price' => 200.00,
-                'icon' => 'user-tie'
             ],
         ];
 
@@ -41,7 +36,6 @@ class SpecificationSeeder extends Seeder
                 ['name' => $spec['name']],
                 [
                     'price' => $spec['price'],
-                    'icon' => $spec['icon']
                 ]
             );
         }
