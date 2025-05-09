@@ -34,7 +34,7 @@
                         </td>
                         <td>
                             <div class="car-info">
-                                <strong>{{ $booking->car->brand->name ?? 'N/A' }} {{ $booking->car->model }}</strong>
+                                <strong>{{ $booking->car->brand->brand ?? 'N/A' }} {{ $booking->car->model }}</strong>
                                 <small class="d-block">{{ $booking->car->license_plate }}</small>
                             </div>
                         </td>
@@ -61,21 +61,22 @@
                             </div>
                         </td>
                         <td class="text-right">
-                            {{ number_format($booking->total_price, 2) }}
-                            @if($booking->promotion)
-                                <div class="text-success small">
-                                    <i class="fas fa-tag"></i> Saved {{ $booking->promotion->discount_percent }}%
-                                    @if(isset($booking->promotion_days))
-                                        ({{ $booking->promotion_days }} days)
-                                    @endif
-                                </div>
-                            @endif
+                            ${{ number_format($booking->total_price, 2) }}
                         </td>
                         <td>
                             @if($booking->promotion)
-                                <span class="promotion-badge">
-                                    {{ $booking->promotion->name }}
-                                </span>
+                                <div>
+                                    <span class="promotion-badge">
+                                        {{ $booking->promotion->name }}
+                                    </span>
+                                    <div class="text-success small mt-1">
+                                        <i class="fas fa-tag"></i> -{{ $booking->promotion->discount_percent }}%
+                                        @if(isset($booking->promotion_days))
+                                            <br>
+                                            <small>({{ $booking->promotion_days }} days)</small>
+                                        @endif
+                                    </div>
+                                </div>
                             @else
                                 <span class="text-muted">None</span>
                             @endif
