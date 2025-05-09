@@ -48,21 +48,9 @@ class StripePaymentController extends Controller
         $confirmedTotalPrice = $request->input('confirmed_total_price');
 
         try {
-            // Calculate all the components as shown in the view
-            $pricePerDay = $bookingData['car']['price_per_day'] ?? ($bookingData['base_price'] ?? 0);
-            $durationDays = $bookingData['duration_days'] ?? ($bookingData['rental_duration'] ?? 0);
-            $rentalSubtotal = $pricePerDay * $durationDays;
-            $insuranceFee = $bookingData['insurance_fee'] ?? 0;
-            $serviceFee = 15.0;
-            $additionalOptions = $bookingData['additional_options'] ?? 0;
-
-            // Get promotion from database
-            $promotion = \App\Models\Promotion::first();
-            $promotionPercent = $promotion ? $promotion->discount_percent : 0;
-            $promotionDiscount = ($rentalSubtotal * $promotionPercent) / 100;
-
-            // Calculate total price
-            $totalPrice = $rentalSubtotal - $promotionDiscount + $insuranceFee + $serviceFee + $additionalOptions;
+            // Recalculate total price to ensure consistency
+            $bookingData = $this->calculateTotalPrice($bookingData);
+            $totalPrice = $bookingData['total_price'];
 
             // Create or update booking with the calculated total price
             if (empty($bookingData['booking_id'])) {
@@ -75,7 +63,7 @@ class StripePaymentController extends Controller
                     'end_time' => $bookingData['return_time'] ?? '10:00',
                     'status' => 'pending',
                     'total_price' => $totalPrice,
-                    'promotion_id' => $promotion ? $promotion->id : null
+                    'promotion_id' => $bookingData['promotion_id'] ?? null
                 ]);
             } else {
                 $booking = Booking::where('id', $bookingData['booking_id'])
@@ -84,7 +72,7 @@ class StripePaymentController extends Controller
 
                 $booking->update([
                     'total_price' => $totalPrice,
-                    'promotion_id' => $promotion ? $promotion->id : null
+                    'promotion_id' => $bookingData['promotion_id'] ?? null
                 ]);
             }
 
@@ -133,8 +121,6 @@ class StripePaymentController extends Controller
                         $bookingData['promotion_discount'] = $promotionDiscount;
                     }
                 }
-
-
 
                 // Create or update booking
                 if (empty($bookingData['booking_id'])) {
@@ -325,12 +311,32 @@ class StripePaymentController extends Controller
             }
         }
 
-        // Calculate total price using the same formula as CarRentalCalculator
-        $totalPrice = ($durationDays * $basePrice) + $additionalOptions;
+        // Calculate insurance fee
+        $insuranceFee = 0;
+        if ($car->insurance) {
+            $insuranceFee = $car->insurance->price_per_day * $durationDays;
+        }
+
+        // Service fee
+        $serviceFee = 15.0;
+
+        // Get promotion from database
+        $promotion = \App\Models\Promotion::first();
+        $promotionPercent = $promotion ? $promotion->discount_percent : 0;
+        $promotionDiscount = ($basePrice * $promotionPercent) / 100;
+
+        // Calculate total price using the same formula everywhere
+        $totalPrice = round(
+            $basePrice - $promotionDiscount + $insuranceFee + $serviceFee + $additionalOptions,
+            2
+        );
 
         // Update bookingData with all calculated values
         $bookingData['base_price'] = $basePrice;
         $bookingData['additional_options'] = $additionalOptions;
+        $bookingData['insurance_fee'] = $insuranceFee;
+        $bookingData['service_fee'] = $serviceFee;
+        $bookingData['promotion_discount'] = $promotionDiscount;
         $bookingData['total_price'] = $totalPrice;
         $bookingData['duration_days'] = $durationDays;
 

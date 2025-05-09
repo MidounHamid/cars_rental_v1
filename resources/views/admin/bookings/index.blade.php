@@ -1,4 +1,3 @@
-
 @extends('admin.layouts.app')
 
 @section('content')
@@ -62,7 +61,7 @@
                             </div>
                         </td>
                         <td class="text-right">
-                            {{ number_format($booking->getTotalPriceAttribute(), 2) }}
+                            {{ number_format($booking->total_price, 2) }}
                             @if($booking->promotion)
                                 <div class="text-success small">
                                     <i class="fas fa-tag"></i> Saved {{ $booking->promotion->discount_percent }}%

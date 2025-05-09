@@ -25,7 +25,7 @@ class Booking extends Model
     protected $casts = [
         'start_date' => 'date',
         'end_date' => 'date',
-        // other casts...
+        'total_price' => 'decimal:2'
     ];
 
     public function user()
@@ -56,7 +56,7 @@ class Booking extends Model
 
 
 
-    public function getTotalPriceAttribute()
+    public function calculateTotalPrice()
     {
         $this->loadMissing(['car', 'specifications']);
 
@@ -74,18 +74,41 @@ class Booking extends Model
         $hours = $startDateTime->diffInHours($endDateTime);
         $days = max(1, ceil($hours / 24));
 
+        // Calculate base price
         $basePrice = $carPricePerDay * $days;
+
+        // Calculate specifications total
         $specTotal = $this->specifications->sum(
-            fn($spec) =>
-            $spec->pivot->price * $spec->pivot->quantity
+            fn($spec) => $spec->pivot->price * $spec->pivot->quantity
         );
 
-        $total = $basePrice + $specTotal;
-
-        if ($this->promotion) {
-            $total *= (1 - $this->promotion->discount_percent / 100);
+        // Calculate insurance fee
+        $insuranceFee = 0;
+        if ($this->car && $this->car->insurance) {
+            $insuranceFee = $this->car->insurance->price_per_day * $days;
         }
 
+        // Service fee
+        $serviceFee = 15.0;
+
+        // Calculate promotion discount
+        $promotionDiscount = 0;
+        if ($this->promotion) {
+            $promotionDiscount = ($basePrice * $this->promotion->discount_percent) / 100;
+        }
+
+        // Calculate final total
+        $total = $basePrice - $promotionDiscount + $insuranceFee + $serviceFee + $specTotal;
+
         return round($total, 2);
+    }
+
+    /**
+     * Get the total price attribute.
+     * This is an accessor that maintains compatibility with existing code.
+     */
+    public function getTotalPriceAttribute()
+    {
+        return $this->calculateTotalPrice();
     }
 }

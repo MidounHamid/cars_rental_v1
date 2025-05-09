@@ -136,8 +136,11 @@ class CarRentalCalculator extends Component
             $promotionDiscount = ($rentalSubtotal * $promotion->discount_percent) / 100;
         }
 
-        // Calculate final total price
-        $this->total_price = $rentalSubtotal - $promotionDiscount + $insuranceFee + $serviceFee + $this->additional_options;
+        // Calculate final total price with all components
+        $this->total_price = round(
+            $rentalSubtotal - $promotionDiscount + $insuranceFee + $serviceFee + $this->additional_options,
+            2
+        );
     }
 
 
