@@ -62,6 +62,9 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::get('/profile/reservations', [ProfileController::class, 'reservations'])->name('profile.reservations');
+
+    // Client review route
+    Route::post('/reviews', [ReviewController::class, 'store'])->name('reviews.store');
 });
 
 // ======= Admin Routes =======

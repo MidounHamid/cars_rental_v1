@@ -7,6 +7,9 @@ use App\Http\Requests\StorereviewRequest;
 use App\Http\Requests\UpdatereviewRequest;
 use App\Models\Car;
 use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 
 class ReviewController extends Controller
 {
@@ -23,21 +26,55 @@ class ReviewController extends Controller
      * Show the form for creating a new resource.
      */
     public function create()
-{
-    // Get all users and cars for the dropdown
-    $users = User::all();  // Assuming you have a User model
-    $cars = Car::all();    // Assuming you have a Car model
+    {
+        // Get all users and cars for the dropdown
+        $users = User::all();  // Assuming you have a User model
+        $cars = Car::all();    // Assuming you have a Car model
 
-    return view('admin.reviews.create', compact('users', 'cars'));
-}
+        return view('admin.reviews.create', compact('users', 'cars'));
+    }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StorereviewRequest $request)
+    public function store(Request $request)
     {
-        Review::create($request->validated());
-        return redirect()->route('reviews.index')->with('success', 'L\'avis a été créé avec succès.');
+        $validator = Validator::make($request->all(), [
+            'car_id' => 'required|exists:cars,id',
+            'rating' => 'required|integer|min:1|max:5',
+            'comment' => 'required|string|min:10|max:1000',
+        ], [
+            'rating.required' => 'Please select a rating',
+            'rating.min' => 'Please select a rating',
+            'comment.required' => 'Please write a review',
+            'comment.min' => 'Your review should be at least 10 characters long'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        try {
+            $review = new Review();
+            $review->user_id = Auth::id();
+            $review->car_id = $request->car_id;
+            $review->rating = $request->rating;
+            $review->comment = $request->comment;
+            $review->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Thank you for your review!'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'An error occurred while saving your review.'
+            ], 500);
+        }
     }
 
     /**

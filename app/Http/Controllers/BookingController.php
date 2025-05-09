@@ -30,7 +30,7 @@ class BookingController extends Controller
     public function index()
     {
         $bookings = Booking::with(['user', 'car', 'car.brand', 'promotion', 'payment'])->paginate(10);
-        
+
         // Update total_price for each booking to show the actual paid amount
         foreach ($bookings as $booking) {
             if ($booking->payment) {
@@ -40,19 +40,19 @@ class BookingController extends Controller
                 // Parse the date first, then set the time
                 $startDate = Carbon::parse($booking->start_date)->setTimeFromTimeString($booking->start_time);
                 $endDate = Carbon::parse($booking->end_date)->setTimeFromTimeString($booking->end_time);
-                
+
                 list($promotionDiscount, $discountedDays, $discountPercent) = $this->promotionService->calculateBookingDiscount(
                     $booking->car->price_per_day,
                     $startDate,
                     $endDate,
                     $booking->promotion
                 );
-                
+
                 $booking->promotion_days = $discountedDays;
                 $booking->total_price = $booking->total_price - $promotionDiscount;
             }
         }
-        
+
         return view('admin.bookings.index', compact('bookings'));
     }
 

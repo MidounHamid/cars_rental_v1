@@ -1,3 +1,59 @@
+@extends('layouts.app')
+
+@section('content')
+    <div class="success-container">
+        <div class="success-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
+            </svg>
+        </div>
+        <div class="success-title">Payment Successful!</div>
+        <div class="success-info">Your booking has been confirmed and is ready to go.</div>
+
+        <div class="success-card">
+            <h3>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <path
+                        d="M19 4h-4V2h-6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V6h14v14zM7 10h5v5H7z" />
+                </svg>
+                Booking Details
+            </h3>
+            <p><span>Booking Reference:</span> <span>#{{ $booking->id }}</span></p>
+            <p><span>Car:</span> <span>{{ $booking->car->brand->brand }} {{ $booking->car->model }}</span></p>
+            <p><span>Pickup Date:</span> <span>{{ \Carbon\Carbon::parse($booking->start_date)->format('d M Y') }} at
+                    {{ $booking->start_time }}</span></p>
+            <p><span>Return Date:</span> <span>{{ \Carbon\Carbon::parse($booking->end_date)->format('d M Y') }} at
+                    {{ $booking->end_time }}</span></p>
+        </div>
+
+        <div class="success-card">
+            <h3>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <path
+                        d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z" />
+                </svg>
+                Payment Information
+            </h3>
+            <p><span>Transaction ID:</span> <span>{{ $payment->transaction_id }}</span></p>
+            <p><span>Amount Paid:</span> <span>${{ number_format($payment->amount, 2) }}</span></p>
+        </div>
+
+        <div class="button-container">
+            <a href="{{ $pdfUrl }}" class="success-link" download="receipt-{{ $booking->id }}.pdf">
+                Download Receipt
+            </a>
+            <button onclick="openReviewPopup('{{ $booking->car->id }}', '{{ $booking->id }}')" class="review-button">
+                Rate Your Experience
+            </button>
+            <a href="{{ route('dashboard') }}" class="success-link secondary">
+                Back to Dashboard
+            </a>
+        </div>
+    </div>
+
+    @include('client.reviews.review-popup')
+@endsection
+
 @push('styles')
     <style>
         .success-container {
@@ -9,6 +65,8 @@
             padding: 40px;
             text-align: center;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            position: relative;
+            z-index: 1;
         }
 
         .success-icon {
@@ -124,6 +182,26 @@
             box-shadow: 0 6px 8px rgba(0, 0, 0, 0.12);
         }
 
+        .review-button {
+            display: inline-block;
+            padding: 12px 25px;
+            background: #4CAF50;
+            color: #fff;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 6px rgba(76, 175, 80, 0.15);
+            border: none;
+            cursor: pointer;
+        }
+
+        .review-button:hover {
+            background: #43A047;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(76, 175, 80, 0.2);
+        }
+
         @media (max-width: 767px) {
             .success-container {
                 margin: 20px 15px;
@@ -137,51 +215,11 @@
     </style>
 @endpush
 
-<x-app-layout>
-    <div class="success-container">
-        <div class="success-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
-            </svg>
-        </div>
-        <div class="success-title">Payment Successful!</div>
-        <div class="success-info">Your booking has been confirmed and is ready to go.</div>
-
-        <div class="success-card">
-            <h3>
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                    <path
-                        d="M19 4h-4V2h-6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V6h14v14zM7 10h5v5H7z" />
-                </svg>
-                Booking Details
-            </h3>
-            <p><span>Booking Reference:</span> <span>#{{ $booking->id }}</span></p>
-            <p><span>Car:</span> <span>{{ $booking->car->brand->brand }} {{ $booking->car->model }}</span></p>
-            <p><span>Pickup Date:</span> <span>{{ \Carbon\Carbon::parse($booking->start_date)->format('d M Y') }} at
-                    {{ $booking->start_time }}</span></p>
-            <p><span>Return Date:</span> <span>{{ \Carbon\Carbon::parse($booking->end_date)->format('d M Y') }} at
-                    {{ $booking->end_time }}</span></p>
-        </div>
-
-        <div class="success-card">
-            <h3>
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                    <path
-                        d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z" />
-                </svg>
-                Payment Information
-            </h3>
-            <p><span>Transaction ID:</span> <span>{{ $payment->transaction_id }}</span></p>
-            <p><span>Amount Paid:</span> <span>${{ number_format($payment->amount, 2) }}</span></p>
-        </div>
-
-        <div class="button-container">
-            <a href="{{ $pdfUrl }}" class="success-link" download="receipt-{{ $booking->id }}.pdf">
-                Download Receipt
-            </a>
-            <a href="{{ route('dashboard') }}" class="success-link secondary">
-                Back to Dashboard
-            </a>
-        </div>
-    </div>
-</x-app-layout>
+@push('scripts')
+    <script>
+        // Auto open review popup after 2 seconds
+        setTimeout(function() {
+            openReviewPopup('{{ $booking->car->id }}', '{{ $booking->id }}');
+        }, 2000);
+    </script>
+@endpush
