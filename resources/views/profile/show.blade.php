@@ -207,15 +207,19 @@
         }
 
         .info-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            display: flex;
+            flex-wrap: wrap;
             gap: 20px;
+            margin-top: 20px;
         }
 
-        .profile-info {
+        .info-group {
             background-color: #f8f9fa;
             padding: 15px;
-            border-radius: 6px;
+            border-radius: 8px;
+            flex: 1 1 calc(50% - 10px);
+            min-width: 250px;
+            max-width: calc(50% - 10px);
         }
 
         .info-label {
@@ -229,35 +233,95 @@
             font-size: 16px;
             color: #333;
             font-weight: 500;
-        }
-
-        .info-value.empty {
-            color: #999;
-            font-style: italic;
-        }
-
-        .profile-image {
-            width: 120px;
-            height: 120px;
             border-radius: 8px;
-            object-fit: cover;
-            margin-bottom: 20px;
+            flex: 1 1 calc(50% - 20px);
+            min-width: 250px;
         }
 
-        .info-group {
-            margin-bottom: 20px;
+        .info-group.document-group {
+            flex: 1 1 100%;
+        }
+
+        .documents-container {
+            display: flex;
+            gap: 40px;
+            margin-top: 20px;
         }
 
         .info-group label {
+            display: block;
             font-size: 14px;
             color: #666;
             margin-bottom: 5px;
         }
 
         .info-group p {
-            font-size: 16px;
+            margin: 0;
             color: #333;
+        }
+
+        .document-image {
+            width: 100%;
+           
+            object-fit: contain;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            border: 1px solid #eee;
+            
+            margin-top: 10px;
+        }
+
+        .document-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: #f8f9fa;
+            padding: 16px;
+            border-radius: 8px;
+            max-width: 400px;
+            min-width: 300px;
+        }
+
+        .document-group {
+            width: 100%;
+            max-width: none;
+            background: transparent;
+            padding: 0;
+            margin-top: 30px;
+        }
+
+        .document-container label {
             font-weight: 500;
+            font-size: 15px;
+            color: #333;
+            margin-bottom: 0;
+        }
+
+        .document-container label {
+            font-weight: 600;
+            font-size: 16px;
+            margin-bottom: 15px;
+            color: #333;
+            text-align: center;
+        }
+
+        @media (max-width: 1200px) {
+            .documents-container {
+                flex-direction: column;
+            }
+            .document-container {
+                width: 100%;
+                max-width: 100%;
+            }
+            .document-image {
+                width: 100%;
+                max-width: 100%;
+                height: auto;
+            }
+            .info-group {
+                flex: 1 1 100%;
+                max-width: 100%;
+            }
         }
 
         .profile-actions {
@@ -362,22 +426,26 @@
                         <p>{{ auth()->user()->age ?? 'Not provided' }}</p>
                     </div>
 
-                    <div class="info-group">
-                        <label>CIN</label>
-                        @if(auth()->user()->cin)
-                            <p>{{ basename(auth()->user()->cin) }}</p>
-                        @else
-                            <p>Not provided</p>
-                        @endif
-                    </div>
-
-                    <div class="info-group">
-                        <label>Driver's License</label>
-                        @if(auth()->user()->driver_license)
-                            <p>{{ basename(auth()->user()->driver_license) }}</p>
-                        @else
-                            <p>Not provided</p>
-                        @endif
+                    <div class="info-group document-group">
+                        <h3 style="margin-bottom: 15px; color: #333;">Identity Documents</h3>
+                        <div class="documents-container">
+                            <div class="document-container">
+                                <label>CIN</label>
+                                @if(auth()->user()->cin)
+                                    <img src="{{ asset('storage/' . auth()->user()->cin) }}" alt="CIN" class="document-image">
+                                @else
+                                    <p>Not provided</p>
+                                @endif
+                            </div>
+                            <div class="document-container">
+                                <label>Driver's License</label>
+                                @if(auth()->user()->driver_license)
+                                    <img src="{{ asset('storage/' . auth()->user()->driver_license) }}" alt="Driver's License" class="document-image">
+                                @else
+                                    <p>Not provided</p>
+                                @endif
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
