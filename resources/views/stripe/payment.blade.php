@@ -9,19 +9,19 @@
                 <div class="car-details">
                     <div class="car-image">
                         @if (isset($bookingData['car']) && isset($bookingData['car']['image']))
-                        <img src="{{ asset('storage/' . $bookingData['car']['image']) }}"
-                            alt="{{ $bookingData['car']['brand'] ?? '' }} {{ $bookingData['car']['model'] ?? '' }}">
+                            <img src="{{ asset('storage/' . $bookingData['car']['image']) }}"
+                                alt="{{ $bookingData['car']['brand'] ?? '' }} {{ $bookingData['car']['model'] ?? '' }}">
                         @else
-                        <img src="{{ asset('images/car-placeholder.jpg') }}" alt="Car Image">
+                            <img src="{{ asset('images/car-placeholder.jpg') }}" alt="Car Image">
                         @endif
                     </div>
                     <div class="car-info">
                         <h2 class="car-model">
                             @if (isset($bookingData['car']))
-                            {{ strtoupper($bookingData['car']['brand'] ?? '') }}
-                            {{ strtoupper($bookingData['car']['model'] ?? '') }}
+                                {{ strtoupper($bookingData['car']['brand']) }}
+                                {{ strtoupper($bookingData['car']['model']) }}
                             @else
-                            CAR MODEL
+                                CAR MODEL
                             @endif
                             <span class="available-badge">Available</span>
                         </h2>
@@ -30,32 +30,34 @@
 
                         <div class="car-specs">
                             @if (isset($bookingData['car']))
-                            <div class="spec-item">
-                                <div class="spec-icon"><i class="fas fa-car"></i></div>
-                                <div class="spec-text">{{ $bookingData['car']['type'] ?? 'N/A' }}</div>
-                            </div>
-                            <div class="spec-item">
-                                <div class="spec-icon"><i class="fas fa-user"></i></div>
-                                <div class="spec-text">{{ $bookingData['car']['seats'] ?? '5' }} Seats</div>
-                            </div>
-                            <div class="spec-item">
-                                <div class="spec-icon"><i class="fas fa-gas-pump"></i></div>
-                                <div class="spec-text">{{ $bookingData['car']['fuel'] ?? 'N/A' }}</div>
-                            </div>
-                            <div class="spec-item">
-                                <div class="spec-icon"><i class="fas fa-shield-alt"></i></div>
-                                <div class="spec-text">
-                                    {{ $bookingData['car']['insurance'] ?? 'Standard Insurance' }}
+                                <div class="spec-item">
+                                    <div class="spec-icon"><i class="fas fa-car"></i></div>
+                                    <div class="spec-text">{{ $bookingData['car']['type'] }}</div>
                                 </div>
-                            </div>
-                            <div class="spec-item">
-                                <div class="spec-icon"><i class="fas fa-cog"></i></div>
-                                <div class="spec-text">{{ $bookingData['car']['gearbox'] ?? 'N/A' }}</div>
-                            </div>
+                                <div class="spec-item">
+                                    <div class="spec-icon"><i class="fas fa-user"></i></div>
+                                    <div class="spec-text">
+                                        {{ isset($bookingData['car']['seats']) ? $bookingData['car']['seats'] . ' Seats' : 'N/A' }}
+                                    </div>
+                                </div>
+                                <div class="spec-item">
+                                    <div class="spec-icon"><i class="fas fa-gas-pump"></i></div>
+                                    <div class="spec-text">{{ $bookingData['car']['fuel'] }}</div>
+                                </div>
+                                <div class="spec-item">
+                                    <div class="spec-icon"><i class="fas fa-shield-alt"></i></div>
+                                    <div class="spec-text">
+                                        {{ $bookingData['car']['insurance'] }}
+                                    </div>
+                                </div>
+                                <div class="spec-item">
+                                    <div class="spec-icon"><i class="fas fa-cog"></i></div>
+                                    <div class="spec-text">{{ $bookingData['car']['gearbox'] }}</div>
+                                </div>
                             @else
-                            <div class="spec-item">
-                                <div class="spec-text">Car specifications not available</div>
-                            </div>
+                                <div class="spec-item">
+                                    <div class="spec-text">Car specifications not available</div>
+                                </div>
                             @endif
                         </div>
 
@@ -66,9 +68,9 @@
                                 <div class="rental-detail-label"><i class="fas fa-calendar-alt"></i> Pickup Date</div>
                                 <div class="rental-detail-value">
                                     @if (isset($bookingData['pickup_date']) && isset($bookingData['pickup_time']))
-                                    {{ \Carbon\Carbon::parse($bookingData['pickup_date'] . ' ' . $bookingData['pickup_time'])->format('d M Y, h:i A') }}
+                                        {{ \Carbon\Carbon::parse($bookingData['pickup_date'] . ' ' . $bookingData['pickup_time'])->format('d M Y, h:i A') }}
                                     @else
-                                    Not specified
+                                        Not specified
                                     @endif
                                 </div>
                             </div>
@@ -76,15 +78,24 @@
                                 <div class="rental-detail-label"><i class="fas fa-calendar-check"></i> Return Date</div>
                                 <div class="rental-detail-value">
                                     @if (isset($bookingData['return_date']) && isset($bookingData['return_time']))
-                                    {{ \Carbon\Carbon::parse($bookingData['return_date'] . ' ' . $bookingData['return_time'])->format('d M Y, h:i A') }}
+                                        {{ \Carbon\Carbon::parse($bookingData['return_date'] . ' ' . $bookingData['return_time'])->format('d M Y, h:i A') }}
                                     @else
-                                    Not specified
+                                        Not specified
                                     @endif
                                 </div>
                             </div>
                             <div class="rental-detail-item">
                                 <div class="rental-detail-label"><i class="fas fa-map-marker-alt"></i> Location</div>
-                                <div class="rental-detail-value">{{ $bookingData['delivery_locations'][0] ?? 'N/A' }}
+                                <div class="rental-detail-value">
+                                    @if (!empty($bookingData['delivery_locations']))
+                                        @foreach ($bookingData['delivery_locations'] as $loc)
+                                            {{ $loc['name'] }} - {{ ucfirst($loc['type']) }}@if (!$loop->last)
+                                                ,
+                                            @endif
+                                        @endforeach
+                                    @else
+                                        N/A
+                                    @endif
                                 </div>
                             </div>
                             <div class="rental-detail-item">
@@ -101,17 +112,17 @@
                         <div class="reviews">
                             <div class="stars">
                                 @php
-                                $rating = $bookingData['rating'] ?? 4.8;
+                                    $rating = $bookingData['rating'] ?? 4.8;
                                 @endphp
                                 @for ($i = 1; $i <= 5; $i++)
-                                    @if ($rating>= $i)
-                                    <i class="fas fa-star"></i>
+                                    @if ($rating >= $i)
+                                        <i class="fas fa-star"></i>
                                     @elseif($rating > $i - 1)
-                                    <i class="fas fa-star-half-alt"></i>
+                                        <i class="fas fa-star-half-alt"></i>
                                     @else
-                                    <i class="far fa-star"></i>
+                                        <i class="far fa-star"></i>
                                     @endif
-                                    @endfor
+                                @endfor
                             </div>
                             <div class="reviews-count">({{ $bookingData['rating'] ?? '4.8' }})</div>
                         </div>
@@ -123,19 +134,25 @@
 
                         <div class="payment-summary">
                             @php
-                            $pricePerDay = $bookingData['car']['price_per_day'] ?? ($bookingData['base_price'] ?? 0);
-                            $durationDays = $bookingData['duration_days'] ?? ($bookingData['rental_duration'] ?? 0);
-                            $rentalSubtotal = $pricePerDay * $durationDays;
-                            $insuranceFee = $bookingData['insurance_fee'];
-                            $serviceFee = 15.0;
-                            $additionalOptions = $bookingData['additional_options'] ?? 0;
+                                $pricePerDay =
+                                    $bookingData['car']['price_per_day'] ?? ($bookingData['base_price'] ?? 0);
+                                $durationDays = $bookingData['duration_days'] ?? ($bookingData['rental_duration'] ?? 0);
+                                $rentalSubtotal = $pricePerDay * $durationDays;
+                                $insuranceFee = $bookingData['insurance_fee'];
+                                $serviceFee = 15.0;
+                                $additionalOptions = $bookingData['additional_options'] ?? 0;
 
-                            // Get promotion from database
-                            $promotion = \App\Models\Promotion::first();
-                            $promotionPercent = $promotion ? $promotion->discount_percent : 0;
-                            $promotionDiscount = ($rentalSubtotal * $promotionPercent) / 100;
+                                // Get promotion from database
+                                $promotion = \App\Models\Promotion::first();
+                                $promotionPercent = $promotion ? $promotion->discount_percent : 0;
+                                $promotionDiscount = ($rentalSubtotal * $promotionPercent) / 100;
 
-                            $totalPrice = $rentalSubtotal - $promotionDiscount + $insuranceFee + $serviceFee + $additionalOptions;
+                                $totalPrice =
+                                    $rentalSubtotal -
+                                    $promotionDiscount +
+                                    $insuranceFee +
+                                    $serviceFee +
+                                    $additionalOptions;
                             @endphp
                             <div class="summary-row">
                                 <div>Car Rental ({{ $durationDays }} days)</div>
@@ -143,31 +160,35 @@
                             </div>
 
                             @if ($additionalOptions > 0)
-                            <div class="summary-row">
-                                <div>Additional Options</div>
-                                <div>${{ number_format($additionalOptions, 2) }}</div>
-                            </div>
+                                <div class="summary-row">
+                                    <div>Additional Options</div>
+                                    <div>${{ number_format($additionalOptions, 2) }}</div>
+                                </div>
                             @endif
 
-                            @if(isset($bookingData['promotion_discount']) && $bookingData['promotion_discount'] > 0)
-                            <div class="summary-row promotion">
-                                <div>
-                                    Promotion Discount ({{ $bookingData['promotion_percent'] }}% OFF)
-                                    <br>
-                                    <small class="text-muted">
-                                        Applied to {{ $bookingData['promotion_days'] }} day(s) during promotion period
-                                    </small>
+                            @if (isset($bookingData['promotion_discount']) && $bookingData['promotion_discount'] > 0)
+                                <div class="summary-row promotion">
+                                    <div>
+                                        Promotion Discount ({{ $bookingData['promotion_percent'] }}% OFF)
+                                        <br>
+                                        <small class="text-muted">
+                                            Applied to {{ $bookingData['promotion_days'] }} day(s) during promotion
+                                            period
+                                        </small>
+                                    </div>
+                                    <div>-${{ number_format($bookingData['promotion_discount'], 2) }}</div>
                                 </div>
-                                <div>-${{ number_format($bookingData['promotion_discount'], 2) }}</div>
-                            </div>
-                            <div class="summary-row promotion-calculation">
-                                <div>
-                                    <small>Base price per day: ${{ number_format($bookingData['car']['price_per_day'], 2) }}</small><br>
-                                    <small>Discounted days: {{ $bookingData['promotion_days'] }}</small><br>
-                                    <small>Discount per day: ${{ number_format($bookingData['car']['price_per_day'] * $bookingData['promotion_percent'] / 100, 2) }}</small>
+                                <div class="summary-row promotion-calculation">
+                                    <div>
+                                        <small>Base price per day:
+                                            ${{ number_format($bookingData['car']['price_per_day'], 2) }}</small><br>
+                                        <small>Discounted days: {{ $bookingData['promotion_days'] }}</small><br>
+                                        <small>Discount per day:
+                                            ${{ number_format(($bookingData['car']['price_per_day'] * $bookingData['promotion_percent']) / 100, 2) }}</small>
+                                    </div>
+                                    <div><small>-${{ number_format($bookingData['promotion_discount'], 2) }}</small>
+                                    </div>
                                 </div>
-                                <div><small>-${{ number_format($bookingData['promotion_discount'], 2) }}</small></div>
-                            </div>
                             @endif
 
                             <div class="summary-row">
@@ -223,10 +244,10 @@
                         <div class="form-group">
                             <label for="cin"><i class="fas fa-id-card"></i>CIN</label>
                             @if (auth()->user()->cin)
-                            <div class="current-file">
-                                <p>Current CIN: {{ basename(auth()->user()->cin) }}</p>
-                                <input type="hidden" name="existing_cin" value="{{ auth()->user()->cin }}">
-                            </div>
+                                <div class="current-file">
+                                    <p>Current CIN: {{ basename(auth()->user()->cin) }}</p>
+                                    <input type="hidden" name="existing_cin" value="{{ auth()->user()->cin }}">
+                                </div>
                             @endif
                             <input type="file" id="cin" name="cin" class="form-control"
                                 accept=".jpg,.jpeg,.png,.pdf" {{ !auth()->user()->cin ? 'required' : '' }}>
@@ -235,11 +256,11 @@
                         <div class="form-group">
                             <label for="driver-license"><i class="fas fa-id-badge"></i>Driver License</label>
                             @if (auth()->user()->driver_license)
-                            <div class="current-file">
-                                <p>Current License: {{ basename(auth()->user()->driver_license) }}</p>
-                                <input type="hidden" name="existing_driver_license"
-                                    value="{{ auth()->user()->driver_license }}">
-                            </div>
+                                <div class="current-file">
+                                    <p>Current License: {{ basename(auth()->user()->driver_license) }}</p>
+                                    <input type="hidden" name="existing_driver_license"
+                                        value="{{ auth()->user()->driver_license }}">
+                                </div>
                             @endif
                             <input type="file" id="driver-license" name="driver_license" class="form-control"
                                 accept=".jpg,.jpeg,.png,.pdf" {{ !auth()->user()->driver_license ? 'required' : '' }}>

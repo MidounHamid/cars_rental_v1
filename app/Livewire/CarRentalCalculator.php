@@ -140,14 +140,14 @@ class CarRentalCalculator extends Component
             $promotionService = app(PromotionService::class);
             $pickup = Carbon::parse($this->pickup_date . ' ' . ($this->pickup_time ?: '10:00'));
             $return = Carbon::parse($this->return_date . ' ' . ($this->return_time ?: '10:00'));
-            
+
             list($promotionDiscount, $discountedDays, $discountPercent) = $promotionService->calculateBookingDiscount(
                 $this->base_price,
                 $pickup,
                 $return,
                 $promotion
             );
-            
+
             $this->promotion_discount = $promotionDiscount;
             $this->promotion_days = $discountedDays;
             $this->promotion_percent = $discountPercent;

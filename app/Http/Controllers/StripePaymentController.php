@@ -35,6 +35,34 @@ class StripePaymentController extends Controller
             return redirect()->route('dashboard')->with('error', 'No booking information found.');
         }
 
+        // Load complete car data with relationships and set all required fields
+        if (isset($bookingData['car']['id'])) {
+            $car = Car::with(['brand', 'carType', 'fuelType', 'insurance', 'carImages'])
+                ->find($bookingData['car']['id']);
+
+            if ($car) {
+                $bookingData['car'] = [
+                    'id' => $car->id,
+                    'brand' => $car->brand->brand,
+                    'model' => $car->model,
+                    'type' => $car->carType->name,
+                    'fuel' => $car->fuelType->fuel_type,
+                    'seats' => $car->seats,
+                    'gearbox' => $car->transmission,
+                    'insurance' => $car->insurance->name,
+                    'price_per_day' => $car->price_per_day,
+                    'image' => optional($car->carImages->first())->image_path ?? 'images/car-placeholder.jpg'
+                ];
+                // Add delivery locations as array of ['name' => ..., 'type' => ...]
+                $bookingData['delivery_locations'] = $car->deliveryLocations->map(function ($location) {
+                    return [
+                        'name' => $location->name,
+                        'type' => $location->type
+                    ];
+                })->toArray();
+            }
+        }
+
         // Ensure all fees are set
         $bookingData = $this->ensureAllFees($bookingData);
         $bookingData = $this->calculateTotalPrice($bookingData);

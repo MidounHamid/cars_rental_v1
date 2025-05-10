@@ -36,12 +36,15 @@ Route::get('/abouts', function () {
 
 
 Route::get('/car-listing', [HomeController::class, 'carListing'])->name('cars.listing');
-Route::get('/car-detail/{id}', [HomeController::class, 'carDetail'])->name('cars.detail');
+Route::middleware(['auth'])->group(function () {
+    Route::get('/car-detail/{id}', [HomeController::class, 'carDetail'])->name('cars.detail');
+    Route::get('/payment', [StripePaymentController::class, 'index'])->name('stripe.payment');
+    // Add any other routes that require login here
+});
 
 
 
 //this route is for the stripe payment
-Route::get('/payment', [StripePaymentController::class, 'index'])->name('stripe.payment');
 Route::post('/checkout', [StripePaymentController::class, 'checkout'])->name('stripe.checkout');
 Route::post('/confirm-payment', [StripePaymentController::class, 'confirmPayment'])->name('stripe.confirm');
 Route::get('/stripe/success', [StripePaymentController::class, 'success'])->name('stripe.success');
