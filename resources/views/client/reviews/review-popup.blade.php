@@ -9,12 +9,13 @@
             height: 100%;
             background-color: rgba(0, 0, 0, 0.5);
             z-index: 1000;
-            justify-content: center;
-            align-items: center;
+            overflow: auto;
         }
 
         .review-popup.active {
             display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         .review-popup-content {
@@ -26,6 +27,8 @@
             max-width: 500px;
             position: relative;
             border-top: 5px solid #DC1E2D;
+            margin: auto;
+            transition: transform 0.3s ease, opacity 0.3s ease;
         }
 
         .review-popup h2 {
@@ -300,6 +303,12 @@
                     })
                     .done(function(response) {
                         if (response.success) {
+                            // Mark this booking as reviewed in localStorage
+                            const bookingId = form.attr('data-booking-id');
+                            if (bookingId) {
+                                localStorage.setItem(`review_submitted_${bookingId}`, 'true');
+                            }
+                            
                             showSuccess(response.message);
                             closeReviewPopup();
                             setTimeout(() => {
@@ -327,9 +336,16 @@
             });
         });
 
-        function openReviewPopup(carId) {
+        function openReviewPopup(carId, bookingId) {
             if (!carId) {
                 console.error('No car ID provided');
+                return;
+            }
+            
+            // Check if user has already submitted a review for this booking
+            const bookingKey = bookingId ? `review_submitted_${bookingId}` : null;
+            if (bookingKey && localStorage.getItem(bookingKey) === 'true') {
+                console.log('User already submitted a review for this booking');
                 return;
             }
 
@@ -339,9 +355,23 @@
 
             // Set new data
             $('#carId').val(carId);
+            
+            // Add booking ID as data attribute if provided
+            if (bookingId) {
+                $('#reviewForm').attr('data-booking-id', bookingId);
+            }
 
-            // Show popup
-            $('#reviewPopup').addClass('active');
+            // Show popup with a smooth animation
+            $('#reviewPopup').addClass('active').hide().fadeIn(400);
+            
+            // Add a subtle entrance animation to the content
+            $('.review-popup-content').css({
+                'opacity': '0',
+                'transform': 'translateY(20px)'
+            }).animate({
+                'opacity': '1',
+                'transform': 'translateY(0)'
+            }, 500);
         }
 
         function closeReviewPopup() {

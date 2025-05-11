@@ -42,7 +42,7 @@
             <a href="{{ $pdfUrl }}" class="success-link" download="receipt-{{ $booking->id }}.pdf">
                 Download Receipt
             </a>
-            <button onclick="openReviewPopup('{{ $booking->car->id }}')" class="review-button">
+            <button onclick="openReviewPopup('{{ $booking->car->id }}', '{{ $booking->id }}')" class="review-button">
                 Rate Your Experience
             </button>
             <a href="{{ route('dashboard') }}" class="success-link secondary">
@@ -212,6 +212,35 @@
                 flex-direction: column;
             }
         }
+        
+        /* Download Notification Styles */
+        .download-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #4CAF50;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            z-index: 1100;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            opacity: 0;
+            transform: translateY(-20px);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        
+        .download-notification.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .download-notification i {
+            margin-right: 10px;
+            font-size: 1.2em;
+        }
     </style>
 @endpush
 
@@ -226,7 +255,56 @@
                 // Clean the URL first
                 const newUrl = window.location.pathname;
                 window.history.replaceState({}, document.title, newUrl);
+                
+                // Automatically download receipt after 1 second
+                setTimeout(function() {
+                    // Get the receipt download URL
+                    const receiptUrl = '{{ $pdfUrl }}';
+                    const fileName = 'receipt-{{ $booking->id }}.pdf';
+                    
+                    // Create a temporary link element and trigger download
+                    const downloadLink = document.createElement('a');
+                    downloadLink.href = receiptUrl;
+                    downloadLink.download = fileName;
+                    downloadLink.style.display = 'none';
+                    document.body.appendChild(downloadLink);
+                    downloadLink.click();
+                    document.body.removeChild(downloadLink);
+                    
+                    // Show a notification that receipt is being downloaded
+                    showDownloadNotification();
+                }, 1000);
+                
+                // Automatically show review popup after 3 seconds
+                setTimeout(function() {
+                    openReviewPopup('{{ $booking->car->id }}', '{{ $booking->id }}');
+                }, 3000);
             }
+            
+            // Store in localStorage that we've shown the review popup for this booking
+            localStorage.setItem('reviewShown_{{ $booking->id }}', 'true');
         });
+        
+        // Function to show a notification when receipt is downloading
+        function showDownloadNotification() {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = 'download-notification';
+            notification.innerHTML = '<i class="fas fa-file-download"></i> Your receipt is being downloaded...';
+            document.body.appendChild(notification);
+            
+            // Animate notification
+            setTimeout(function() {
+                notification.classList.add('show');
+            }, 100);
+            
+            // Remove notification after 3 seconds
+            setTimeout(function() {
+                notification.classList.remove('show');
+                setTimeout(function() {
+                    document.body.removeChild(notification);
+                }, 500);
+            }, 3000);
+        }
     </script>
 @endpush
