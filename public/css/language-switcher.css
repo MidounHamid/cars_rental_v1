@@ -1,0 +1,108 @@
+/* Language Switcher Styles */
+.language-switcher {
+    position: relative;
+    margin-left: auto;
+    margin-right: 1rem;
+    display: flex;
+    align-items: center;
+    z-index: 1000;
+}
+
+.language-switcher-trigger {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    padding: 5px 10px;
+    border-radius: 4px;
+    background-color: rgba(0, 0, 0, 0.05);
+    transition: all 0.2s ease;
+}
+
+.language-switcher-trigger:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+.language-switcher-trigger .current-language {
+    font-weight: 500;
+    margin-right: 4px;
+    color: #333;
+}
+
+.language-switcher-dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background-color: white;
+    border-radius: 4px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    display: none;
+    flex-direction: column;
+    min-width: 120px;
+    margin-top: 5px;
+    animation: fadeIn 0.2s ease;
+    z-index: 1001;
+}
+
+.language-switcher-dropdown.active {
+    display: flex;
+}
+
+.lang-link {
+    color: #333;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 10px 15px;
+    transition: all 0.2s ease;
+    border-bottom: 1px solid #eee;
+}
+
+.lang-link:last-child {
+    border-bottom: none;
+}
+
+.lang-link:hover {
+    background-color: rgba(200, 35, 51, 0.1);
+    color: #c82333;
+}
+
+.lang-link.active {
+    color: #c82333;
+    font-weight: bold;
+    background-color: rgba(200, 35, 51, 0.05);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive styles */
+@media screen and (max-width: 768px) {
+    .language-switcher {
+        margin-left: 0;
+        margin-right: auto;
+    }
+}
+
+/* RTL support for language switcher */
+body.rtl .language-switcher {
+    margin-right: auto;
+    margin-left: 1rem;
+}
+
+body.rtl .language-switcher-dropdown {
+    right: auto;
+    left: 0;
+}
+
+body.rtl .language-switcher-trigger .current-language {
+    margin-right: 0;
+    margin-left: 4px;
+}

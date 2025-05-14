@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" dir="{{ Session::get('direction', 'ltr') }}">
 
 <head>
     <meta charset="utf-8">
@@ -17,7 +17,7 @@
 
 </head>
 
-<body>
+<body class="{{ Session::get('direction', 'ltr') }}">
     @include('layouts.head')
 
     @hasSection('content')

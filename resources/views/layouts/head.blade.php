@@ -9,7 +9,10 @@
         <img src="{{asset('images/logo-azidcar.png')}}" alt="logo-azidcar" class="logo-img">
     </h2>
 
-    <input type="text" id="search-box" class="search-input" placeholder="Search...">
+    <!-- <input type="text" id="search-box" class="search-input" placeholder="{{ __('Search...') }}"> -->
+
+    <!-- Language Switcher -->
+    @include('components.language-switcher')
 
     @auth
     <div class="mobile-profile">
@@ -20,21 +23,21 @@
         <div class="mobile-profile-dropdown">
             <a href="{{ route('profile.edit') }}" class="dropdown-item">
                 <span class="material-symbols-rounded">person</span>
-                <span>My Profile</span>
+                <span>{{ __('messages.my_profile') }}</span>
             </a>
             <a href="{{ route('profile.edit') }}" class="dropdown-item">
                 <span class="material-symbols-rounded">settings</span>
-                <span>Settings</span>
+                <span>{{ __('messages.settings') }}</span>
             </a>
             <a href="#" class="dropdown-item">
                 <span class="material-symbols-rounded">mail</span>
-                <span>Messages</span>
+                <span>{{ __('messages.messages') }}</span>
             </a>
             <form method="POST" action="{{ route('logout') }}">
                 @csrf
                 <button type="submit" class="dropdown-item text-danger">
                     <span class="material-symbols-rounded">logout</span>
-                    <span>Sign out</span>
+                    <span>{{ __('messages.sign_out') }}</span>
                 </button>
             </form>
         </div>
@@ -50,21 +53,21 @@
 
     <ul class="navbar-links">
         <li class="navbar-item">
-            <a href="{{route('dashboard')}}" class="navbar-link {{ request()->routeIs('dashboard') ? 'current' : '' }}">Home</a>
+            <a href="{{route('dashboard')}}" class="navbar-link {{ request()->routeIs('dashboard') ? 'current' : '' }}">{{ __('messages.home') }}</a>
         </li>
         <li class="navbar-item">
-            <a href="{{route('cars.listing')}}" class="navbar-link {{ request()->routeIs('cars.listing') ? 'current' : '' }}">Browse Car</a>
+            <a href="{{route('cars.listing')}}" class="navbar-link {{ request()->routeIs('cars.listing') ? 'current' : '' }}">{{ __('messages.browse_car') }}</a>
         </li>
+        <!-- <li class="navbar-item">
+            <a href="#" class="navbar-link {{ request()->routeIs('promotion') ? 'current' : '' }}">{{ __('messages.promotion') }}</a>
+        </li> -->
         <li class="navbar-item">
-            <a href="#" class="navbar-link {{ request()->routeIs('promotion') ? 'current' : '' }}">Promotion</a>
-        </li>
-        <li class="navbar-item">
-            <a href="#" class="navbar-link {{ request()->routeIs('contact') ? 'current' : '' }}">Contact Us</a>
+            <a href="#" class="navbar-link {{ request()->routeIs('contact') ? 'current' : '' }}">{{ __('messages.contact_us') }}</a>
         </li>
 
         @guest
-            <li class="navbar-item"><a href="{{ route('login') }}" class="navbar-link-login">Login</a></li>
-            <li class="navbar-item"><a href="{{ route('register') }}" class="navbar-link-signup">Register</a></li>
+            <li class="navbar-item"><a href="{{ route('login') }}" class="navbar-link-login">{{ __('messages.login') }}</a></li>
+            <li class="navbar-item"><a href="{{ route('register') }}" class="navbar-link-signup">{{ __('messages.register') }}</a></li>
         @else
             <li class="navbar-item profile-menu">
                 <button type="button" class="profile-trigger">
@@ -83,15 +86,15 @@
                     <div class="dropdown-body">
                         <a href="{{ route('profile.show') }}" class="dropdown-item">
                             <span class="material-symbols-rounded">person</span>
-                            <span>My Profile</span>
+                            <span>{{ __('messages.my_profile') }}</span>
                         </a>
                         <a href="{{ route('profile.edit') }}" class="dropdown-item">
                             <span class="material-symbols-rounded">settings</span>
-                            <span>Settings</span>
+                            <span>{{ __('messages.settings') }}</span>
                         </a>
                         <a href="#" class="dropdown-item">
                             <span class="material-symbols-rounded">mail</span>
-                            <span>Messages</span>
+                            <span>{{ __('messages.messages') }}</span>
                         </a>
                     </div>
                     <div class="dropdown-footer">
@@ -99,7 +102,7 @@
                             @csrf
                             <button type="submit" class="dropdown-item text-danger">
                                 <span class="material-symbols-rounded">logout</span>
-                                <span>{{ __('Sign out') }}</span>
+                                <span>{{ __('messages.sign_out') }}</span>
                             </button>
                         </form>
                     </div>
@@ -112,6 +115,7 @@
 <!-- Script -->
 <script>
     document.addEventListener('DOMContentLoaded', function () {
+        // Profile dropdown functionality
         const profileTrigger = document.querySelector('.profile-trigger');
         const profileMenu = document.querySelector('.profile-menu');
 
@@ -126,6 +130,7 @@
             }
         });
 
+        // Mobile profile dropdown functionality
         const mobileProfileTrigger = document.querySelector('.mobile-profile-trigger');
         const mobileProfileDropdown = document.querySelector('.mobile-profile-dropdown');
 
@@ -139,6 +144,8 @@
                 mobileProfileDropdown.classList.remove('active');
             }
         });
+        
+        // Language switcher functionality is now in the language-switcher component
 
         const mobileLinks = document.querySelectorAll('.navbar-links .navbar-link, .navbar-links .navbar-link-login, .navbar-links .navbar-link-signup');
         const menuToggle = document.getElementById('menu-toggle');

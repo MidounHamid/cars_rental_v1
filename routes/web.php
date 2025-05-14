@@ -23,11 +23,14 @@ use App\Http\Controllers\StripePaymentController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\client\HomeController;
 use App\Http\Controllers\FeatureController;
+use App\Http\Controllers\LanguageController;
 use App\Models\BookingSpecification;
 use App\Models\CarFeature;
 
 // ======= Client Routes =======
 
+// Language Switching Route
+Route::get('language/{lang}', [LanguageController::class, 'switchLang'])->name('language.switch');
 
 Route::get('/', [HomeController::class, 'index'])->name('dashboard');
 Route::get('/abouts', function () {
@@ -110,5 +113,6 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('/notifications/unread-count', [App\Http\Controllers\Admin\NotificationController::class, 'getUnreadCount'])->name('notifications.unread-count');
     Route::get('/notifications/recent', [App\Http\Controllers\Admin\NotificationController::class, 'getRecent'])->name('notifications.recent');
 });
+
 
 require __DIR__ . '/auth.php';
