@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" dir="{{ Session::get('direction', 'ltr') }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" dir="{{ session('direction', 'ltr') }}">
 
 <head>
     <meta charset="utf-8">
@@ -17,7 +17,7 @@
 
 </head>
 
-<body class="{{ Session::get('direction', 'ltr') }}">
+<body class="{{ session('direction', 'ltr') }}">
     @include('layouts.head')
 
     @hasSection('content')
@@ -25,6 +25,13 @@
     @else
         {{ $slot ?? '' }}
     @endif
+
+    <div
+        style="position: fixed; bottom: 10px; left: 10px; background: #f8f9fa; padding: 10px; border: 1px solid #ccc; z-index: 9999;">
+        <p>Langue actuelle : {{ app()->getLocale() }}</p>
+        <p>Session locale : {{ session('locale') }}</p>
+        <p>Direction : {{ session('direction') }}</p>
+    </div>
 
     @include('layouts.footer')
     @include('layouts.scripts')

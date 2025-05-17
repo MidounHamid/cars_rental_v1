@@ -53,14 +53,13 @@
 
     <ul class="navbar-links">
         <li class="navbar-item">
+
             <a href="{{route('dashboard')}}" class="navbar-link {{ request()->routeIs('dashboard') ? 'current' : '' }}">{{ __('messages.home') }}</a>
         </li>
         <li class="navbar-item">
             <a href="{{route('cars.listing')}}" class="navbar-link {{ request()->routeIs('cars.listing') ? 'current' : '' }}">{{ __('messages.browse_car') }}</a>
         </li>
-        <!-- <li class="navbar-item">
-            <a href="#" class="navbar-link {{ request()->routeIs('promotion') ? 'current' : '' }}">{{ __('messages.promotion') }}</a>
-        </li> -->
+
         <li class="navbar-item">
             <a href="#" class="navbar-link {{ request()->routeIs('contact') ? 'current' : '' }}">{{ __('messages.contact_us') }}</a>
         </li>
@@ -80,7 +79,7 @@
                         <img src="{{ $profileImage }}" alt="Profile" class="profile-img-large">
                         <div class="profile-info">
                             <h4>{{ Auth::user()->name }}</h4>
-                            <p>Administrator</p>
+                            <p>{{ __('messages.administrator') }}</p>
                         </div>
                     </div>
                     <div class="dropdown-body">
@@ -144,7 +143,7 @@
                 mobileProfileDropdown.classList.remove('active');
             }
         });
-        
+
         // Language switcher functionality is now in the language-switcher component
 
         const mobileLinks = document.querySelectorAll('.navbar-links .navbar-link, .navbar-links .navbar-link-login, .navbar-links .navbar-link-signup');

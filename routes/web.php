@@ -29,10 +29,23 @@ use App\Models\CarFeature;
 
 // ======= Client Routes =======
 
-// Language Switching Route
-Route::get('language/{lang}', [LanguageController::class, 'switchLang'])->name('language.switch');
+Route::match(['get', 'post'], 'language/{lang}', [LanguageController::class, 'switchLang'])
+    ->name('language.switch')
+    ->middleware('web')
+    ->where('lang', 'en|fr|ar');
+
+
+Route::get('/test-locale', [App\Http\Controllers\LanguageController::class, 'testLocale']);
+
+
+
+
+
 
 Route::get('/', [HomeController::class, 'index'])->name('dashboard');
+
+
+
 Route::get('/abouts', function () {
     return view('client.abouts.abouts');
 })->middleware(['auth', 'verified'])->name('abouts');
